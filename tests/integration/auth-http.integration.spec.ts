@@ -88,6 +88,11 @@ describe("auth HTTP vertical slice", () => {
       .set("Origin", origin)
       .expect(200);
     expect(refreshed.body.data.accessToken).toEqual(expect.any(String));
+    const restored = await agent
+      .get("/api/v1/auth/me")
+      .set("Authorization", `Bearer ${refreshed.body.data.accessToken}`)
+      .expect(200);
+    expect(restored.body.data.id).toBe(registered.body.data.user.id);
     await agent.post("/api/v1/auth/logout").set("Origin", origin).expect(204);
     await agent
       .get("/api/v1/auth/me")

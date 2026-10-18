@@ -267,10 +267,13 @@ export class AuthService {
         return {
           kind: "ok" as const,
           value: {
-            accessToken: this.access(session, session.id),
+            accessToken: this.access(
+              { ...session, id: session.user_id },
+              session.id,
+            ),
             expiresIn: 900,
             refreshToken: nextToken,
-            user: this.publicUser(session),
+            user: this.publicUser({ ...session, id: session.user_id }),
           },
         };
       }

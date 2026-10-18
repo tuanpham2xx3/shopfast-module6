@@ -51,3 +51,5 @@ PostgreSQL-backed sliding counters enforce 3 send requests per normalized email 
 Verification: four PostgreSQL integration suites passed, 13 tests. This includes concurrent email requests across different IPs, IP requests across different emails, and window expiry. This evidence covers the OTP send limiter; login/global limiters remain outstanding.
 
 Session revocation follow-up: a regression test first demonstrated that a logged-out token could confirm OTP. Verification now locks and validates its active session in the same transaction. Auth service/HTTP suites passed 11 tests, including OTP expiry and the five-attempt ceiling.
+
+Real browser refresh regression: `/me` using a rotated access token first returned 401 because token subject was the session ID. Refresh now uses `user_id` as subject and public user ID. The HTTP regression passed; the live browser test also passed register → verify → reload → staff inventory. UI session restore shares an in-flight refresh so StrictMode cannot rotate the same cookie twice.
