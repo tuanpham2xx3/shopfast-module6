@@ -26,6 +26,7 @@
 | D19 | Gemini dùng REST generateContent chính thức qua adapter, model cấu hình backend | Baseline triển khai 18/10/2026 | Không phụ thuộc SDK; vẫn dùng Gemini API Google AI Studio |
 | D20 | Câu trả lời factual AI render từ evidence DB của lượt hiện tại | Baseline triển khai 18/10/2026 | Không dùng prose của model tự khai claims để chứng minh tính đúng |
 | D21 | Implement toàn bộ ứng dụng trước; nghiệm thu Redis/Gemini/email thật sau | Người dùng chọn 18/10/2026 | Không chặn code do service/key local chưa sẵn sàng |
+| D22 | Retention AI 30 ngày; job thành công thu gọn payload sau 90 ngày, giữ tombstone chống chạy trùng | Baseline triển khai 19/10/2026 | Không xóa phản hồi khách/audit; cleanup có batch, advisory lock và không phụ thuộc Redis |
 
 Những DEC được dùng để tạo bản spec cụ thể, có thể sửa khi review; không phải tuyên bố người dùng đã xác nhận tất cả lựa chọn.
 

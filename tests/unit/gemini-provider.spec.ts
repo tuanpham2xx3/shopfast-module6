@@ -5,26 +5,24 @@
 } from "../../libs/modules/ai/gemini.provider";
 describe("Gemini provider boundaries", () => {
   it("declares numeric confidence in the provider classification schema", async () => {
-    const transport = jest
-      .spyOn(globalThis, "fetch")
-      .mockResolvedValue(
-        new Response(
-          JSON.stringify({
-            candidates: [
-              {
-                content: {
-                  parts: [
-                    {
-                      text: '{"category":"OTHER","confidence":0.9,"reason":"Demo"}',
-                    },
-                  ],
-                },
+    const transport = jest.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          candidates: [
+            {
+              content: {
+                parts: [
+                  {
+                    text: '{"category":"OTHER","confidence":0.9,"reason":"Demo"}',
+                  },
+                ],
               },
-            ],
-          }),
-          { status: 200 },
-        ),
-      );
+            },
+          ],
+        }),
+        { status: 200 },
+      ),
+    );
     try {
       await new GoogleGeminiProvider(
         "synthetic-test-key",

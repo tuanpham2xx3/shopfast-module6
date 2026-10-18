@@ -278,7 +278,7 @@ export class TicketsService {
       if (approvedAiMessageId) {
         if (a.role === "CUSTOMER") throw new TicketError("FORBIDDEN");
         const [turn] = await m.query(
-          `SELECT x.response FROM ${this.t("ai_turns")} x JOIN ${this.t("ai_sessions")} s ON s.id=x.session_id WHERE x.id=$1 AND s.ticket_id=$2 AND s.actor_id=$3 AND x.status='COMPLETED'`,
+          `SELECT x.response FROM ${this.t("ai_turns")} x JOIN ${this.t("ai_sessions")} s ON s.id=x.session_id WHERE x.id=$1 AND s.ticket_id=$2 AND s.actor_id=$3 AND x.status='COMPLETED' FOR UPDATE OF x`,
           [approvedAiMessageId, id, a.id],
         );
         if (

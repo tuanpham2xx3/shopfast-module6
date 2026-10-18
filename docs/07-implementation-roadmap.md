@@ -78,7 +78,7 @@ Trạng thái 18/10/2026: đang triển khai trên `feat/m0-foundation`; xem [ev
 
 **P1:** lease/dedup, dead letter retry, catch-up sau restart, crash-window tests và provider email thật có idempotency/status lookup. Nếu chưa chứng minh được contract provider, evidence “đúng một email” giữ BLOCKED, không giả PASS.
 
-**P2:** retention/cleanup lịch sử job dài hạn và dashboard vận hành mở rộng.
+**P2:** đã có cleanup payload job thành công sau 90 ngày, giữ tombstone; archive outbox/dead-letter dài hạn và dashboard vận hành mở rộng còn hoãn.
 
 **Gate:** checkout không chờ provider; event chỉ tới đúng customer; worker restart không làm mất business event.
 
@@ -106,7 +106,7 @@ Trạng thái 18/10/2026: đang triển khai trên `feat/m0-foundation`; xem [ev
 
 **P1:** timeout/circuit breaker, prompt injection tests, clientMessageId dedup và stale proposal.
 
-**P2:** lưu hội thoại 30 ngày, dataset 30 ticket/confusion matrix và usage metrics chi tiết.
+**P2:** đã có cleanup hội thoại quá 30 ngày và dataset 30 ticket/confusion matrix (evidence riêng); usage metrics chi tiết còn thiếu.
 
 **Gate:** smoke Gemini thật với key ngoài repo; tool không đọc đơn khách khác; AI không tự ghi hoặc tự gửi khách.
 

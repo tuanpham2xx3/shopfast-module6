@@ -17,6 +17,7 @@ import {
 import { createJobsService } from "../../../modules/jobs/jobs.module";
 import { JobsService } from "../../../modules/jobs/jobs.service";
 import { domainEvents } from "../domain-events";
+import { RetentionService } from "../../../modules/jobs/retention.service";
 export type OutboxSubscriber = (
   event: OutboxEvent,
   source: DataSource,
@@ -39,6 +40,8 @@ export class FoundationWorker implements OnModuleInit, OnApplicationShutdown {
   private lastSchedule = 0;
   private archiveCursor = 0;
   private lastArchive = 0;
+  private lastRetention = 0;
+  private retentionRunning?: Promise<void>;
   async onModuleInit() {
     if (!process.env.DATABASE_URL || !process.env.REDIS_URL)
       throw new Error("Worker requires DATABASE_URL and REDIS_URL");
@@ -126,6 +129,22 @@ export class FoundationWorker implements OnModuleInit, OnApplicationShutdown {
     }
   }
   private async tick() {
+    if (!this.retentionRunning && Date.now() - this.lastRetention > 3600000) {
+      this.lastRetention = Date.now();
+      this.retentionRunning = new RetentionService(
+        this.source!,
+        process.env.DATABASE_SCHEMA,
+      )
+        .cleanup()
+        .then(() => undefined)
+        .catch(() => {
+          this.lastRetention = Date.now() - 3540000;
+          Logger.warn("Retention failed; retry in one minute", "Worker");
+        })
+        .finally(() => {
+          this.retentionRunning = undefined;
+        });
+    }
     if (Date.now() - this.lastSchedule > 15000) {
       await this.jobs!.catchUp();
       this.lastSchedule = Date.now();
@@ -192,6 +211,7 @@ export class FoundationWorker implements OnModuleInit, OnApplicationShutdown {
     this.closing = true;
     if (this.timer) clearInterval(this.timer);
     await this.running;
+    await this.retentionRunning;
     await this.worker?.close();
     await this.queue?.close();
     this.redis?.disconnect();

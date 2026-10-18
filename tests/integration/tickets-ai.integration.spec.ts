@@ -1,7 +1,6 @@
 ﻿import { randomUUID } from "node:crypto";
 import { DataSource } from "typeorm";
 import { createDataSource } from "../../libs/platform/src/database/data-source";
-import { TicketsAi1780000600000 } from "../../database/migrations/1780000600000-tickets-ai";
 import {
   Actor,
   TicketsService,
@@ -31,14 +30,6 @@ describe("tickets and AI ownership/confirmation integration", () => {
     admin: Actor = { id: randomUUID(), role: "ADMIN" };
   beforeAll(async () => {
     source = createDataSource(process.env.TEST_DATABASE_URL!, schema);
-    source.setOptions({
-      migrations: [
-        ...(source.options.migrations as Function[]).filter(
-          (m) => m !== TicketsAi1780000600000,
-        ),
-        TicketsAi1780000600000,
-      ],
-    });
     await source.initialize();
     await source.query(`CREATE SCHEMA "${schema}"`);
     await source.runMigrations();
