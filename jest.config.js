@@ -1,5 +1,9 @@
 module.exports = {
-  testPathIgnorePatterns: ["/node_modules/", "\\.integration\\.spec\\.ts$"],
+  testPathIgnorePatterns: [
+    "/node_modules/",
+    "\\.integration\\.spec\\.ts$",
+    "/tests/e2e/",
+  ],
   moduleFileExtensions: ["js", "json", "ts"],
   rootDir: ".",
   testRegex: ".*\\.spec\\.ts$",
