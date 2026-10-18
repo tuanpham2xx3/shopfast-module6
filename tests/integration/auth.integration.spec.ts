@@ -103,4 +103,33 @@ describe("auth service integration", () => {
       code: "INVALID_REFRESH_TOKEN",
     });
   });
+
+  it("keeps verification resend generic, throttled and invalidates the old code", async () => {
+    const registered = await service.register({
+      email: "resend@example.com",
+      password: "correct horse battery",
+      displayName: "Resend",
+    });
+    await expect(
+      service.sendVerification("missing@example.com"),
+    ).resolves.toBeUndefined();
+    await service.sendVerification("resend@example.com");
+    const [{ count: throttledCount }] = await source.query(
+      `SELECT count(*)::int count FROM "${schema}".verification_codes WHERE user_id=$1`,
+      [registered.user.id],
+    );
+    expect(throttledCount).toBe(1);
+    await source.query(
+      `UPDATE "${schema}".verification_codes SET created_at=now()-interval '61 seconds' WHERE user_id=$1`,
+      [registered.user.id],
+    );
+    await service.sendVerification("resend@example.com");
+    const records = await source.query(
+      `SELECT consumed_at FROM "${schema}".verification_codes WHERE user_id=$1 ORDER BY created_at`,
+      [registered.user.id],
+    );
+    expect(records).toHaveLength(2);
+    expect(records[0].consumed_at).not.toBeNull();
+    expect(records[1].consumed_at).toBeNull();
+  });
 });

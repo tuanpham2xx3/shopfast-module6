@@ -282,4 +282,63 @@ export class AuthService {
       throw new AuthError("INVALID_REFRESH_TOKEN");
     return outcome.value;
   }
+
+  async currentUser(accessToken: string): Promise<PublicUser> {
+    const claims = this.readAccess(accessToken);
+    const [user]: UserRow[] = await this.source.query(
+      `SELECT u.* FROM ${this.table("users")} u JOIN ${this.table("auth_sessions")} s ON s.user_id=u.id WHERE u.id=$1 AND s.id=$2 AND u.status='ACTIVE' AND s.revoked_at IS NULL AND s.expires_at>now()`,
+      [claims.sub, claims.sid],
+    );
+    if (!user) throw new AuthError("INVALID_ACCESS_TOKEN");
+    return this.publicUser(user);
+  }
+
+  async logout(refreshToken: string): Promise<void> {
+    await this.source.query(
+      `UPDATE ${this.table("auth_sessions")} SET revoked_at=COALESCE(revoked_at,now()),updated_at=now() WHERE refresh_hash=$1`,
+      [this.hash(refreshToken)],
+    );
+  }
+
+  async sendVerification(rawEmail: string): Promise<void> {
+    const email = rawEmail.trim().toLowerCase();
+    await this.source.transaction(async (manager) => {
+      const [user]: UserRow[] = await manager.query(
+        `SELECT * FROM ${this.table("users")} WHERE email=$1 FOR UPDATE`,
+        [email],
+      );
+      if (!user || user.email_verified_at || user.status !== "ACTIVE") return;
+      const [latest] = await manager.query(
+        `SELECT * FROM ${this.table("verification_codes")} WHERE user_id=$1 ORDER BY created_at DESC LIMIT 1 FOR UPDATE`,
+        [user.id],
+      );
+      if (latest && Date.now() - new Date(latest.created_at).getTime() < 60_000)
+        return;
+      await manager.query(
+        `UPDATE ${this.table("verification_codes")} SET consumed_at=COALESCE(consumed_at,now()) WHERE user_id=$1`,
+        [user.id],
+      );
+      const code = this.generateCode();
+      const codeId = randomUUID();
+      await manager.query(
+        `INSERT INTO ${this.table("verification_codes")} (id,user_id,code_hash,expires_at) VALUES ($1,$2,$3,now()+interval '10 minutes')`,
+        [
+          codeId,
+          user.id,
+          this.hash(`${user.id}:${code}:${this.options.accessTokenSecret}`),
+        ],
+      );
+      await enqueueOutbox(
+        manager,
+        {
+          id: randomUUID(),
+          businessKey: `verification:${codeId}`,
+          type: "auth.email",
+          aggregateId: user.id,
+          payload: { template: "verify-email", recipient: email, code },
+        },
+        this.schema,
+      );
+    });
+  }
 }

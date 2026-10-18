@@ -17,12 +17,15 @@ import { NestFactory } from "@nestjs/core";
 import { ConfigModule } from "@nestjs/config";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { json, Request, Response, NextFunction } from "express";
+import cookieParser from "cookie-parser";
 import { parseEnvironment } from "../../../libs/platform/src/config/environment";
 import { checkReadiness } from "../../../libs/platform/src/health/readiness";
 import {
   probeDatabase,
   probeRedis,
 } from "../../../libs/platform/src/health/dependency-probes";
+import { AuthError } from "../../../libs/modules/auth/auth.service";
+import { AuthModule } from "../../../libs/modules/auth/auth.module";
 
 type IdentifiedRequest = Request & { requestId: string };
 
@@ -36,14 +39,24 @@ class ApiExceptionFilter implements ExceptionFilter {
       typeof exception === "object" && exception !== null && "type" in exception
         ? exception.type
         : undefined;
+    const authStatuses: Record<string, number> = {
+      INVALID_CREDENTIALS: 401,
+      INVALID_ACCESS_TOKEN: 401,
+      INVALID_REFRESH_TOKEN: 401,
+      REFRESH_TOKEN_REUSED: 401,
+      INVALID_VERIFICATION_CODE: 400,
+      EMAIL_ALREADY_REGISTERED: 409,
+    };
     const status =
-      exception instanceof HttpException
-        ? exception.getStatus()
-        : parserType === "entity.too.large"
-          ? 413
-          : parserType === "entity.parse.failed"
-            ? 400
-            : 500;
+      exception instanceof AuthError
+        ? (authStatuses[exception.code] ?? 400)
+        : exception instanceof HttpException
+          ? exception.getStatus()
+          : parserType === "entity.too.large"
+            ? 413
+            : parserType === "entity.parse.failed"
+              ? 400
+              : 500;
     const messages: Record<number, [string, string]> = {
       400: ["BAD_REQUEST", "Invalid request"],
       401: ["UNAUTHORIZED", "Authentication required"],
@@ -52,10 +65,15 @@ class ApiExceptionFilter implements ExceptionFilter {
       413: ["PAYLOAD_TOO_LARGE", "Request body exceeds the size limit"],
       503: ["SERVICE_UNAVAILABLE", "Service unavailable"],
     };
-    const [code, message] = messages[status] ?? [
-      "INTERNAL_ERROR",
-      "Internal server error",
-    ];
+    const [code, message] =
+      exception instanceof AuthError
+        ? [
+            exception.code,
+            exception.code === "INVALID_CREDENTIALS"
+              ? "Invalid email or password"
+              : "Authentication request failed",
+          ]
+        : (messages[status] ?? ["INTERNAL_ERROR", "Internal server error"]);
     response.status(status).json({
       error: { code, message, details: null },
       requestId: request.requestId,
@@ -88,6 +106,7 @@ class HealthController {
       ignoreEnvFile: process.env.NODE_ENV === "test",
       validate: parseEnvironment,
     }),
+    AuthModule,
   ],
   controllers: [HealthController],
 })
@@ -111,6 +130,7 @@ export async function createApiApp(options: NestApplicationOptions = {}) {
     },
   );
   app.use(json({ limit: "64kb" }));
+  app.use(cookieParser());
   app.setGlobalPrefix(environment.API_PREFIX);
   app.enableCors({ origin: environment.WEB_ORIGIN, credentials: true });
   app.useGlobalFilters(new ApiExceptionFilter());

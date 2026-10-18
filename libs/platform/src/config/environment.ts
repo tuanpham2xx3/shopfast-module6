@@ -16,6 +16,11 @@ const schema = z.object({
       "Expected PostgreSQL URL",
     )
     .optional(),
+  DATABASE_SCHEMA: z
+    .string()
+    .regex(/^[a-z][a-z0-9_]{0,62}$/)
+    .default("public"),
+  ACCESS_TOKEN_SECRET: z.string().min(32).optional(),
   REDIS_URL: z
     .string()
     .url()
