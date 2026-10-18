@@ -34,10 +34,10 @@
 
 **Interfaces:** Produces `createApiApp()`, validated `AppEnvironment`, `/health/live`, `/health/ready`, request ID middleware, and global error envelope.
 
-- [ ] Write failing API contract and configuration tests.
-- [ ] Add the minimal workspace and applications needed to pass them.
-- [ ] Verify format, lint, typecheck, unit tests, and builds.
-- [ ] Commit `feat(foundation): scaffold ShopFast applications`.
+- [x] Write failing API contract and configuration tests.
+- [x] Add the minimal workspace and applications needed to pass them.
+- [x] Verify format, lint, typecheck, unit tests, and builds.
+- [x] Commit `feat(foundation): scaffold ShopFast applications`.
 
 ### Task 2: PostgreSQL foundation
 
@@ -45,10 +45,10 @@
 
 **Interfaces:** Produces a TypeORM data source, repeatable migration command, initial outbox/job tables, small development seed, and PostgreSQL readiness probe.
 
-- [ ] Write failing migration and database health integration tests.
-- [ ] Add the data source, migrations, seed, and lifecycle integration.
-- [ ] Verify migration from empty DB and safe rerun against PostgreSQL 16 native.
-- [ ] Commit `feat(database): add PostgreSQL foundation`.
+- [x] Write failing migration tests and database health unit/HTTP tests.
+- [x] Add the data source, migrations, seed, and lifecycle integration.
+- [x] Verify migration from empty DB and safe rerun against PostgreSQL 16 native.
+- [x] Commit PostgreSQL foundation (`f66da1b`).
 
 ### Task 3: Redis, queue, and transactional outbox slice
 
@@ -57,7 +57,7 @@
 **Interfaces:** Produces Redis and BullMQ connectivity probes, delayed/retry smoke, outbox leasing publisher, idempotent fake adapters, and worker health.
 
 - [ ] Write failing Redis/BullMQ and outbox idempotency tests.
-- [ ] Add the probes, queue adapters, publisher, and fake handler.
+- [x] Add the probes, queue adapters, publisher, and fake handler (`731c6e6`).
 - [ ] Verify commands, Lua, Pub/Sub, delayed/retry, and duplicate delivery against Memurai native.
 - [ ] Commit `feat(worker): add outbox queue foundation`.
 
@@ -71,4 +71,3 @@
 - [ ] Add CI jobs using service containers only on GitHub-hosted Linux.
 - [ ] Run the full local suite and record real evidence and any environment gaps.
 - [ ] Commit `ci: verify M0 foundation`.
-

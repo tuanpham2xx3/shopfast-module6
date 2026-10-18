@@ -14,6 +14,8 @@ Các DEC vẫn là baseline thiết kế, nhưng roadmap không coi mọi harden
 
 ## M0 — Foundation và môi trường local
 
+Trạng thái 18/10/2026: đang triển khai trên `feat/m0-foundation`; xem [evidence M0](evidence/m0-progress.md). PostgreSQL native và nền tảng API/worker/web đã có; Redis/BullMQ native và audit dependency còn chờ nghiệm thu.
+
 **P0**
 
 - Tạo branch triển khai riêng; không làm trực tiếp trên `main` của repository cha.
