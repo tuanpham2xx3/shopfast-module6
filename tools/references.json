@@ -1,0 +1,14 @@
+[
+  {
+    "name": "js-genai",
+    "url": "https://github.com/googleapis/js-genai.git",
+    "commit": "177ee684ada5d2fd39450e88a9416b301eaa6ff4",
+    "purpose": "Official Gemini JavaScript SDK and function-calling examples"
+  },
+  {
+    "name": "bullmq",
+    "url": "https://github.com/taskforcesh/bullmq.git",
+    "commit": "a5e710bf4d1bf689fe40a372b3f0ddbbaaab33cc",
+    "purpose": "Official queue behavior, retries, scheduling and idempotency references"
+  }
+]
