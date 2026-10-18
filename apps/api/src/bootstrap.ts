@@ -26,6 +26,8 @@ import {
 } from "../../../libs/platform/src/health/dependency-probes";
 import { AuthError } from "../../../libs/modules/auth/auth.service";
 import { AuthModule } from "../../../libs/modules/auth/auth.module";
+import { CatalogModule } from "../../../libs/modules/catalog/catalog.module";
+import { CatalogError } from "../../../libs/modules/catalog/catalog.service";
 
 type IdentifiedRequest = Request & { requestId: string };
 
@@ -48,16 +50,31 @@ class ApiExceptionFilter implements ExceptionFilter {
       EMAIL_ALREADY_REGISTERED: 409,
       RATE_LIMITED: 429,
     };
+    const databaseCode = (exception as { driverError?: { code?: string } })
+      ?.driverError?.code;
+    const catalogStatuses: Record<string, number> = {
+      NOT_FOUND: 404,
+      BAD_REQUEST: 400,
+      VERSION_CONFLICT: 409,
+      IDEMPOTENCY_CONFLICT: 409,
+      INSUFFICIENT_STOCK: 409,
+    };
     const status =
-      exception instanceof AuthError
-        ? (authStatuses[exception.code] ?? 400)
-        : exception instanceof HttpException
-          ? exception.getStatus()
-          : parserType === "entity.too.large"
-            ? 413
-            : parserType === "entity.parse.failed"
-              ? 400
-              : 500;
+      exception instanceof CatalogError
+        ? (catalogStatuses[exception.code] ?? 400)
+        : databaseCode === "23505"
+          ? 409
+          : databaseCode === "23503" || databaseCode === "23514"
+            ? 400
+            : exception instanceof AuthError
+              ? (authStatuses[exception.code] ?? 400)
+              : exception instanceof HttpException
+                ? exception.getStatus()
+                : parserType === "entity.too.large"
+                  ? 413
+                  : parserType === "entity.parse.failed"
+                    ? 400
+                    : 500;
     const messages: Record<number, [string, string]> = {
       400: ["BAD_REQUEST", "Invalid request"],
       401: ["UNAUTHORIZED", "Authentication required"],
@@ -67,16 +84,21 @@ class ApiExceptionFilter implements ExceptionFilter {
       503: ["SERVICE_UNAVAILABLE", "Service unavailable"],
     };
     const [code, message] =
-      exception instanceof AuthError
+      exception instanceof CatalogError
         ? [
             exception.code,
-            exception.code === "RATE_LIMITED"
-              ? `Bạn thao tác quá nhanh. Vui lòng thử lại sau ${exception.retryAfter ?? 900} giây.`
-              : exception.code === "INVALID_CREDENTIALS"
-                ? "Invalid email or password"
-                : "Authentication request failed",
+            "Không thể thực hiện thao tác. Vui lòng kiểm tra dữ liệu hoặc tải lại.",
           ]
-        : (messages[status] ?? ["INTERNAL_ERROR", "Internal server error"]);
+        : exception instanceof AuthError
+          ? [
+              exception.code,
+              exception.code === "RATE_LIMITED"
+                ? `Bạn thao tác quá nhanh. Vui lòng thử lại sau ${exception.retryAfter ?? 900} giây.`
+                : exception.code === "INVALID_CREDENTIALS"
+                  ? "Invalid email or password"
+                  : "Authentication request failed",
+            ]
+          : (messages[status] ?? ["INTERNAL_ERROR", "Internal server error"]);
     if (exception instanceof AuthError && exception.code === "RATE_LIMITED") {
       response.setHeader("Retry-After", exception.retryAfter ?? 900);
     }
@@ -113,6 +135,7 @@ class HealthController {
       validate: parseEnvironment,
     }),
     AuthModule,
+    CatalogModule,
   ],
   controllers: [HealthController],
 })
