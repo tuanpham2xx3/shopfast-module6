@@ -5,6 +5,7 @@ test("real browser registers, verifies, creates catalog and adjusts stock", asyn
   page,
   request,
 }) => {
+  test.setTimeout(180000);
   test.skip(
     !process.env.TEST_DATABASE_URL,
     "Requires native PostgreSQL or CI PostgreSQL service",
@@ -179,6 +180,9 @@ test("real browser registers, verifies, creates catalog and adjusts stock", asyn
       `UPDATE "${schema}".users SET role='WAREHOUSE' WHERE email=$1`,
       [email],
     );
+    // This accelerated test reuses one synthetic account for every role. Respect
+    // the conservative per-user fallback window instead of bypassing the limiter.
+    await page.waitForTimeout(61000);
     await page.reload();
     await expect(
       page.getByRole("heading", { name: "Chào Browser Admin" }),
@@ -200,6 +204,80 @@ test("real browser registers, verifies, creates catalog and adjusts stock", asyn
       `SELECT on_hand,reserved FROM "${schema}".inventories`,
     );
     expect(inventory).toMatchObject({ on_hand: 6, reserved: 0 });
+    await source.query(
+      `UPDATE "${schema}".users SET role='CUSTOMER' WHERE email=$1`,
+      [email],
+    );
+    await page.reload();
+    await expect(
+      page.getByRole("heading", { name: "Chào Browser Admin" }),
+    ).toBeVisible();
+    await page.getByRole("button", { name: "Mở hỗ trợ", exact: true }).click();
+    await page
+      .getByLabel("Tiêu đề", { exact: true })
+      .fill("Hỏi đơn hàng đã giao");
+    await page
+      .getByLabel("Nội dung", { exact: true })
+      .fill("Tôi cần kiểm tra thông tin đơn hàng.");
+    await page
+      .getByRole("button", { name: "Gửi yêu cầu", exact: true })
+      .click();
+    await expect(
+      page.getByRole("heading", { name: "Hỏi đơn hàng đã giao", exact: true }),
+    ).toBeVisible();
+    await source.query(
+      `UPDATE "${schema}".users SET role='SUPPORT' WHERE email=$1`,
+      [email],
+    );
+    await page.reload();
+    await expect(
+      page.getByRole("heading", { name: "Chào Browser Admin" }),
+    ).toBeVisible();
+    await page.getByRole("button", { name: "Mở hỗ trợ", exact: true }).click();
+    await page
+      .getByRole("button")
+      .filter({ hasText: "Hỏi đơn hàng đã giao" })
+      .click();
+    await page.getByRole("button", { name: "Nhận xử lý", exact: true }).click();
+    await page
+      .getByLabel("Trả lời khách hàng", { exact: true })
+      .fill("Đơn hàng đã giao thành công. Cảm ơn bạn.");
+    await page
+      .getByRole("button", { name: "Gửi tin nhắn", exact: true })
+      .click();
+    await expect(
+      page.getByText("Đơn hàng đã giao thành công. Cảm ơn bạn.", {
+        exact: true,
+      }),
+    ).toBeVisible();
+    await page
+      .getByLabel("Hỏi trợ lý", { exact: true })
+      .fill("Kiểm tra đơn hàng này");
+    await page.getByRole("button", { name: "Hỏi Gemini", exact: true }).click();
+    await expect(page.getByText("UNAVAILABLE", { exact: true })).toBeVisible();
+    await page.screenshot({
+      path: "docs/evidence/support-ui-mobile.png",
+      fullPage: true,
+    });
+    await source.query(
+      `UPDATE "${schema}".users SET role='ADMIN' WHERE email=$1`,
+      [email],
+    );
+    await page.reload();
+    await expect(
+      page.getByRole("heading", { name: "Chào Browser Admin" }),
+    ).toBeVisible();
+    await page
+      .getByRole("button", { name: "Mở quản trị", exact: true })
+      .click();
+    await expect(
+      page.getByRole("heading", { name: "Quản trị ShopFast", exact: true }),
+    ).toBeVisible();
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
   } finally {
     await source.destroy();
   }

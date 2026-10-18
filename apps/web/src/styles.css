@@ -1,3 +1,137 @@
+.workspace {
+  max-width: 1440px;
+  margin: auto;
+  padding: 2rem 4vw;
+}
+.workspace-title {
+  max-width: none;
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  line-height: 1.1;
+  margin: 1rem 0 2rem;
+  letter-spacing: -0.04em;
+}
+.panel {
+  background: white;
+  border: 1px solid #d4ded7;
+  border-radius: 12px;
+  padding: 1.4rem;
+  margin: 1rem 0;
+  min-width: 0;
+}
+.panel h2 {
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+}
+.panel form,
+.panel {
+  gap: 0.9rem;
+}
+.support-layout {
+  display: grid;
+  grid-template-columns: minmax(230px, 1fr) minmax(0, 2.5fr);
+  gap: 1.5rem;
+}
+.ticket-row {
+  width: 100%;
+  display: grid;
+  gap: 0.6rem;
+  text-align: left;
+  background: white;
+  color: #173f2a;
+  border: 1px solid #b5c8bc;
+  margin: 0.6rem 0;
+}
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+  align-items: start;
+}
+.admin-grid article {
+  padding: 0.8rem 0;
+  border-bottom: 1px solid #d4ded7;
+}
+.panel code {
+  overflow-wrap: anywhere;
+  font-size: 0.8rem;
+}
+.panel label {
+  margin: 0.65rem 0;
+}
+textarea {
+  font: inherit;
+  width: 100%;
+  min-height: 7rem;
+  padding: 0.8rem;
+  border: 1px solid #aebbb2;
+  border-radius: 10px;
+  resize: vertical;
+}
+textarea:focus,
+select:focus {
+  outline: 2px solid #176f38;
+  outline-offset: 2px;
+}
+pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 0.85rem;
+}
+.conversation article {
+  padding: 0.8rem;
+  margin: 0.8rem 0;
+  background: #eef3ef;
+  border-radius: 8px;
+}
+.conversation p,
+.ai-panel p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
+.ai-panel {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #b5c8bc;
+}
+.proposal {
+  border: 2px solid #33744a;
+  background: #f1f7f1;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+.nav-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.rate-notice {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: #fff0c2;
+  color: #594111;
+  padding: 1rem;
+  margin: 0;
+  text-align: center;
+}
+@media (max-width: 780px) {
+  .support-layout,
+  .admin-grid {
+    grid-template-columns: 1fr;
+  }
+  .topnav {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .nav-actions button {
+    font-size: 0.8rem;
+    padding: 0.5rem;
+  }
+  .panel {
+    padding: 1rem;
+  }
+}
 .orders-panel {
   margin-top: 3rem;
   padding-top: 2rem;

@@ -1,4 +1,6 @@
 import { FormEvent, useEffect, useState } from "react";
+import { io } from "socket.io-client";
+import { API, getAccessToken, restoreSession } from "./client";
 const mutationKeys = new Map<string, string>();
 function mutationKey(identity: string) {
   let key = mutationKeys.get(identity);
@@ -49,12 +51,25 @@ export function Orders({
   const [selected, setSelected] = useState<Order | null>(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [tracking, setTracking] = useState("Chưa theo dõi đơn");
+  const [invoiceStatus, setInvoiceStatus] = useState("");
+  const [orderPage, setOrderPage] = useState(1);
+  const [orderTotal, setOrderTotal] = useState(0);
+  const [statusFilter, setStatusFilter] = useState("");
+  const selectedId = selected?.id;
   const prefix = staff ? "/staff/orders" : "/orders";
   useEffect(() => {
     let active = true;
-    api<{ items: Order[] }>(prefix, {}, token)
+    api<{ items: Order[]; total: number }>(
+      `${prefix}?page=${orderPage}&pageSize=20${statusFilter ? `&status=${statusFilter}` : ""}`,
+      {},
+      token,
+    )
       .then((r) => {
-        if (active) setOrders(r.items);
+        if (active) {
+          setOrders(r.items);
+          setOrderTotal(r.total);
+        }
       })
       .catch((e) => {
         if (active) setError(e.message);
@@ -70,7 +85,148 @@ export function Orders({
     return () => {
       active = false;
     };
-  }, [api, token, staff, prefix, revision]);
+  }, [api, token, staff, prefix, revision, orderPage, statusFilter]);
+  useEffect(() => {
+    if (!selectedId) return;
+    let active = true;
+    let loading = false;
+    let again = false;
+    let seen = 0;
+    setInvoiceStatus("");
+    const resync = async () => {
+      if (!active) return;
+      if (loading) {
+        again = true;
+        return;
+      }
+      loading = true;
+      try {
+        const order = await api<Order>(`${prefix}/${selectedId}`, {}, token);
+        if (active && order.version >= seen) {
+          seen = order.version;
+          setSelected(order);
+        }
+      } catch (e) {
+        if (active) setError((e as Error).message);
+      } finally {
+        loading = false;
+        if (again && active) {
+          again = false;
+          void resync();
+        }
+      }
+    };
+    const timer = setInterval(() => {
+      void resync();
+    }, 10000);
+    if (staff) {
+      setTracking("Tự cập nhật mỗi 10 giây");
+      return () => {
+        active = false;
+        clearInterval(timer);
+      };
+    }
+    const socket = io(`${new URL(API).origin}/orders`, {
+      auth: { token: getAccessToken() || token },
+      reconnection: true,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 30000,
+      randomizationFactor: 0.5,
+      transports: ["websocket", "polling"],
+    });
+    socket.on("connect", () => {
+      socket
+        .timeout(3000)
+        .emit(
+          "order.subscribe",
+          { orderId: selectedId },
+          (error: unknown, ack: { ok?: boolean }) => {
+            if (!active) return;
+            if (error || !ack?.ok) {
+              setTracking("Realtime chưa kết nối; cập nhật mỗi 10 giây");
+              return;
+            }
+            setTracking("Đang theo dõi trực tiếp");
+            void resync();
+          },
+        );
+    });
+    socket.on(
+      "order.status.updated",
+      (event: { orderId: string; version: number }) => {
+        if (
+          event.orderId === selectedId &&
+          Number.isInteger(event.version) &&
+          event.version > seen
+        )
+          void resync();
+      },
+    );
+    socket.on("connect_error", () => {
+      if (active) setTracking("Realtime chưa kết nối; cập nhật mỗi 10 giây");
+    });
+    socket.on("disconnect", (reason) => {
+      if (!active) return;
+      setTracking("Mất kết nối; cập nhật mỗi 10 giây");
+      if (reason === "io server disconnect")
+        void restoreSession()
+          .then((result) => {
+            if (active) {
+              socket.auth = { token: result.accessToken };
+              socket.connect();
+            }
+          })
+          .catch(() => undefined);
+    });
+    return () => {
+      active = false;
+      clearInterval(timer);
+      socket.emit("order.unsubscribe", { orderId: selectedId });
+      socket.disconnect();
+    };
+  }, [api, selectedId, prefix, token, staff]);
+  async function quantity(productId: string, value: number) {
+    try {
+      await api(
+        `/cart/items/${productId}`,
+        { method: "PATCH", body: JSON.stringify({ quantity: value }) },
+        token,
+      );
+      onChange();
+    } catch (e) {
+      setError((e as Error).message);
+    }
+  }
+  async function invoice(order: Order) {
+    setBusy(true);
+    try {
+      const info = await api<{ status: string; downloadUrl?: string }>(
+        `/orders/${order.id}/invoice`,
+        {},
+        token,
+      );
+      setInvoiceStatus(info.status);
+      if (info.status === "READY" && info.downloadUrl) {
+        const response = await fetch(`${API}${info.downloadUrl}`, {
+          credentials: "include",
+          headers: { Authorization: `Bearer ${getAccessToken() || token}` },
+        });
+        if (!response.ok)
+          throw new Error("Không tải được hóa đơn. Vui lòng thử lại.");
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `invoice-${order.code}.pdf`;
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
   async function remove(id: string) {
     try {
       await api(`/cart/items/${id}`, { method: "DELETE" }, token);
@@ -191,6 +347,22 @@ export function Orders({
                     {item.name} × {item.quantity} ·{" "}
                     {(item.quantity * item.price).toLocaleString("vi-VN")} ₫
                   </span>
+                  <label>
+                    Số lượng {item.name}
+                    <input
+                      aria-label={`Số lượng ${item.name}`}
+                      type="number"
+                      min={1}
+                      max={99}
+                      defaultValue={item.quantity}
+                      key={`${item.productId}-${item.quantity}`}
+                      onBlur={(e) => {
+                        const value = Number(e.target.value);
+                        if (value !== item.quantity)
+                          void quantity(item.productId, value);
+                      }}
+                    />
+                  </label>
                   <button
                     className="switch"
                     onClick={() => remove(item.productId)}
@@ -244,6 +416,29 @@ export function Orders({
           )}
         </>
       )}
+      <label>
+        Lọc đơn theo trạng thái
+        <select
+          value={statusFilter}
+          onChange={(e) => {
+            setStatusFilter(e.target.value);
+            setOrderPage(1);
+          }}
+        >
+          <option value="">Tất cả</option>
+          {[
+            "PENDING_PAYMENT",
+            "CONFIRMED",
+            "PROCESSING",
+            "SHIPPING",
+            "DELIVERED",
+            "CANCELLED",
+            "EXPIRED",
+          ].map((s) => (
+            <option key={s}>{s}</option>
+          ))}
+        </select>
+      </label>
       <div className="order-list">
         {orders.length === 0 ? (
           <p>Chưa có đơn hàng.</p>
@@ -261,9 +456,28 @@ export function Orders({
           ))
         )}
       </div>
+      <nav className="pagination">
+        <button
+          disabled={orderPage === 1}
+          onClick={() => setOrderPage((p) => p - 1)}
+        >
+          Đơn trước
+        </button>
+        <span>Trang {orderPage}</span>
+        <button
+          disabled={orderPage * 20 >= orderTotal}
+          onClick={() => setOrderPage((p) => p + 1)}
+        >
+          Đơn sau
+        </button>
+      </nav>
       {selected && (
         <section className="product-detail" aria-label="Chi tiết đơn hàng">
           <h3>Đơn {selected.code}</h3>
+          <p role="status">{tracking}</p>
+          <button className="switch" onClick={() => setSelected(null)}>
+            Đóng đơn
+          </button>
           <p>
             Trạng thái: <strong>{selected.status}</strong> · Thanh toán:{" "}
             {selected.paymentStatus}
@@ -274,6 +488,25 @@ export function Orders({
             </p>
           ))}
           <p>Tổng: {selected.total.toLocaleString("vi-VN")} ₫</p>
+          {!staff && selected.paymentStatus === "PAID" && (
+            <>
+              <button disabled={busy} onClick={() => invoice(selected)}>
+                Kiểm tra / tải hóa đơn
+              </button>
+              {invoiceStatus && (
+                <p>
+                  Hóa đơn:{" "}
+                  {invoiceStatus === "PENDING"
+                    ? "Đang tạo, vui lòng kiểm tra lại"
+                    : invoiceStatus === "FAILED"
+                      ? "Tạo hóa đơn lỗi, liên hệ hỗ trợ"
+                      : invoiceStatus === "READY"
+                        ? "Đã sẵn sàng"
+                        : "Chưa khả dụng"}
+                </p>
+              )}
+            </>
+          )}
           <ol>
             {selected.history?.map((h) => (
               <li key={h.version}>{h.toStatus}</li>
