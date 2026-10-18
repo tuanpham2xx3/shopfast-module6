@@ -98,6 +98,15 @@ export class GoogleGeminiProvider implements GeminiProvider {
             ? {
                 generationConfig: {
                   responseMimeType: "application/json",
+                  responseSchema: {
+                    type: "OBJECT",
+                    properties: {
+                      category: { type: "STRING", enum: [...categories] },
+                      confidence: { type: "NUMBER" },
+                      reason: { type: "STRING" },
+                    },
+                    required: ["category", "confidence", "reason"],
+                  },
                   temperature: 0,
                 },
               }

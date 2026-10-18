@@ -1,14 +1,54 @@
 import "dotenv/config";
-import { writeFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import {
   GoogleGeminiProvider,
   classificationSchema,
+  ProviderError,
 } from "../libs/modules/ai/gemini.provider";
 
 async function main() {
   if (!process.env.GEMINI_API_KEY || !process.env.GEMINI_MODEL)
     throw new Error("Configure backend GEMINI_API_KEY and GEMINI_MODEL first");
   const provider = new GoogleGeminiProvider();
+  const intervalMs = Math.max(
+    5000,
+    Number(process.env.GEMINI_SMOKE_INTERVAL_MS) || 5000,
+  );
+  let nextRequestAt = 0;
+  async function generate(body: string) {
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const wait = Math.max(0, nextRequestAt - Date.now());
+      if (wait) await new Promise((resolve) => setTimeout(resolve, wait));
+      nextRequestAt = Date.now() + intervalMs;
+      try {
+        return await provider.generate({
+          contents: [
+            {
+              role: "user",
+              parts: [{ text: JSON.stringify({ subject: body, body }) }],
+            },
+          ],
+          classification: true,
+          signal: AbortSignal.timeout(12000),
+        });
+      } catch (error) {
+        if (
+          error instanceof ProviderError &&
+          error.status === 429 &&
+          attempt < 2
+        ) {
+          const delay = Math.max(60000, error.retryAfter);
+          nextRequestAt = Math.max(nextRequestAt, Date.now() + delay);
+          console.log(
+            `Rate limited; retrying sample after ${Math.ceil(delay / 1000)}s`,
+          );
+          continue;
+        }
+        throw error;
+      }
+    }
+    throw new Error("Retry limit reached");
+  }
   const categories = [
     "ORDER_STATUS",
     "PAYMENT",
@@ -68,23 +108,48 @@ async function main() {
     ]),
   );
   let correct = 0;
-  const results = [];
+  let previous: {
+    model?: string;
+    results?: { expected: string; predicted?: string; confidence?: number }[];
+  } = {};
+  if (process.env.GEMINI_SMOKE_RESUME === "true")
+    try {
+      previous = JSON.parse(
+        await readFile("docs/evidence/gemini-live-evaluation.json", "utf8"),
+      );
+    } catch {
+      /* Start a fresh evaluation if no checkpoint exists. */
+    }
+  const results: {
+    expected: string;
+    predicted?: string;
+    confidence?: number;
+    status?: string;
+    httpStatus?: number | null;
+    errorType?: string;
+  }[] = [];
   for (let group = 0; group < categories.length; group++)
     for (const body of examples[group]!) {
       const expected = categories[group]!;
+      const old =
+        previous.model === process.env.GEMINI_MODEL
+          ? previous.results?.[results.length]
+          : undefined;
+      if (old?.predicted && old.expected === expected) {
+        matrix[expected]![old.predicted]!++;
+        if (old.predicted === expected) correct++;
+        results.push(old);
+        continue;
+      }
       try {
-        const parts = await provider.generate({
-          contents: [
-            {
-              role: "user",
-              parts: [{ text: JSON.stringify({ subject: body, body }) }],
-            },
-          ],
-          classification: true,
-          signal: AbortSignal.timeout(12000),
-        });
+        const parts = await generate(body);
         const parsed = classificationSchema.parse(
-          JSON.parse(parts.map((p) => p.text ?? "").join("")),
+          JSON.parse(
+            parts
+              .map((p) => p.text ?? "")
+              .join("")
+              .replace(/^```(?:json)?\s*|\s*```$/g, ""),
+          ),
         );
         matrix[expected]![parsed.category]!++;
         if (parsed.category === expected) correct++;
@@ -93,14 +158,31 @@ async function main() {
           predicted: parsed.category,
           confidence: parsed.confidence,
         });
-      } catch {
-        results.push({ expected, status: "UNAVAILABLE" });
+      } catch (error) {
+        if (error instanceof Error && error.name === "ZodError")
+          console.log(
+            JSON.stringify({
+              sample: results.length + 1,
+              issues: (error as unknown as { issues: unknown }).issues,
+            }),
+          );
+        results.push({
+          expected,
+          status: "UNAVAILABLE",
+          httpStatus: error instanceof ProviderError ? error.status : null,
+          errorType: error instanceof Error ? error.name : "Unknown",
+        });
       }
+      console.log(`Completed ${results.length}/30 samples`);
     }
   const report = {
     model: process.env.GEMINI_MODEL,
     executedAt: new Date().toISOString(),
     total: 30,
+    intervalMs,
+    resumed:
+      process.env.GEMINI_SMOKE_RESUME === "true" &&
+      previous.model === process.env.GEMINI_MODEL,
     correct,
     accuracy: correct / 30,
     matrix,
