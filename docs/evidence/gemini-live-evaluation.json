@@ -1,0 +1,199 @@
+{
+  "model": "gemini-3.5-flash-lite",
+  "executedAt": "2026-10-18T17:22:13.504Z",
+  "total": 30,
+  "correct": 19,
+  "accuracy": 0.6333333333333333,
+  "matrix": {
+    "ORDER_STATUS": {
+      "ORDER_STATUS": 5,
+      "PAYMENT": 0,
+      "INVENTORY": 0,
+      "DELIVERY": 0,
+      "CANCELLATION": 0,
+      "OTHER": 0
+    },
+    "PAYMENT": {
+      "ORDER_STATUS": 0,
+      "PAYMENT": 5,
+      "INVENTORY": 0,
+      "DELIVERY": 0,
+      "CANCELLATION": 0,
+      "OTHER": 0
+    },
+    "INVENTORY": {
+      "ORDER_STATUS": 0,
+      "PAYMENT": 0,
+      "INVENTORY": 5,
+      "DELIVERY": 0,
+      "CANCELLATION": 0,
+      "OTHER": 0
+    },
+    "DELIVERY": {
+      "ORDER_STATUS": 0,
+      "PAYMENT": 0,
+      "INVENTORY": 0,
+      "DELIVERY": 3,
+      "CANCELLATION": 0,
+      "OTHER": 0
+    },
+    "CANCELLATION": {
+      "ORDER_STATUS": 0,
+      "PAYMENT": 0,
+      "INVENTORY": 0,
+      "DELIVERY": 0,
+      "CANCELLATION": 1,
+      "OTHER": 0
+    },
+    "OTHER": {
+      "ORDER_STATUS": 0,
+      "PAYMENT": 0,
+      "INVENTORY": 0,
+      "DELIVERY": 0,
+      "CANCELLATION": 0,
+      "OTHER": 0
+    }
+  },
+  "results": [
+    {
+      "expected": "ORDER_STATUS",
+      "predicted": "ORDER_STATUS",
+      "confidence": 1
+    },
+    {
+      "expected": "ORDER_STATUS",
+      "predicted": "ORDER_STATUS",
+      "confidence": 1
+    },
+    {
+      "expected": "ORDER_STATUS",
+      "predicted": "ORDER_STATUS",
+      "confidence": 1
+    },
+    {
+      "expected": "ORDER_STATUS",
+      "predicted": "ORDER_STATUS",
+      "confidence": 1
+    },
+    {
+      "expected": "ORDER_STATUS",
+      "predicted": "ORDER_STATUS",
+      "confidence": 1
+    },
+    {
+      "expected": "PAYMENT",
+      "predicted": "PAYMENT",
+      "confidence": 1
+    },
+    {
+      "expected": "PAYMENT",
+      "predicted": "PAYMENT",
+      "confidence": 1
+    },
+    {
+      "expected": "PAYMENT",
+      "predicted": "PAYMENT",
+      "confidence": 0.95
+    },
+    {
+      "expected": "PAYMENT",
+      "predicted": "PAYMENT",
+      "confidence": 0.95
+    },
+    {
+      "expected": "PAYMENT",
+      "predicted": "PAYMENT",
+      "confidence": 1
+    },
+    {
+      "expected": "INVENTORY",
+      "predicted": "INVENTORY",
+      "confidence": 1
+    },
+    {
+      "expected": "INVENTORY",
+      "predicted": "INVENTORY",
+      "confidence": 1
+    },
+    {
+      "expected": "INVENTORY",
+      "predicted": "INVENTORY",
+      "confidence": 0.95
+    },
+    {
+      "expected": "INVENTORY",
+      "predicted": "INVENTORY",
+      "confidence": 1
+    },
+    {
+      "expected": "INVENTORY",
+      "predicted": "INVENTORY",
+      "confidence": 0.99
+    },
+    {
+      "expected": "DELIVERY",
+      "predicted": "DELIVERY",
+      "confidence": 0.95
+    },
+    {
+      "expected": "DELIVERY",
+      "status": "UNAVAILABLE"
+    },
+    {
+      "expected": "DELIVERY",
+      "predicted": "DELIVERY",
+      "confidence": 0.95
+    },
+    {
+      "expected": "DELIVERY",
+      "status": "UNAVAILABLE"
+    },
+    {
+      "expected": "DELIVERY",
+      "predicted": "DELIVERY",
+      "confidence": 0.95
+    },
+    {
+      "expected": "CANCELLATION",
+      "status": "UNAVAILABLE"
+    },
+    {
+      "expected": "CANCELLATION",
+      "predicted": "CANCELLATION",
+      "confidence": 1
+    },
+    {
+      "expected": "CANCELLATION",
+      "status": "UNAVAILABLE"
+    },
+    {
+      "expected": "CANCELLATION",
+      "status": "UNAVAILABLE"
+    },
+    {
+      "expected": "CANCELLATION",
+      "status": "UNAVAILABLE"
+    },
+    {
+      "expected": "OTHER",
+      "status": "UNAVAILABLE"
+    },
+    {
+      "expected": "OTHER",
+      "status": "UNAVAILABLE"
+    },
+    {
+      "expected": "OTHER",
+      "status": "UNAVAILABLE"
+    },
+    {
+      "expected": "OTHER",
+      "status": "UNAVAILABLE"
+    },
+    {
+      "expected": "OTHER",
+      "status": "UNAVAILABLE"
+    }
+  ],
+  "acceptance": "FAIL"
+}
