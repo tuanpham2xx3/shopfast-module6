@@ -1,6 +1,6 @@
 # ShopFast — Bộ tài liệu triển khai
 
-Ngày lập: 18/10/2026. Trạng thái: bản đặc tả v1 để review và làm căn cứ triển khai; chưa có mã sản phẩm.
+Ngày lập: 18/10/2026. Trạng thái: đã triển khai nền tảng, auth, catalog/kho và luồng mua hàng cơ bản; đang tiếp tục roadmap, chưa nghiệm thu toàn bộ sản phẩm. Xem kết quả chạy thật trong `docs/evidence/`.
 
 Nguồn yêu cầu: `../Module 06 – Software Requirement Specification (SRS).docx.txt`.
 

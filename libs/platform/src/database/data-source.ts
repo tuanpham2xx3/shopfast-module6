@@ -4,6 +4,7 @@ import { Foundation1780000000000 } from "../../../../database/migrations/1780000
 import { Auth1780000100000 } from "../../../../database/migrations/1780000100000-auth";
 import { SecurityCounters1780000200000 } from "../../../../database/migrations/1780000200000-security-counters";
 import { Catalog1780000300000 } from "../../../../database/migrations/1780000300000-catalog";
+import { Orders1780000400000 } from "../../../../database/migrations/1780000400000-orders";
 
 export function createDataSource(url: string, schema = "public"): DataSource {
   if (!/^[a-z][a-z0-9_]{0,62}$/.test(schema))
@@ -19,6 +20,7 @@ export function createDataSource(url: string, schema = "public"): DataSource {
       Auth1780000100000,
       SecurityCounters1780000200000,
       Catalog1780000300000,
+      Orders1780000400000,
     ],
     migrationsTransactionMode: "all",
     connectTimeoutMS: 3000,

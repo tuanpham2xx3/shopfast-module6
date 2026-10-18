@@ -4,6 +4,8 @@ Roadmap ưu tiên có một vertical slice chạy được sớm, sau đó bổ 
 
 ## 1. Mức ưu tiên
 
+Tiến độ thực tế 18/10/2026: M0 đã qua CI PostgreSQL16/Redis7; Memurai local vẫn chưa sẵn sàng. M1 auth, M2 catalog/kho và M3 luồng mua hàng cơ bản đã có code/evidence, browser thật chạy đến DELIVERED. M2 admin editor UI và các hardening/UI mở rộng còn thiếu. M4 jobs/realtime, M5 cache/limiter đầy đủ, M6 ticket/Gemini và M7 nghiệm thu toàn bộ chưa hoàn thành. Xem `docs/evidence/m1-auth.md`, `m2-catalog.md`, `m3-orders.md` trước khi tiếp tục.
+
 | Mức               | Ý nghĩa                                                       | Điều kiện                                         |
 | ----------------- | ------------------------------------------------------------- | ------------------------------------------------- |
 | P0 — Defense core | Đường chạy chính để minh họa từng F01–F07                     | Không cắt nếu chưa có quyết định thay đổi phạm vi |

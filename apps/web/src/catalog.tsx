@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useState } from "react";
+import { Orders } from "./orders";
 
 type Product = {
   id: string;
@@ -30,10 +31,12 @@ export function Catalog({
   api,
   token,
   staff,
+  customer,
 }: {
   api: Api;
   token: string;
   staff: boolean;
+  customer: boolean;
 }) {
   const [items, setItems] = useState<Product[]>([]);
   const [stock, setStock] = useState<Stock[]>([]);
@@ -200,6 +203,31 @@ export function Catalog({
               <button className="switch" onClick={() => setSelected(item)}>
                 Xem {item.name}
               </button>
+              {customer && (
+                <button
+                  disabled={item.available < 1}
+                  onClick={async () => {
+                    try {
+                      await api(
+                        "/cart/items",
+                        {
+                          method: "POST",
+                          body: JSON.stringify({
+                            productId: item.id,
+                            quantity: 1,
+                          }),
+                        },
+                        token,
+                      );
+                      setRevision((v) => v + 1);
+                    } catch (e) {
+                      setError((e as Error).message);
+                    }
+                  }}
+                >
+                  Thêm {item.name} vào giỏ
+                </button>
+              )}
             </article>
           ))}
         </div>
@@ -261,6 +289,15 @@ export function Catalog({
             </form>
           ))}
         </section>
+      )}
+      {(customer || staff) && (
+        <Orders
+          api={api}
+          token={token}
+          staff={staff}
+          revision={revision}
+          onChange={() => setRevision((v) => v + 1)}
+        />
       )}
     </section>
   );

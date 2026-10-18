@@ -28,6 +28,8 @@ import { AuthError } from "../../../libs/modules/auth/auth.service";
 import { AuthModule } from "../../../libs/modules/auth/auth.module";
 import { CatalogModule } from "../../../libs/modules/catalog/catalog.module";
 import { CatalogError } from "../../../libs/modules/catalog/catalog.service";
+import { OrderError } from "../../../libs/modules/orders/order.service";
+import { OrderModule } from "../../../libs/modules/orders/order.module";
 
 type IdentifiedRequest = Request & { requestId: string };
 
@@ -53,6 +55,14 @@ class ApiExceptionFilter implements ExceptionFilter {
     const databaseCode = (exception as { driverError?: { code?: string } })
       ?.driverError?.code;
     const catalogStatuses: Record<string, number> = {
+      FORBIDDEN: 403,
+      PRICE_CHANGED: 409,
+      OUT_OF_STOCK: 409,
+      PROMO_NOT_ELIGIBLE: 409,
+      PROMO_EXHAUSTED: 409,
+      PROMOTION_INVALID: 409,
+      INVALID_TRANSITION: 409,
+      REQUEST_IN_PROGRESS: 409,
       NOT_FOUND: 404,
       BAD_REQUEST: 400,
       VERSION_CONFLICT: 409,
@@ -60,7 +70,7 @@ class ApiExceptionFilter implements ExceptionFilter {
       INSUFFICIENT_STOCK: 409,
     };
     const status =
-      exception instanceof CatalogError
+      exception instanceof CatalogError || exception instanceof OrderError
         ? (catalogStatuses[exception.code] ?? 400)
         : databaseCode === "23505"
           ? 409
@@ -84,7 +94,7 @@ class ApiExceptionFilter implements ExceptionFilter {
       503: ["SERVICE_UNAVAILABLE", "Service unavailable"],
     };
     const [code, message] =
-      exception instanceof CatalogError
+      exception instanceof CatalogError || exception instanceof OrderError
         ? [
             exception.code,
             "Không thể thực hiện thao tác. Vui lòng kiểm tra dữ liệu hoặc tải lại.",
@@ -136,6 +146,7 @@ class HealthController {
     }),
     AuthModule,
     CatalogModule,
+    OrderModule,
   ],
   controllers: [HealthController],
 })

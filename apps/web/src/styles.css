@@ -1,3 +1,37 @@
+.orders-panel {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid #aebbb2;
+}
+.checkout-form {
+  max-width: 35rem;
+  margin: 2rem 0;
+}
+.cart-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.cart-row .switch {
+  width: auto;
+  margin: 0;
+}
+.order-list {
+  display: grid;
+  gap: 0.7rem;
+  margin: 2rem 0;
+}
+.order-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: space-between;
+  text-align: left;
+  background: white;
+  color: #14221b;
+  border: 1px solid #aebbb2;
+}
 .topnav {
   display: flex;
   justify-content: space-between;

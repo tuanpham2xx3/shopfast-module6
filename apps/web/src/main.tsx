@@ -132,6 +132,7 @@ function App() {
         <Catalog
           api={api}
           token={accessToken}
+          customer={Boolean(user?.verified && user.role === "CUSTOMER")}
           staff={Boolean(
             user?.verified && ["ADMIN", "WAREHOUSE"].includes(user.role),
           )}

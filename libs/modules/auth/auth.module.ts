@@ -45,7 +45,7 @@ function bearer(request: Request): string {
 function requireOrigin(request: Request) {
   if (
     request.header("origin") !==
-    (process.env.WEB_ORIGIN ?? "http://localhost:5173")
+    (process.env.WEB_ORIGIN ?? "http://127.0.0.1:5173")
   )
     throw new ForbiddenException();
 }

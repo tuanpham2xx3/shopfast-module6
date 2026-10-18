@@ -7,7 +7,7 @@ const schema = z.object({
   HOST: z.string().ip().default("127.0.0.1"),
   PORT: z.coerce.number().int().min(1).max(65535).default(3000),
   API_PREFIX: z.literal("api/v1").default("api/v1"),
-  WEB_ORIGIN: z.string().url().default("http://localhost:5173"),
+  WEB_ORIGIN: z.string().url().default("http://127.0.0.1:5173"),
   DATABASE_URL: z
     .string()
     .url()

@@ -93,6 +93,113 @@ test("real browser registers, verifies, creates catalog and adjusts stock", asyn
         () => document.documentElement.scrollWidth <= window.innerWidth,
       ),
     ).toBe(true);
+    await source.query(
+      `UPDATE "${schema}".users SET role='CUSTOMER' WHERE email=$1`,
+      [email],
+    );
+    await page.reload();
+    await expect(
+      page.getByRole("heading", { name: "Chào Browser Admin" }),
+    ).toBeVisible();
+    await page.getByRole("button", { name: "Khám phá sản phẩm" }).click();
+    await page
+      .getByRole("button", { name: "Thêm Live headphones vào giỏ" })
+      .click();
+    await page.getByLabel("Người nhận").fill("Demo Buyer");
+    await page.getByLabel("Địa chỉ nhận hàng").fill("123 Demo Street");
+    await page.getByLabel("Số điện thoại").fill("0901234567");
+    await page.getByLabel("Phường / Xã").fill("Demo Ward");
+    await page.getByLabel("Tỉnh / Thành phố").fill("Demo City");
+    const customerLogin = await request.post(`${base}/auth/login`, {
+      data: { email, password: "BrowserPassword!2026" },
+    });
+    const customerAuth = {
+      Authorization: `Bearer ${(await customerLogin.json()).data.accessToken}`,
+      "Idempotency-Key": "invalid-array-address",
+    };
+    const malformed = await request.post(`${base}/orders`, {
+      headers: customerAuth,
+      data: {
+        items: [
+          {
+            productId: (await product.json()).data.id,
+            quantity: 1,
+            expectedUnitPrice: 250000,
+          },
+        ],
+        shippingAddress: [],
+      },
+    });
+    expect(malformed.status()).toBe(400);
+    await page
+      .getByRole("button", { name: "Đặt đơn hàng", exact: true })
+      .click();
+    await expect(
+      page.getByRole("button", { name: "Xác nhận thanh toán mô phỏng" }),
+    ).toBeVisible();
+    await page.getByLabel("Lý do hủy").fill("Reorder same purchase");
+    await page
+      .getByRole("button", { name: "Hủy đơn hàng", exact: true })
+      .click();
+    await expect(
+      page
+        .getByLabel("Chi tiết đơn hàng")
+        .getByText("CANCELLED", { exact: true })
+        .first(),
+    ).toBeVisible();
+    await page
+      .getByRole("button", { name: "Thêm Live headphones vào giỏ" })
+      .click();
+    await page.getByLabel("Người nhận").fill("Demo Buyer");
+    await page.getByLabel("Địa chỉ nhận hàng").fill("123 Demo Street");
+    await page.getByLabel("Số điện thoại").fill("0901234567");
+    await page.getByLabel("Phường / Xã").fill("Demo Ward");
+    await page.getByLabel("Tỉnh / Thành phố").fill("Demo City");
+    await page
+      .getByRole("button", { name: "Đặt đơn hàng", exact: true })
+      .click();
+    await expect
+      .poll(async () => {
+        const [{ count }] = await source.query(
+          `SELECT count(*)::int count FROM "${schema}".orders`,
+        );
+        return count;
+      })
+      .toBe(2);
+    await page
+      .getByRole("button", { name: "Xác nhận thanh toán mô phỏng" })
+      .click();
+    await expect(
+      page
+        .getByLabel("Chi tiết đơn hàng")
+        .getByText("CONFIRMED", { exact: true })
+        .first(),
+    ).toBeVisible();
+    await source.query(
+      `UPDATE "${schema}".users SET role='WAREHOUSE' WHERE email=$1`,
+      [email],
+    );
+    await page.reload();
+    await expect(
+      page.getByRole("heading", { name: "Chào Browser Admin" }),
+    ).toBeVisible();
+    await page.getByRole("button", { name: "Khám phá sản phẩm" }).click();
+    await page.getByRole("button").filter({ hasText: "CONFIRMED" }).click();
+    for (const target of ["PROCESSING", "SHIPPING", "DELIVERED"]) {
+      await page
+        .getByRole("button", { name: `Chuyển sang ${target}`, exact: true })
+        .click();
+    }
+    await expect(
+      page
+        .getByLabel("Chi tiết đơn hàng")
+        .getByText("DELIVERED", { exact: true })
+        .first(),
+    ).toBeVisible();
+    const [inventory] = await source.query(
+      `SELECT on_hand,reserved FROM "${schema}".inventories`,
+    );
+    expect(inventory).toMatchObject({ on_hand: 6, reserved: 0 });
   } finally {
     await source.destroy();
   }
