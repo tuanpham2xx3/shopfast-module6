@@ -11,6 +11,7 @@
   "scripts": {
     "smoke:api": "node scripts/smoke-api.mjs",
     "smoke:gemini": "ts-node scripts/gemini-smoke.ts",
+    "smoke:gemini-agent": "ts-node scripts/gemini-agent-smoke.ts",
     "dev:doctor": "ts-node scripts/dev-doctor.ts",
     "check": "npm run format:check && npm run lint && npm run typecheck && npm test && npm run build",
     "db:migrate": "ts-node database/migrate.ts",

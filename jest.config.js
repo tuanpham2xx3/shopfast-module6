@@ -8,7 +8,11 @@ module.exports = {
   rootDir: ".",
   testRegex: ".*\\.spec\\.ts$",
   transform: { "^.+\\.(t|j)s$": ["ts-jest", { tsconfig: "tsconfig.json" }] },
-  collectCoverageFrom: ["apps/**/*.ts", "libs/**/*.ts"],
+  collectCoverageFrom: [
+    "apps/api/**/*.ts",
+    "apps/worker/**/*.ts",
+    "libs/**/*.ts",
+  ],
   coverageDirectory: "coverage",
   testEnvironment: "node",
   moduleNameMapper: {
