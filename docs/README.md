@@ -36,3 +36,10 @@ Nguồn yêu cầu: `../Module 06 – Software Requirement Specification (SRS).d
 - [ ] Các DEC chưa được review trong decision log phải được xác nhận khi tới phần triển khai liên quan.
 - [ ] Chọn cấu hình hạ tầng và hoàn thiện kế hoạch vận hành ở giai đoạn sau.
 - [ ] Ghi bằng chứng kiểm thử thực tế sau mỗi mốc.
+
+## Đối chiếu gần nhất
+
+- [Rà soát SRS và những phần chưa nghiệm thu](evidence/srs-audit-2026-10-19.md).
+- [Gemini agent thật: tool, proposal và xác nhận](evidence/gemini-agent-live.md).
+- [Retention và regression khi duyệt phản hồi đồng thời](evidence/retention.md).
+- [Coverage: phân biệt unit-only và coverage kết hợp](evidence/coverage-baseline.md).

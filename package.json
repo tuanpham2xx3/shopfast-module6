@@ -17,6 +17,7 @@
     "db:migrate": "ts-node database/migrate.ts",
     "db:seed": "ts-node database/seeds/development.ts",
     "test:integration": "jest --config jest.integration.config.js --runInBand",
+    "test:coverage": "jest --config jest.business.config.js --runInBand",
     "test:e2e": "playwright test",
     "build": "npm run build:api && npm run build:worker && npm run build:web",
     "build:api": "nest build api",
