@@ -12,3 +12,5 @@ dist/
 coverage/
 .codex/config.toml
 *.log
+*.tsbuildinfo
+.superpowers/
