@@ -8,6 +8,19 @@ const schema = z.object({
   PORT: z.coerce.number().int().min(1).max(65535).default(3000),
   API_PREFIX: z.literal("api/v1").default("api/v1"),
   WEB_ORIGIN: z.string().url().default("http://localhost:5173"),
+  DATABASE_URL: z
+    .string()
+    .url()
+    .refine(
+      (value) => /^postgres(?:ql)?:/.test(value),
+      "Expected PostgreSQL URL",
+    )
+    .optional(),
+  REDIS_URL: z
+    .string()
+    .url()
+    .refine((value) => /^rediss?:/.test(value), "Expected Redis URL")
+    .optional(),
 });
 
 export type AppEnvironment = z.infer<typeof schema>;

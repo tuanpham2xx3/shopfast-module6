@@ -17,6 +17,12 @@
     "noUncheckedIndexedAccess": true,
     "paths": { "@shopfast/platform/*": ["libs/platform/src/*"] }
   },
-  "include": ["apps/**/*.ts", "libs/**/*.ts", "tests/**/*.ts"],
+  "include": [
+    "apps/**/*.ts",
+    "libs/**/*.ts",
+    "tests/**/*.ts",
+    "database/**/*.ts",
+    "scripts/**/*.ts"
+  ],
   "exclude": ["node_modules", "dist", "apps/web"]
 }
