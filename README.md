@@ -4,7 +4,7 @@ ShopFast là bài Defense Case Study Module 6: backend thương mại điện t�
 
 ## Trạng thái
 
-Đã có auth, catalog/kho và luồng mua hàng chạy qua React → NestJS → PostgreSQL: giỏ → checkout → thanh toán mô phỏng → kho xử lý → giao hàng. Đang triển khai tiếp jobs/realtime/cache/limiter/ticket/Gemini; chưa nghiệm thu toàn bộ sản phẩm hoặc triển khai production. Xem kết quả thực tế trong `docs/evidence/`.
+Đã có auth, catalog/kho/đơn, BullMQ jobs/invoice PDF, Socket.IO realtime, Redis cache/fallback, rate limiting, ticket/support và Gemini agent với human confirmation. UI customer/kho/support/admin đã nối API. Provider thật, Redis local và performance/cloud chưa nghiệm thu; xem `docs/evidence/external-acceptance-pending.md`.
 
 - [Bộ tài liệu triển khai](docs/README.md)
 - [Product spec](docs/01-product-spec.md)
@@ -54,7 +54,9 @@ npm run dev:web
 - OpenAPI khi phát triển: `http://127.0.0.1:3000/api/docs`
 - Web: `http://127.0.0.1:5173`; chọn “Khám phá sản phẩm” để mở catalog, giỏ và đơn hàng. Warehouse/Admin có giao diện điều chỉnh tồn và xử lý đơn.
 - Seed tạo customer/warehouse/support/admin tại `<role>@shopfast.test`, dùng `DEV_SEED_PASSWORD` khi tạo mới; chạy lại không reset mật khẩu/tồn. Xem [hướng dẫn seed](docs/evidence/m2-catalog.md).
-- Email hiện dùng outbox/fake adapter; chưa gửi email thật.
+- Email mặc định dùng adapter development-fake được ghi rõ trong admin queue. Cấu hình EMAIL_PROVIDER_URL/TOKEN để dùng HTTPS provider có idempotency; production từ chối email giả.
+- Backend giữ GEMINI_API_KEY và GEMINI_MODEL; thiếu cấu hình trả UNAVAILABLE, không giả câu trả lời. Chạy `npm run smoke:gemini` khi sẵn sàng nghiệm thu.
+- PDF hóa đơn lưu riêng trong PostgreSQL, tải bằng bearer và link HMAC có hạn; không đưa JWT vào URL. Worker tạo invoice sau payment, reminder/expiry và report theo Bangkok.
 
 `npm run check` chạy format/lint/typecheck/unit/HTTP contract/build. Integration yêu cầu `TEST_DATABASE_URL` và `TEST_REDIS_URL` riêng rồi chạy `npm run test:integration`; test tạo schema/key/queue riêng và dọn sau khi chạy, không dùng FLUSHDB.
 

@@ -22,6 +22,11 @@
 | D16 | P0/P1/P2; service native local, Docker/VPS ở M8                         | Người dùng chọn 18/10/2026      | Tránh Docker Desktop/WSL tràn RAM; vẫn đáp ứng Docker ở môi trường bàn giao |
 | D17 | PostgreSQL 16 native + Memurai Redis API v7 trên Windows                | Người dùng chọn 18/10/2026      | Dev nhẹ, không WSL; bắt buộc compatibility smoke và test lại Redis 7 thật   |
 
+| D18 | Invoice local lưu PDF bytea riêng trong PostgreSQL, tải có bearer + HMAC hạn 5 phút | Baseline triển khai 18/10/2026 | Không cần chốt cloud storage; bảo toàn quyền và file khi restart |
+| D19 | Gemini dùng REST generateContent chính thức qua adapter, model cấu hình backend | Baseline triển khai 18/10/2026 | Không phụ thuộc SDK; vẫn dùng Gemini API Google AI Studio |
+| D20 | Câu trả lời factual AI render từ evidence DB của lượt hiện tại | Baseline triển khai 18/10/2026 | Không dùng prose của model tự khai claims để chứng minh tính đúng |
+| D21 | Implement toàn bộ ứng dụng trước; nghiệm thu Redis/Gemini/email thật sau | Người dùng chọn 18/10/2026 | Không chặn code do service/key local chưa sẵn sàng |
+
 Những DEC được dùng để tạo bản spec cụ thể, có thể sửa khi review; không phải tuyên bố người dùng đã xác nhận tất cả lựa chọn.
 
 ## 2. Những việc hạ tầng chưa chốt
