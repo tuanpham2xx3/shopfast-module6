@@ -179,6 +179,11 @@ export class AuthService {
   ): Promise<PublicUser> {
     const claims = this.readAccess(accessToken);
     const result = await this.source.transaction(async (manager) => {
+      const [session] = await manager.query(
+        `SELECT id FROM ${this.table("auth_sessions")} WHERE id=$1 AND user_id=$2 AND revoked_at IS NULL AND expires_at>now() FOR UPDATE`,
+        [claims.sid, claims.sub],
+      );
+      if (!session) throw new AuthError("INVALID_ACCESS_TOKEN");
       const [user]: UserRow[] = await manager.query(
         `SELECT * FROM ${this.table("users")} WHERE id=$1 FOR UPDATE`,
         [claims.sub],

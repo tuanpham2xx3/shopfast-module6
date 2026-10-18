@@ -37,7 +37,7 @@ Evidence:
 | --- | --- | --- |
 | AUTH-01 | PASS | integration test normalizes email, hashes password and forces CUSTOMER |
 | AUTH-01A | PASS | browser walkthrough and auth HTTP integration complete register → OTP without another login |
-| AUTH-02 OTP attempts | PARTIAL | one-time code and resend invalidation tested; expiry and five-attempt ceiling still need explicit tests |
+| AUTH-02 OTP attempts | PASS | one-time code, resend invalidation, expiry and five-attempt ceiling explicitly tested |
 | AUTH-02 protected modules | PARTIAL | verified guard is implemented and tested; checkout itself belongs to M4 |
 | AUTH-03 | PASS | integration test proves rotated-token reuse revokes the active family |
 | AUTH-04 | PARTIAL | access/verified/role guards return 401/403 in unit tests; private-resource ownership is exercised in later business modules |
@@ -49,3 +49,5 @@ Tokens and OTPs are absent from API responses and screenshots. Cloud deployment 
 PostgreSQL-backed sliding counters enforce 3 send requests per normalized email and 10 per client IP in 15 minutes, including unknown accounts. Advisory transaction locks serialize concurrent increments. Subjects are hashed; expired counters are removed after 30 minutes. HTTP uses the socket client IP without trusting arbitrary forwarded headers. Rejections return 429, `RATE_LIMITED` and `Retry-After`.
 
 Verification: four PostgreSQL integration suites passed, 13 tests. This includes concurrent email requests across different IPs, IP requests across different emails, and window expiry. This evidence covers the OTP send limiter; login/global limiters remain outstanding.
+
+Session revocation follow-up: a regression test first demonstrated that a logged-out token could confirm OTP. Verification now locks and validates its active session in the same transaction. Auth service/HTTP suites passed 11 tests, including OTP expiry and the five-attempt ceiling.

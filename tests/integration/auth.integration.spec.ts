@@ -185,4 +185,39 @@ describe("auth service integration", () => {
       service.sendVerification("ip-next@example.test", "203.0.113.1"),
     ).rejects.toMatchObject({ code: "RATE_LIMITED" });
   });
+
+  it("rejects verification after its session is revoked", async () => {
+    const registered = await service.register({
+      email: "revoked@example.test",
+      password: "correct horse battery",
+      displayName: "Revoked",
+    });
+    await service.logout(registered.refreshToken);
+    await expect(
+      service.confirmVerification(registered.accessToken, "123456"),
+    ).rejects.toMatchObject({ code: "INVALID_ACCESS_TOKEN" });
+  });
+
+  it("rejects expired OTPs and locks a code after five wrong attempts", async () => {
+    const registered = await service.register({
+      email: "attempts@example.test",
+      password: "correct horse battery",
+      displayName: "Attempts",
+    });
+    for (let index = 0; index < 5; index += 1) {
+      await expect(
+        service.confirmVerification(registered.accessToken, "000000"),
+      ).rejects.toMatchObject({ code: "INVALID_VERIFICATION_CODE" });
+    }
+    await expect(
+      service.confirmVerification(registered.accessToken, "123456"),
+    ).rejects.toMatchObject({ code: "INVALID_VERIFICATION_CODE" });
+    await source.query(
+      `UPDATE "${schema}".verification_codes SET attempts=0,expires_at=now()-interval '1 second' WHERE user_id=$1`,
+      [registered.user.id],
+    );
+    await expect(
+      service.confirmVerification(registered.accessToken, "123456"),
+    ).rejects.toMatchObject({ code: "INVALID_VERIFICATION_CODE" });
+  });
 });
