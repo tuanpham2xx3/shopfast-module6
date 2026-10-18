@@ -7,7 +7,10 @@ import { enqueueOutbox } from "../../platform/src/outbox/outbox";
 const DUMMY_HASH =
   "$argon2id$v=19$m=65536,t=3,p=4$u4tn5/QBkajPFwbV7vg+fw$1RGvrL5mH3lKeiXS1ZEx5Ji+x5lLmXyIj8emT0XhWd4";
 export class AuthError extends Error {
-  constructor(public readonly code: string) {
+  constructor(
+    public readonly code: string,
+    public readonly retryAfter?: number,
+  ) {
     super(code);
   }
 }
@@ -300,8 +303,37 @@ export class AuthService {
     );
   }
 
-  async sendVerification(rawEmail: string): Promise<void> {
+  async sendVerification(
+    rawEmail: string,
+    clientIp = "unknown",
+  ): Promise<void> {
     const email = rawEmail.trim().toLowerCase();
+    await this.source.transaction(async (manager) => {
+      const limits = [
+        { scope: "otp-email", subject: email, limit: 3 },
+        { scope: "otp-ip", subject: clientIp, limit: 10 },
+      ];
+      for (const entry of limits) {
+        const subject = this.hash(entry.subject);
+        await manager.query(
+          `SELECT pg_advisory_xact_lock(hashtextextended($1,0))`,
+          [`${this.schema}:${entry.scope}:${subject}`],
+        );
+        const [usage] = await manager.query(
+          `SELECT COALESCE(sum(count),0)::int count, GREATEST(1,ceil(extract(epoch FROM min(window_start)+interval '15 minutes'-clock_timestamp())))::int retry_after FROM ${this.table("security_counters")} WHERE scope=$1 AND subject_hash=$2 AND window_start>clock_timestamp()-interval '15 minutes'`,
+          [entry.scope, subject],
+        );
+        if (usage.count >= entry.limit)
+          throw new AuthError("RATE_LIMITED", usage.retry_after);
+        await manager.query(
+          `INSERT INTO ${this.table("security_counters")} (scope,subject_hash,count) VALUES ($1,$2,1)`,
+          [entry.scope, subject],
+        );
+      }
+      await manager.query(
+        `DELETE FROM ${this.table("security_counters")} WHERE window_start<clock_timestamp()-interval '30 minutes'`,
+      );
+    });
     await this.source.transaction(async (manager) => {
       const [user]: UserRow[] = await manager.query(
         `SELECT * FROM ${this.table("users")} WHERE email=$1 FOR UPDATE`,

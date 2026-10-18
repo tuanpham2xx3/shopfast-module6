@@ -23,7 +23,11 @@ describe("PostgreSQL migration contract", () => {
   it("migrates an empty isolated schema and safely reruns", async () => {
     expect(
       (await source.runMigrations()).map((migration) => migration.name),
-    ).toEqual(["Foundation1780000000000", "Auth1780000100000"]);
+    ).toEqual([
+      "Foundation1780000000000",
+      "Auth1780000100000",
+      "SecurityCounters1780000200000",
+    ]);
     expect(await source.runMigrations()).toHaveLength(0);
     const tables = await source.query(
       `SELECT table_name FROM information_schema.tables WHERE table_schema=$1`,

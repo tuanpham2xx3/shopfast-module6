@@ -103,8 +103,13 @@ class AuthController {
   }
   @Post("verification/send")
   @HttpCode(202)
-  async sendVerification(@Body() dto: SendVerificationDto) {
-    await (await this.runtime.get()).sendVerification(dto.email);
+  async sendVerification(
+    @Body() dto: SendVerificationDto,
+    @Req() request: Request,
+  ) {
+    await (
+      await this.runtime.get()
+    ).sendVerification(dto.email, request.ip ?? "unknown");
     return { accepted: true };
   }
   @Get("me")

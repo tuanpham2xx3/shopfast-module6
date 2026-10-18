@@ -46,6 +46,7 @@ class ApiExceptionFilter implements ExceptionFilter {
       REFRESH_TOKEN_REUSED: 401,
       INVALID_VERIFICATION_CODE: 400,
       EMAIL_ALREADY_REGISTERED: 409,
+      RATE_LIMITED: 429,
     };
     const status =
       exception instanceof AuthError
@@ -69,11 +70,16 @@ class ApiExceptionFilter implements ExceptionFilter {
       exception instanceof AuthError
         ? [
             exception.code,
-            exception.code === "INVALID_CREDENTIALS"
-              ? "Invalid email or password"
-              : "Authentication request failed",
+            exception.code === "RATE_LIMITED"
+              ? `Bạn thao tác quá nhanh. Vui lòng thử lại sau ${exception.retryAfter ?? 900} giây.`
+              : exception.code === "INVALID_CREDENTIALS"
+                ? "Invalid email or password"
+                : "Authentication request failed",
           ]
         : (messages[status] ?? ["INTERNAL_ERROR", "Internal server error"]);
+    if (exception instanceof AuthError && exception.code === "RATE_LIMITED") {
+      response.setHeader("Retry-After", exception.retryAfter ?? 900);
+    }
     response.status(status).json({
       error: { code, message, details: null },
       requestId: request.requestId,

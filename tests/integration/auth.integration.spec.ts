@@ -132,4 +132,57 @@ describe("auth service integration", () => {
     expect(records[0].consumed_at).not.toBeNull();
     expect(records[1].consumed_at).toBeNull();
   });
+
+  it("limits verification sends by target account across repeated requests", async () => {
+    const registered = await service.register({
+      email: "limited@example.com",
+      password: "correct horse battery",
+      displayName: "Limited",
+    });
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      await source.query(
+        `UPDATE "${schema}".verification_codes SET created_at=now()-interval '61 seconds' WHERE user_id=$1`,
+        [registered.user.id],
+      );
+      await service.sendVerification(
+        "limited@example.com",
+        `192.0.2.${attempt}`,
+      );
+    }
+    await expect(
+      service.sendVerification("limited@example.com", "192.0.2.20"),
+    ).rejects.toMatchObject({ code: "RATE_LIMITED" });
+  });
+
+  it("atomically limits concurrent sends and expires the rolling window", async () => {
+    const outcomes = await Promise.allSettled(
+      Array.from({ length: 8 }, (_, index) =>
+        service.sendVerification(
+          "parallel@example.test",
+          `198.51.100.${index}`,
+        ),
+      ),
+    );
+    expect(
+      outcomes.filter((entry) => entry.status === "fulfilled"),
+    ).toHaveLength(3);
+    expect(
+      outcomes.filter((entry) => entry.status === "rejected"),
+    ).toHaveLength(5);
+    await source.query(
+      `UPDATE "${schema}".security_counters SET window_start=window_start-interval '16 minutes' WHERE scope='otp-email'`,
+    );
+    await expect(
+      service.sendVerification("parallel@example.test", "198.51.100.30"),
+    ).resolves.toBeUndefined();
+  });
+
+  it("limits an IP even when each request targets a different email", async () => {
+    for (let index = 0; index < 10; index += 1) {
+      await service.sendVerification(`ip-${index}@example.test`, "203.0.113.1");
+    }
+    await expect(
+      service.sendVerification("ip-next@example.test", "203.0.113.1"),
+    ).rejects.toMatchObject({ code: "RATE_LIMITED" });
+  });
 });
