@@ -46,6 +46,7 @@ import {
   VerifiedGuard,
 } from "../auth/auth.guards";
 import { OrderService } from "./order.service";
+import { RuntimeModule, RuntimeServices } from "../runtime/runtime.module";
 
 class QuantityDto {
   @IsInt() @Min(1) @Max(99) quantity!: number;
@@ -115,6 +116,7 @@ class ListDto {
 }
 @Injectable()
 class OrderRuntime implements OnApplicationShutdown {
+  constructor(private readonly protections: RuntimeServices) {}
   private source?: DataSource;
   private pending?: Promise<OrderService>;
   get() {
@@ -130,7 +132,8 @@ class OrderRuntime implements OnApplicationShutdown {
       process.env.DATABASE_URL!,
       process.env.DATABASE_SCHEMA ?? "public",
     ).initialize();
-    return new OrderService(this.source, process.env.DATABASE_SCHEMA);
+    const { cache } = await this.protections.get();
+    return new OrderService(this.source, process.env.DATABASE_SCHEMA, cache);
   }
   async onApplicationShutdown() {
     if (this.source?.isInitialized) await this.source.destroy();
@@ -172,11 +175,18 @@ class CartController {
 @UseGuards(AccessGuard, VerifiedGuard, RolesGuard)
 @Roles("CUSTOMER")
 class OrdersController {
-  constructor(private readonly runtime: OrderRuntime) {}
+  constructor(
+    private readonly runtime: OrderRuntime,
+    private readonly protections: RuntimeServices,
+  ) {}
   @Post() async checkout(
     @Req() r: AuthenticatedRequest,
     @Body() dto: CheckoutDto,
   ) {
+    const { limiter } = await this.protections.get();
+    await limiter.consume("checkout", r.user!.id, 10, 60000);
+    if (dto.promoCode)
+      await limiter.consume("checkout-promo", r.user!.id, 3, 60000, true);
     return (await this.runtime.get()).checkout(
       r.user!.id,
       r.header("idempotency-key") ?? "",
@@ -299,7 +309,7 @@ class AdminOrderController {
   }
 }
 @Module({
-  imports: [AuthModule],
+  imports: [AuthModule, RuntimeModule],
   controllers: [
     CartController,
     OrdersController,

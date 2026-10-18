@@ -1,0 +1,19 @@
+import { AiService } from "../../libs/modules/ai/ai.service";
+import { TicketsService } from "../../libs/modules/tickets/tickets.service";
+
+it("bounds the entire AI request when the initial database lookup stalls", async () => {
+  const source = { manager: { query: () => new Promise(() => {}) } };
+  const tickets = new TicketsService(source as never, "public");
+  const service = new AiService(tickets, { generate: async () => [] }, 25);
+  const result = await service.message(
+    { id: "00000000-0000-4000-8000-000000000001", role: "SUPPORT" },
+    "00000000-0000-4000-8000-000000000002",
+    "Check order",
+    "00000000-0000-4000-8000-000000000003",
+  );
+  expect(result).toMatchObject({
+    status: "UNAVAILABLE",
+    proposal: null,
+    evidence: [],
+  });
+});

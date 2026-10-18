@@ -19,7 +19,8 @@ import {
 import { Request, Response } from "express";
 import { AccessGuard, RolesGuard, VerifiedGuard } from "./auth.guards";
 import { AuthRuntime } from "./auth.runtime";
-import { AuthResult } from "./auth.service";
+import { AuthError, AuthResult } from "./auth.service";
+import { RuntimeModule, RuntimeServices } from "../runtime/runtime.module";
 
 class RegisterDto {
   @IsEmail() email!: string;
@@ -71,7 +72,10 @@ function publicAuth(result: AuthResult) {
 
 @Controller("auth")
 class AuthController {
-  constructor(private readonly runtime: AuthRuntime) {}
+  constructor(
+    private readonly runtime: AuthRuntime,
+    private readonly protections: RuntimeServices,
+  ) {}
   @Post("register")
   async register(
     @Body() dto: RegisterDto,
@@ -85,11 +89,21 @@ class AuthController {
   @HttpCode(200)
   async login(
     @Body() dto: LoginDto,
+    @Req() request: Request,
     @Res({ passthrough: true }) response: Response,
   ) {
-    const result = await (
-      await this.runtime.get()
-    ).login(dto.email, dto.password);
+    const { limiter } = await this.protections.get();
+    await limiter.consume("login-ip", request.ip ?? "unknown", 5, 60000, true);
+    await limiter.loginTarget(dto.email, "check");
+    let result: AuthResult;
+    try {
+      result = await (await this.runtime.get()).login(dto.email, dto.password);
+    } catch (error) {
+      if (error instanceof AuthError && error.code === "INVALID_CREDENTIALS")
+        await limiter.loginTarget(dto.email, "failure");
+      throw error;
+    }
+    await limiter.loginTarget(dto.email, "reset");
     setRefreshCookie(response, result.refreshToken);
     return publicAuth(result);
   }
@@ -144,6 +158,7 @@ class AuthController {
 }
 
 @Module({
+  imports: [RuntimeModule],
   controllers: [AuthController],
   providers: [AuthRuntime, AccessGuard, VerifiedGuard, RolesGuard],
   exports: [AuthRuntime, AccessGuard, VerifiedGuard, RolesGuard],

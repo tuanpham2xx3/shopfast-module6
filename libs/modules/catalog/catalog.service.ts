@@ -1,6 +1,12 @@
 import { createHash, randomUUID } from "node:crypto";
 import { DataSource } from "typeorm";
 import { enqueueOutbox } from "../../platform/src/outbox/outbox";
+import {
+  CatalogCache,
+  catalogListKey,
+  catalogListTags,
+} from "../runtime/catalog-cache";
+import { enqueueCatalogInvalidation } from "../runtime/catalog-invalidation";
 
 export class CatalogError extends Error {
   constructor(public readonly code: string) {
@@ -39,9 +45,17 @@ export class CatalogService {
   constructor(
     private readonly source: DataSource,
     private readonly schema = "public",
+    private readonly cache?: CatalogCache,
   ) {
     if (!/^[a-z][a-z0-9_]{0,62}$/.test(schema))
       throw new Error("Invalid schema");
+  }
+  private async invalidated<T extends object>(
+    value: T,
+    tags: string[],
+  ): Promise<T & { cacheInvalidationPending?: boolean }> {
+    const pending = this.cache ? !(await this.cache.invalidate(tags)) : false;
+    return pending ? { ...value, cacheInvalidationPending: true } : value;
   }
   private t(name: string) {
     return `"${this.schema}".${name}`;
@@ -66,26 +80,53 @@ export class CatalogService {
     );
   }
   async createTaxonomy(kind: Taxonomy, input: { name: string; slug: string }) {
-    const [row] = await this.source.query(
-      `INSERT INTO ${this.t(kind)} (id,name,slug) VALUES ($1,$2,$3) RETURNING id,name,slug,active`,
-      [randomUUID(), input.name.trim(), input.slug],
-    );
-    return row as { id: string };
+    const { row, tags } = await this.source.transaction(async (manager) => {
+      const [row] = await manager.query(
+        `INSERT INTO ${this.t(kind)} (id,name,slug) VALUES ($1,$2,$3) RETURNING id,name,slug,active`,
+        [randomUUID(), input.name.trim(), input.slug],
+      );
+      const tags = await enqueueCatalogInvalidation(
+        manager,
+        this.schema,
+        row.id,
+        [],
+        [`taxonomy:${kind}`],
+      );
+      return { row: row as { id: string }, tags };
+    });
+    return this.invalidated(row, tags);
   }
   async updateTaxonomy(
     kind: Taxonomy,
     id: string,
     input: { name?: string; active?: boolean },
   ) {
-    const [[row]] = await this.source.query(
-      `UPDATE ${this.t(kind)} SET name=COALESCE($2,name),active=COALESCE($3,active),updated_at=now() WHERE id=$1 RETURNING id,name,slug,active`,
-      [id, input.name?.trim(), input.active],
-    );
-    if (!row) throw new CatalogError("NOT_FOUND");
-    return row;
+    const { row, tags } = await this.source.transaction(async (manager) => {
+      const [[row]] = await manager.query(
+        `UPDATE ${this.t(kind)} SET name=COALESCE($2,name),active=COALESCE($3,active),updated_at=now() WHERE id=$1 RETURNING id,name,slug,active`,
+        [id, input.name?.trim(), input.active],
+      );
+      if (!row) throw new CatalogError("NOT_FOUND");
+      const products: { id: string }[] = await manager.query(
+        `SELECT id FROM ${this.t("products")} WHERE ${kind === "categories" ? "category_id" : "brand_id"}=$1`,
+        [id],
+      );
+      const tags = await enqueueCatalogInvalidation(
+        manager,
+        this.schema,
+        id,
+        products.map((p) => p.id),
+        [
+          `taxonomy:${kind}`,
+          `${kind === "categories" ? "category" : "brand"}:${id}`,
+        ],
+      );
+      return { row, tags };
+    });
+    return this.invalidated(row, tags);
   }
   async createProduct(input: ProductInput): Promise<{ id: string }> {
-    return this.source.transaction(async (manager) => {
+    const { row, tags } = await this.source.transaction(async (manager) => {
       const [row] = await manager.query(
         `INSERT INTO ${this.t("products")} (id,sku,slug,name,description,image_url,category_id,brand_id,price) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id`,
         [
@@ -104,8 +145,15 @@ export class CatalogService {
         `INSERT INTO ${this.t("inventories")} (product_id) VALUES ($1)`,
         [row.id],
       );
-      return row;
+      const tags = await enqueueCatalogInvalidation(
+        manager,
+        this.schema,
+        row.id,
+        [row.id],
+      );
+      return { row, tags };
     });
+    return this.invalidated(row, tags);
   }
   async updateProduct(
     id: string,
@@ -131,17 +179,63 @@ export class CatalogService {
         values.push(input[key as keyof typeof input]);
         updates.push(`${column}=$${values.length}`);
       }
-    const [[row]] = await this.source.query(
-      `UPDATE ${this.t("products")} SET ${[...updates, "version=version+1", "updated_at=now()"].join(",")} WHERE id=$1 AND version=$2 RETURNING id,version`,
-      values,
-    );
-    if (!row) throw new CatalogError("VERSION_CONFLICT");
-    return row;
+    const { row, tags } = await this.source.transaction(async (manager) => {
+      const [old] = await manager.query(
+        `SELECT category_id,brand_id FROM ${this.t("products")} WHERE id=$1 FOR UPDATE`,
+        [id],
+      );
+      const [[row]] = await manager.query(
+        `UPDATE ${this.t("products")} SET ${[...updates, "version=version+1", "updated_at=now()"].join(",")} WHERE id=$1 AND version=$2 RETURNING id,version`,
+        values,
+      );
+      if (!row) throw new CatalogError("VERSION_CONFLICT");
+      const tags = await enqueueCatalogInvalidation(
+        manager,
+        this.schema,
+        id,
+        [id],
+        old ? [`category:${old.category_id}`, `brand:${old.brand_id}`] : [],
+      );
+      return { row, tags };
+    });
+    return this.invalidated(row, tags);
   }
   private select() {
-    return `SELECT p.id,p.sku,p.slug,p.name,p.description,p.image_url AS "imageUrl",p.price::float8 AS price,p.version,jsonb_build_object('id',c.id,'name',c.name) category,jsonb_build_object('id',b.id,'name',b.name) brand,(i.on_hand-i.reserved) available FROM ${this.t("products")} p JOIN ${this.t("categories")} c ON c.id=p.category_id JOIN ${this.t("brands")} b ON b.id=p.brand_id JOIN ${this.t("inventories")} i ON i.product_id=p.id`;
+    return `SELECT p.id,p.sku,p.slug,p.name,p.description,p.image_url AS "imageUrl",p.price::float8 AS price,p.version,i.version AS "inventoryVersion",jsonb_build_object('id',c.id,'name',c.name) category,jsonb_build_object('id',b.id,'name',b.name) brand,(i.on_hand-i.reserved) available FROM ${this.t("products")} p JOIN ${this.t("categories")} c ON c.id=p.category_id JOIN ${this.t("brands")} b ON b.id=p.brand_id JOIN ${this.t("inventories")} i ON i.product_id=p.id`;
   }
   async product(id: string) {
+    if (this.cache) {
+      const load = async () => {
+        try {
+          return await this.productUncached(id);
+        } catch (error) {
+          if (error instanceof CatalogError && error.code === "NOT_FOUND")
+            return null;
+          throw error;
+        }
+      };
+      const row = await this.cache.remember(
+        `product:${id}`,
+        [`product:${id}`],
+        load,
+        {
+          validate: async (row) =>
+            row
+              ? this.current([row])
+              : (
+                  await this.source.query(
+                    `${this.select()} WHERE p.id=$1 AND p.active AND c.active AND b.active`,
+                    [id],
+                  )
+                ).length === 0,
+        },
+      );
+      if (!row) throw new CatalogError("NOT_FOUND");
+      return row;
+    }
+    return this.productUncached(id);
+  }
+  private async productUncached(id: string) {
     const [row] = await this.source.query(
       `${this.select()} WHERE p.id=$1 AND p.active AND c.active AND b.active`,
       [id],
@@ -150,6 +244,48 @@ export class CatalogService {
     return row;
   }
   async products(input: ProductFilter) {
+    if (this.cache)
+      return this.cache.remember(
+        catalogListKey({ ...input }),
+        catalogListTags(input),
+        () => this.productsUncached(input),
+        {
+          validate: (page) => this.current(page.items),
+          tags: (page) =>
+            page.items.map((p: { id: string }) => `product:${p.id}`),
+        },
+      );
+    return this.productsUncached(input);
+  }
+  private async current(
+    rows: {
+      id: string;
+      version: number;
+      inventoryVersion: number;
+      category: unknown;
+      brand: unknown;
+    }[],
+  ): Promise<boolean> {
+    if (!rows.length) return true;
+    const latest = await this.source.query(
+      `${this.select()} WHERE p.id=ANY($1::uuid[]) AND p.active AND c.active AND b.active`,
+      [rows.map((p) => p.id)],
+    );
+    return (
+      latest.length === rows.length &&
+      rows.every((row) =>
+        latest.some(
+          (p: typeof row) =>
+            p.id === row.id &&
+            p.version === row.version &&
+            p.inventoryVersion === row.inventoryVersion &&
+            JSON.stringify(p.category) === JSON.stringify(row.category) &&
+            JSON.stringify(p.brand) === JSON.stringify(row.brand),
+        ),
+      )
+    );
+  }
+  private async productsUncached(input: ProductFilter) {
     const { page, pageSize, offset } = this.page(input);
     if (
       input.minPrice !== undefined &&
@@ -226,7 +362,8 @@ export class CatalogService {
         }),
       )
       .digest("hex");
-    return this.source.transaction(async (manager) => {
+    let invalidationTags: string[] = [];
+    const result = await this.source.transaction(async (manager) => {
       await manager.query(
         `SELECT pg_advisory_xact_lock(hashtextextended($1,0))`,
         [`${this.schema}:inventory:${actorId}:${key}`],
@@ -279,8 +416,15 @@ export class CatalogService {
         },
         this.schema,
       );
+      invalidationTags = await enqueueCatalogInvalidation(
+        manager,
+        this.schema,
+        productId,
+        [productId],
+      );
       return result;
     });
+    return this.invalidated(result, invalidationTags);
   }
   async movements(productId: string, input: Page) {
     const { page, pageSize, offset } = this.page(input);

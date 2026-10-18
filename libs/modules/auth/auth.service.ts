@@ -3,6 +3,7 @@ import * as argon2 from "argon2";
 import * as jwt from "jsonwebtoken";
 import { DataSource, EntityManager } from "typeorm";
 import { enqueueOutbox } from "../../platform/src/outbox/outbox";
+import { domainEvents } from "../../platform/src/domain-events";
 
 const DUMMY_HASH =
   "$argon2id$v=19$m=65536,t=3,p=4$u4tn5/QBkajPFwbV7vg+fw$1RGvrL5mH3lKeiXS1ZEx5Ji+x5lLmXyIj8emT0XhWd4";
@@ -305,10 +306,12 @@ export class AuthService {
   }
 
   async logout(refreshToken: string): Promise<void> {
-    await this.source.query(
-      `UPDATE ${this.table("auth_sessions")} SET revoked_at=COALESCE(revoked_at,now()),updated_at=now() WHERE refresh_hash=$1`,
+    const [rows] = await this.source.query(
+      `UPDATE ${this.table("auth_sessions")} SET revoked_at=COALESCE(revoked_at,now()),updated_at=now() WHERE refresh_hash=$1 RETURNING id`,
       [this.hash(refreshToken)],
     );
+    for (const session of rows)
+      domainEvents.emit("session.revoked", session.id);
   }
 
   async sendVerification(

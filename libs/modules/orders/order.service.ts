@@ -1,6 +1,9 @@
 import { createHash, randomUUID } from "node:crypto";
 import { DataSource, EntityManager } from "typeorm";
 import { enqueueOutbox } from "../../platform/src/outbox/outbox";
+import { domainEvents } from "../../platform/src/domain-events";
+import { CatalogCache } from "../runtime/catalog-cache";
+import { enqueueCatalogInvalidation } from "../runtime/catalog-invalidation";
 
 export class OrderError extends Error {
   constructor(public readonly code: string) {
@@ -53,7 +56,8 @@ export class OrderService {
     return row;
   }
   async expireDue(at = new Date()) {
-    return this.source.transaction(async (m) => {
+    const tags: string[] = [];
+    const result = await this.source.transaction(async (m) => {
       const orders = await m.query(
         `SELECT id,version,status FROM ${this.t("orders")} WHERE status='PENDING_PAYMENT' AND expires_at<=$1 ORDER BY expires_at,id LIMIT 100 FOR UPDATE SKIP LOCKED`,
         [at],
@@ -107,13 +111,26 @@ export class OrderService {
           "Payment deadline elapsed",
         );
         await this.event(m, order.id, order.version + 1, "order.changed");
+        tags.push(
+          ...(await enqueueCatalogInvalidation(
+            m,
+            this.schema,
+            order.id,
+            rows.map((r: { product_id: string }) => r.product_id),
+            [],
+            order.version + 1,
+          )),
+        );
       }
       return orders.length;
     });
+    if (tags.length && this.cache) await this.cache.invalidate(tags);
+    return result;
   }
   constructor(
     private readonly source: DataSource,
     private readonly schema = "public",
+    private readonly cache?: CatalogCache,
   ) {
     if (!/^[a-z][a-z0-9_]{0,62}$/.test(schema))
       throw new Error("Invalid schema");
@@ -133,32 +150,64 @@ export class OrderService {
     const hash = createHash("sha256")
       .update(JSON.stringify(payload))
       .digest("hex");
-    return this.source.transaction(async (m) => {
-      const [{ locked }] = await m.query(
-        `SELECT pg_try_advisory_xact_lock(hashtextextended($1,0)) locked`,
-        [`${this.schema}:${actor}:${route}:${key}`],
-      );
-      if (!locked) throw new OrderError("REQUEST_IN_PROGRESS");
-      const [old] = await m.query(
-        `SELECT * FROM ${this.t("idempotency_records")} WHERE user_id=$1 AND route=$2 AND key=$3 AND expires_at>now()`,
-        [actor, route, key],
-      );
-      if (old) {
-        if (old.request_hash !== hash)
-          throw new OrderError("IDEMPOTENCY_CONFLICT");
-        return old.response as T;
-      }
-      await m.query(
-        `DELETE FROM ${this.t("idempotency_records")} WHERE user_id=$1 AND route=$2 AND key=$3`,
-        [actor, route, key],
-      );
-      const result = await work(m);
-      await m.query(
-        `INSERT INTO ${this.t("idempotency_records")} (user_id,route,key,request_hash,status_code,response,expires_at) VALUES($1,$2,$3,$4,200,$5,now()+interval '24 hours')`,
-        [actor, route, key, hash, JSON.stringify(result)],
-      );
-      return result;
-    });
+    return this.source
+      .transaction(async (m) => {
+        const [{ locked }] = await m.query(
+          `SELECT pg_try_advisory_xact_lock(hashtextextended($1,0)) locked`,
+          [`${this.schema}:${actor}:${route}:${key}`],
+        );
+        if (!locked) throw new OrderError("REQUEST_IN_PROGRESS");
+        const [old] = await m.query(
+          `SELECT * FROM ${this.t("idempotency_records")} WHERE user_id=$1 AND route=$2 AND key=$3 AND expires_at>now()`,
+          [actor, route, key],
+        );
+        if (old) {
+          if (old.request_hash !== hash)
+            throw new OrderError("IDEMPOTENCY_CONFLICT");
+          return old.response as T;
+        }
+        await m.query(
+          `DELETE FROM ${this.t("idempotency_records")} WHERE user_id=$1 AND route=$2 AND key=$3`,
+          [actor, route, key],
+        );
+        const result = await work(m);
+        await m.query(
+          `INSERT INTO ${this.t("idempotency_records")} (user_id,route,key,request_hash,status_code,response,expires_at) VALUES($1,$2,$3,$4,200,$5,now()+interval '24 hours')`,
+          [actor, route, key, hash, JSON.stringify(result)],
+        );
+        return result;
+      })
+      .then(async (result) => {
+        const order = result as { id?: string; version?: number };
+        if (order?.id && order.version) {
+          if (this.cache) {
+            const invalidations: { payload: { tags: string[] } }[] =
+              await this.source.query(
+                `SELECT payload FROM ${this.t("outbox_events")} WHERE type='catalog.invalidate' AND aggregate_id=$1 AND aggregate_version=$2`,
+                [order.id, order.version],
+              );
+            const tags = invalidations.flatMap((event) => event.payload.tags);
+            if (tags.length && !(await this.cache.invalidate(tags)))
+              Object.assign(result as object, {
+                cacheInvalidationPending: true,
+              });
+          }
+          try {
+            const [event] = await this.source.query(
+              `SELECT e.id AS "eventId",e.aggregate_id AS "orderId",h.to_status status,e.aggregate_version version,h.created_at AS "occurredAt" FROM ${this.t("outbox_events")} e JOIN ${this.t("order_status_history")} h ON h.order_id=e.aggregate_id AND h.order_version=e.aggregate_version WHERE e.aggregate_id=$1 AND e.aggregate_version=$2 AND e.type IN ('order.created','order.changed','payment.confirmed') LIMIT 1`,
+              [order.id, order.version],
+            );
+            if (event)
+              domainEvents.emit("order.status.updated", {
+                ...event,
+                occurredAt: new Date(event.occurredAt).toISOString(),
+              });
+          } catch {
+            /* The committed outbox will retry delivery. */
+          }
+        }
+        return result;
+      });
   }
   async addCart(user: string, product: string, quantity: number) {
     if (!Number.isInteger(quantity) || quantity < 1 || quantity > 99)
@@ -375,6 +424,7 @@ export class OrderService {
         "CHECKOUT",
       );
       await this.event(m, id, 1, "order.created");
+      await enqueueCatalogInvalidation(m, this.schema, id, productIds, [], 1);
       return this.read(m, id);
     });
   }
@@ -590,6 +640,20 @@ export class OrderService {
           order.version + 1,
           target === "CONFIRMED" ? "payment.confirmed" : "order.changed",
         );
+        if (["SHIPPING", "CANCELLED"].includes(target)) {
+          const products: { product_id: string }[] = await m.query(
+            `SELECT product_id FROM ${this.t("order_items")} WHERE order_id=$1`,
+            [id],
+          );
+          await enqueueCatalogInvalidation(
+            m,
+            this.schema,
+            id,
+            products.map((row) => row.product_id),
+            [],
+            order.version + 1,
+          );
+        }
         return this.read(m, id);
       },
     );

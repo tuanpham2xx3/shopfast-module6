@@ -13,7 +13,7 @@ import {
   ServiceUnavailableException,
   ValidationPipe,
 } from "@nestjs/common";
-import { NestFactory } from "@nestjs/core";
+import { APP_INTERCEPTOR, NestFactory } from "@nestjs/core";
 import { ConfigModule } from "@nestjs/config";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { json, Request, Response, NextFunction } from "express";
@@ -30,6 +30,16 @@ import { CatalogModule } from "../../../libs/modules/catalog/catalog.module";
 import { CatalogError } from "../../../libs/modules/catalog/catalog.service";
 import { OrderError } from "../../../libs/modules/orders/order.service";
 import { OrderModule } from "../../../libs/modules/orders/order.module";
+import { RealtimeModule } from "../../../libs/modules/realtime/realtime.module";
+import { JobsModule } from "../../../libs/modules/jobs/jobs.module";
+import { TicketsModule } from "../../../libs/modules/tickets/tickets.module";
+import { TicketError } from "../../../libs/modules/tickets/tickets.service";
+import {
+  RuntimeModule,
+  RuntimeRateInterceptor,
+} from "../../../libs/modules/runtime/runtime.module";
+import { RateLimitError } from "../../../libs/modules/runtime/limiter";
+import { OperationsModule } from "../../../libs/modules/operations/operations.module";
 
 type IdentifiedRequest = Request & { requestId: string };
 
@@ -70,48 +80,75 @@ class ApiExceptionFilter implements ExceptionFilter {
       INSUFFICIENT_STOCK: 409,
     };
     const status =
-      exception instanceof CatalogError || exception instanceof OrderError
-        ? (catalogStatuses[exception.code] ?? 400)
-        : databaseCode === "23505"
-          ? 409
-          : databaseCode === "23503" || databaseCode === "23514"
-            ? 400
-            : exception instanceof AuthError
-              ? (authStatuses[exception.code] ?? 400)
-              : exception instanceof HttpException
-                ? exception.getStatus()
-                : parserType === "entity.too.large"
-                  ? 413
-                  : parserType === "entity.parse.failed"
-                    ? 400
-                    : 500;
+      exception instanceof TicketError
+        ? exception.code === "NOT_FOUND" ||
+          exception.code === "ORDER_NOT_ACCESSIBLE"
+          ? 404
+          : exception.code === "FORBIDDEN" ||
+              exception.code === "SESSION_NOT_ACCESSIBLE"
+            ? 403
+            : exception.code === "BAD_REQUEST"
+              ? 400
+              : 409
+        : exception instanceof CatalogError || exception instanceof OrderError
+          ? (catalogStatuses[exception.code] ?? 400)
+          : databaseCode === "23505"
+            ? 409
+            : databaseCode === "23503" || databaseCode === "23514"
+              ? 400
+              : exception instanceof AuthError
+                ? (authStatuses[exception.code] ?? 400)
+                : exception instanceof HttpException
+                  ? exception.getStatus()
+                  : parserType === "entity.too.large"
+                    ? 413
+                    : parserType === "entity.parse.failed"
+                      ? 400
+                      : 500;
     const messages: Record<number, [string, string]> = {
       400: ["BAD_REQUEST", "Invalid request"],
       401: ["UNAUTHORIZED", "Authentication required"],
       403: ["FORBIDDEN", "Access denied"],
       404: ["NOT_FOUND", "Resource not found"],
       413: ["PAYLOAD_TOO_LARGE", "Request body exceeds the size limit"],
+      409: [
+        "CONFLICT",
+        "Dữ liệu đã thay đổi hoặc thao tác xung đột. Vui lòng tải lại.",
+      ],
+      429: ["RATE_LIMITED", "Bạn thao tác quá nhanh. Vui lòng thử lại sau."],
       503: ["SERVICE_UNAVAILABLE", "Service unavailable"],
     };
     const [code, message] =
-      exception instanceof CatalogError || exception instanceof OrderError
+      exception instanceof TicketError
         ? [
             exception.code,
-            "Không thể thực hiện thao tác. Vui lòng kiểm tra dữ liệu hoặc tải lại.",
+            "Không thể xử lý yêu cầu hỗ trợ. Vui lòng kiểm tra quyền hoặc tải lại.",
           ]
-        : exception instanceof AuthError
+        : exception instanceof CatalogError || exception instanceof OrderError
           ? [
               exception.code,
-              exception.code === "RATE_LIMITED"
-                ? `Bạn thao tác quá nhanh. Vui lòng thử lại sau ${exception.retryAfter ?? 900} giây.`
-                : exception.code === "INVALID_CREDENTIALS"
-                  ? "Invalid email or password"
-                  : "Authentication request failed",
+              "Không thể thực hiện thao tác. Vui lòng kiểm tra dữ liệu hoặc tải lại.",
             ]
-          : (messages[status] ?? ["INTERNAL_ERROR", "Internal server error"]);
+          : exception instanceof AuthError
+            ? [
+                exception.code,
+                exception.code === "RATE_LIMITED"
+                  ? `Bạn thao tác quá nhanh. Vui lòng thử lại sau ${exception.retryAfter ?? 900} giây.`
+                  : exception.code === "INVALID_CREDENTIALS"
+                    ? "Invalid email or password"
+                    : "Authentication request failed",
+              ]
+            : (messages[status] ?? ["INTERNAL_ERROR", "Internal server error"]);
     if (exception instanceof AuthError && exception.code === "RATE_LIMITED") {
       response.setHeader("Retry-After", exception.retryAfter ?? 900);
     }
+    if (exception instanceof RateLimitError)
+      response.setHeader("Retry-After", exception.retryAfter);
+    if (
+      (exception instanceof OrderError || exception instanceof TicketError) &&
+      exception.code === "REQUEST_IN_PROGRESS"
+    )
+      response.setHeader("Retry-After", 1);
     response.status(status).json({
       error: { code, message, details: null },
       requestId: request.requestId,
@@ -147,8 +184,14 @@ class HealthController {
     AuthModule,
     CatalogModule,
     OrderModule,
+    RealtimeModule,
+    RuntimeModule,
+    JobsModule,
+    TicketsModule,
+    OperationsModule,
   ],
   controllers: [HealthController],
+  providers: [{ provide: APP_INTERCEPTOR, useClass: RuntimeRateInterceptor }],
 })
 class ApiModule {}
 

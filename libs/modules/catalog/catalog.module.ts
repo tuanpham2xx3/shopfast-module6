@@ -39,13 +39,14 @@ import {
 } from "../auth/auth.guards";
 import { AuthModule } from "../auth/auth.module";
 import { CatalogService } from "./catalog.service";
+import { RuntimeModule, RuntimeServices } from "../runtime/runtime.module";
 
 class PageDto {
   @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(1)
-  @Max(1000000)
+  @Max(10000)
   page?: number;
   @IsOptional()
   @Type(() => Number)
@@ -117,6 +118,7 @@ class AdjustmentDto {
 
 @Injectable()
 class CatalogRuntime implements OnApplicationShutdown {
+  constructor(private readonly protections: RuntimeServices) {}
   private pending?: Promise<CatalogService>;
   private source?: DataSource;
   get(): Promise<CatalogService> {
@@ -132,7 +134,8 @@ class CatalogRuntime implements OnApplicationShutdown {
       process.env.DATABASE_URL!,
       process.env.DATABASE_SCHEMA ?? "public",
     ).initialize();
-    return new CatalogService(this.source, process.env.DATABASE_SCHEMA);
+    const { cache } = await this.protections.get();
+    return new CatalogService(this.source, process.env.DATABASE_SCHEMA, cache);
   }
   async onApplicationShutdown() {
     if (this.source?.isInitialized) await this.source.destroy();
@@ -215,7 +218,7 @@ class InventoryController {
   }
 }
 @Module({
-  imports: [AuthModule],
+  imports: [AuthModule, RuntimeModule],
   controllers: [CatalogController, CatalogAdminController, InventoryController],
   providers: [CatalogRuntime],
 })
