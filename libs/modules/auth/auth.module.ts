@@ -4,13 +4,10 @@ import {
   ForbiddenException,
   Get,
   HttpCode,
-  Injectable,
   Module,
-  OnApplicationShutdown,
   Post,
   Req,
   Res,
-  ServiceUnavailableException,
 } from "@nestjs/common";
 import {
   IsEmail,
@@ -20,9 +17,9 @@ import {
   MinLength,
 } from "class-validator";
 import { Request, Response } from "express";
-import { DataSource } from "typeorm";
-import { createDataSource } from "../../platform/src/database/data-source";
-import { AuthResult, AuthService } from "./auth.service";
+import { AccessGuard, RolesGuard, VerifiedGuard } from "./auth.guards";
+import { AuthRuntime } from "./auth.runtime";
+import { AuthResult } from "./auth.service";
 
 class RegisterDto {
   @IsEmail() email!: string;
@@ -38,29 +35,6 @@ class ConfirmDto {
 }
 class SendVerificationDto {
   @IsEmail() email!: string;
-}
-
-@Injectable()
-class AuthRuntime implements OnApplicationShutdown {
-  private source?: DataSource;
-  private service?: AuthService;
-  async get(): Promise<AuthService> {
-    if (this.service) return this.service;
-    if (!process.env.DATABASE_URL || !process.env.ACCESS_TOKEN_SECRET)
-      throw new ServiceUnavailableException();
-    this.source = await createDataSource(
-      process.env.DATABASE_URL,
-      process.env.DATABASE_SCHEMA ?? "public",
-    ).initialize();
-    this.service = new AuthService(this.source, {
-      accessTokenSecret: process.env.ACCESS_TOKEN_SECRET,
-      schema: process.env.DATABASE_SCHEMA,
-    });
-    return this.service;
-  }
-  async onApplicationShutdown() {
-    if (this.source?.isInitialized) await this.source.destroy();
-  }
 }
 
 function bearer(request: Request): string {
@@ -164,5 +138,9 @@ class AuthController {
   }
 }
 
-@Module({ controllers: [AuthController], providers: [AuthRuntime] })
+@Module({
+  controllers: [AuthController],
+  providers: [AuthRuntime, AccessGuard, VerifiedGuard, RolesGuard],
+  exports: [AuthRuntime, AccessGuard, VerifiedGuard, RolesGuard],
+})
 export class AuthModule {}
