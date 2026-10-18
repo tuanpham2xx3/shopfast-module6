@@ -1,6 +1,7 @@
 import React, { FormEvent, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import "./styles.css";
+import { Catalog } from "./catalog";
 
 const API = import.meta.env.VITE_API_BASE ?? "http://127.0.0.1:3000/api/v1";
 type User = {
@@ -31,6 +32,17 @@ async function api<T>(
   return body?.data as T;
 }
 
+let restoreRequest: Promise<{ accessToken: string; user: User }> | undefined;
+function restoreSession() {
+  if (!restoreRequest)
+    restoreRequest = api<{ accessToken: string; user: User }>("/auth/refresh", {
+      method: "POST",
+    }).finally(() => {
+      restoreRequest = undefined;
+    });
+  return restoreRequest;
+}
+
 function App() {
   const [mode, setMode] = useState<"register" | "verify" | "login" | "account">(
     "register",
@@ -39,12 +51,11 @@ function App() {
   const [user, setUser] = useState<User | null>(null);
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
+  const [screen, setScreen] = useState<"auth" | "catalog">("auth");
 
   useEffect(() => {
     let active = true;
-    api<{ accessToken: string; user: User }>("/auth/refresh", {
-      method: "POST",
-    })
+    restoreSession()
       .then((result) => {
         if (!active) return;
         setAccessToken(result.accessToken);
@@ -109,6 +120,24 @@ function App() {
     }
   }
 
+  if (screen === "catalog")
+    return (
+      <>
+        <nav className="topnav">
+          <strong>ShopFast</strong>
+          <button onClick={() => setScreen("auth")}>
+            {user ? "Tài khoản" : "Đăng nhập / Đăng ký"}
+          </button>
+        </nav>
+        <Catalog
+          api={api}
+          token={accessToken}
+          staff={Boolean(
+            user?.verified && ["ADMIN", "WAREHOUSE"].includes(user.role),
+          )}
+        />
+      </>
+    );
   return (
     <main className="shell">
       <section className="intro" aria-labelledby="brand-title">
@@ -132,6 +161,7 @@ function App() {
           <li>Đơn hàng có lịch sử trạng thái minh bạch</li>
           <li>AI chỉ đề xuất, con người xác nhận thao tác ghi</li>
         </ul>
+        <button onClick={() => setScreen("catalog")}>Khám phá sản phẩm</button>
       </section>
       <section className="auth" aria-live="polite">
         <header>

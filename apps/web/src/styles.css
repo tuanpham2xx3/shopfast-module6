@@ -1,3 +1,112 @@
+.topnav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 5vw;
+  background: #173f2a;
+  color: white;
+}
+.store {
+  max-width: 1280px;
+  margin: auto;
+  padding: 3rem 5vw;
+}
+.store-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+.store .eyebrow {
+  color: #33744a;
+}
+.filters {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) auto;
+  align-items: end;
+  gap: 1rem;
+  margin: 1rem 0 2rem;
+}
+select {
+  font: inherit;
+  min-height: 3rem;
+  border: 1px solid #aebbb2;
+  border-radius: 10px;
+  padding: 0.5rem;
+  width: 100%;
+  background: white;
+}
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+.product-grid article {
+  padding: 1.2rem;
+  background: white;
+  border-radius: 12px;
+}
+.product-grid h3 {
+  font-size: 1.2rem;
+  margin: 0.7rem 0;
+}
+.product-art {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4/3;
+  background: #dde9df;
+  color: #2d6440;
+  font-size: 4rem;
+  font-weight: 700;
+  border-radius: 8px;
+}
+.product-meta {
+  font-size: 0.85rem;
+  color: #607066;
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+.stock-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 2fr auto;
+  align-items: end;
+  gap: 1rem;
+  border-top: 1px solid #bccbbf;
+  padding: 1rem 0;
+}
+.product-detail {
+  padding: 1.5rem;
+  border: 1px solid #aebbb2;
+  background: white;
+  border-radius: 12px;
+}
+@media (max-width: 780px) {
+  .filters {
+    grid-template-columns: 1fr 1fr;
+  }
+  .product-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .stock-row {
+    grid-template-columns: 1fr;
+  }
+  .store-heading {
+    align-items: start;
+  }
+  .store-heading h2 {
+    font-size: 2rem;
+  }
+}
+@media (max-width: 440px) {
+  .product-grid {
+    grid-template-columns: 1fr;
+  }
+}
 :root {
   font-family: "Segoe UI", system-ui, sans-serif;
   color: #14221b;
