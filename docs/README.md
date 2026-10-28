@@ -39,6 +39,8 @@ Nguồn yêu cầu: `../Module 06 – Software Requirement Specification (SRS).d
 
 ## Đối chiếu gần nhất
 
+- [Cải thiện UI/UX và nguồn ảnh](15-ui-refresh.md).
+
 - [Runbook deploy, backup và harness](14-deployment-runbook.md).
 
 - [Plan bàn giao end-to-end và đầu vào cần cấp](13-end-to-end-delivery-plan.md).

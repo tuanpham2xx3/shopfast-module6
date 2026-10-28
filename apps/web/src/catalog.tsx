@@ -27,6 +27,85 @@ type Api = <T>(
   options?: RequestInit,
   token?: string,
 ) => Promise<T>;
+function ProductMedia({
+  name,
+  url,
+  sku,
+}: {
+  name: string;
+  url: string;
+  sku: string;
+}) {
+  const [failed, setFailed] = useState(false);
+  useEffect(() => setFailed(false), [url]);
+  let usable = false;
+  try {
+    const image = new URL(url);
+    usable =
+      image.protocol === "https:" &&
+      !["example.com", "example.test"].includes(image.hostname);
+  } catch {
+    /* Missing image uses the explicit placeholder below. */
+  }
+  const illustration =
+    (
+      {
+        "SF-AUDIO-1": "headphones",
+        "SF-AUDIO-2": "speaker",
+        "SF-AUDIO-3": "microphone",
+      } as Record<string, string>
+    )[sku] ??
+    (/micro|\bmic\b/i.test(name)
+      ? "microphone"
+      : /loa|speaker/i.test(name)
+        ? "speaker"
+        : /tai nghe|headphone/i.test(name)
+          ? "headphones"
+          : null);
+  const source =
+    usable && !failed
+      ? url
+      : illustration
+        ? `/images/products/${illustration}.jpg`
+        : null;
+  return (
+    <>
+      <div className="product-art">
+        {source ? (
+          <img
+            src={source}
+            alt={`${name}, ảnh minh họa`}
+            width="640"
+            height="480"
+            loading="lazy"
+            decoding="async"
+            referrerPolicy="no-referrer"
+            onError={() => setFailed(true)}
+          />
+        ) : (
+          <div
+            className="product-placeholder"
+            role="img"
+            aria-label={`Chưa có ảnh ${name}`}
+          >
+            <span aria-hidden="true">SF</span>
+            <small>Hình ảnh đang cập nhật</small>
+          </div>
+        )}
+      </div>
+      {source && (
+        <a
+          className="media-note"
+          href="/images/products/credits.html"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Ảnh minh họa · Nguồn ảnh
+        </a>
+      )}
+    </>
+  );
+}
 export function Catalog({
   api,
   token,
@@ -128,7 +207,7 @@ export function Catalog({
           <p className="eyebrow">Bộ sưu tập</p>
           <h2 id="catalog-title">Chọn món bạn cần.</h2>
         </div>
-        <span>{total} sản phẩm</span>
+        <span className="count-badge">{total} sản phẩm</span>
       </header>
       <form className="filters" onSubmit={filter}>
         <label>
@@ -180,22 +259,41 @@ export function Catalog({
         </p>
       )}
       {loading ? (
-        <p role="status">Đang tải sản phẩm…</p>
+        <div className="catalog-loading" role="status">
+          <span>Đang tải sản phẩm…</span>
+          <div className="product-grid" aria-hidden="true">
+            {[0, 1, 2].map((i) => (
+              <div className="product-skeleton" key={i}>
+                <div />
+                <span />
+                <span />
+              </div>
+            ))}
+          </div>
+        </div>
       ) : items.length === 0 ? (
-        <p>Chưa có sản phẩm phù hợp.</p>
+        <p className="empty-state">
+          Chưa có sản phẩm phù hợp. Thử thay đổi bộ lọc để tìm thêm lựa chọn.
+        </p>
       ) : (
         <div className="product-grid">
           {items.map((item) => (
-            <article key={item.id}>
-              <div className="product-art" aria-hidden="true">
-                {item.category.name.slice(0, 1)}
-              </div>
+            <article className="product-card" key={item.id}>
+              <ProductMedia
+                name={item.name}
+                url={item.imageUrl}
+                sku={item.sku}
+              />
               <p className="product-meta">
                 {item.brand.name} / {item.sku}
               </p>
               <h3>{item.name}</h3>
-              <p>{item.price.toLocaleString("vi-VN")} ₫</p>
-              <p className="product-meta">
+              <p className="product-price">
+                {item.price.toLocaleString("vi-VN")} ₫
+              </p>
+              <p
+                className={`stock-label ${item.available > 0 ? "in-stock" : "out-of-stock"}`}
+              >
                 {item.available > 0
                   ? `Còn ${item.available} sản phẩm`
                   : "Tạm hết hàng"}

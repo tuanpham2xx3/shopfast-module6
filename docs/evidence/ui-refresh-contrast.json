@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "executedAt": "2026-10-28T08:10:52.433Z",
+  "results": [
+    {
+      "theme": "light",
+      "minButtonContrast": 5.0058035785258435,
+      "checkedButtons": 7
+    },
+    {
+      "theme": "dark",
+      "minButtonContrast": 6.693892077320755,
+      "checkedButtons": 7
+    }
+  ],
+  "allCatalogImagesLoaded": true,
+  "mobileNoOverflow": true
+}

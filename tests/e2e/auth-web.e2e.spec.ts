@@ -8,6 +8,52 @@ const user = {
   verified: false,
 };
 
+test("preserves password input and theme preference on mobile", async ({
+  page,
+}) => {
+  await page.route("**/api/v1/auth/refresh", (route) =>
+    route.fulfill({
+      status: 401,
+      contentType: "application/json",
+      body: JSON.stringify({ error: { message: "Unauthorized" } }),
+    }),
+  );
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  const password = page.getByLabel("Mật khẩu", { exact: true });
+  await password.fill("SyntheticUiPassword!2026");
+  await page
+    .getByRole("button", { name: "Hiện mật khẩu", exact: true })
+    .click();
+  await expect(password).toHaveAttribute("type", "text");
+  await expect(password).toHaveValue("SyntheticUiPassword!2026");
+  await page
+    .getByRole("button", { name: "Đã có tài khoản? Đăng nhập", exact: true })
+    .click();
+  await expect(password).toHaveAttribute("type", "password");
+  await page
+    .getByRole("button", { name: "Hiện mật khẩu", exact: true })
+    .click();
+  await page.getByRole("button", { name: "Ẩn mật khẩu", exact: true }).click();
+  await expect(password).toHaveAttribute("type", "password");
+  await page
+    .getByRole("button", { name: "Chuyển sang giao diện tối", exact: true })
+    .click();
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  expect(
+    await page
+      .getByRole("button", { name: "Tạo tài khoản", exact: true })
+      .evaluate((element) => getComputedStyle(element).transitionDuration),
+  ).toBe("0s");
+});
+
 test("registers, verifies and shows the current account", async ({ page }) => {
   await page.route("**/api/v1/auth/refresh", (route) =>
     route.fulfill({
@@ -41,7 +87,7 @@ test("registers, verifies and shows the current account", async ({ page }) => {
   await page.goto("/");
   await page.getByLabel("Họ tên").fill("Nguyễn Demo");
   await page.getByLabel("Email").fill("browser@example.test");
-  await page.getByLabel("Mật khẩu").fill("TestPassword!2026");
+  await page.getByLabel("Mật khẩu", { exact: true }).fill("TestPassword!2026");
   await page.getByRole("button", { name: "Tạo tài khoản" }).click();
 
   await expect(

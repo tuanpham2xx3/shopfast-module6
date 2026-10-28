@@ -20,7 +20,9 @@ test("real browser registers, verifies, creates catalog and adjusts stock", asyn
     await page.goto("/");
     await page.getByLabel("Họ tên").fill("Browser Admin");
     await page.getByLabel("Email").fill(email);
-    await page.getByLabel("Mật khẩu").fill("BrowserPassword!2026");
+    await page
+      .getByLabel("Mật khẩu", { exact: true })
+      .fill("BrowserPassword!2026");
     await page
       .getByRole("button", { name: "Tạo tài khoản", exact: true })
       .click();
@@ -79,6 +81,14 @@ test("real browser registers, verifies, creates catalog and adjusts stock", asyn
     await expect(
       page.getByRole("heading", { name: "Live headphones", exact: true }),
     ).toBeVisible();
+    await expect
+      .poll(() =>
+        page
+          .locator(".product-card img")
+          .first()
+          .evaluate((image) => (image as HTMLImageElement).naturalWidth),
+      )
+      .toBeGreaterThan(0);
     await page.getByLabel("Thay đổi").fill("7");
     await page.getByLabel("Lý do").fill("Browser initial stock");
     await page.getByRole("button", { name: "Lưu điều chỉnh" }).click();
@@ -273,6 +283,37 @@ test("real browser registers, verifies, creates catalog and adjusts stock", asyn
     await expect(
       page.getByRole("heading", { name: "Quản trị ShopFast", exact: true }),
     ).toBeVisible();
+    await expect.poll(() => page.evaluate(() => scrollY)).toBe(0);
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
+    await expect(
+      page
+        .locator(".admin-grid article")
+        .filter({ hasText: "Live headphones" }),
+    ).toBeVisible();
+    await page.evaluate(() => document.fonts.ready);
+    await page.screenshot({
+      path: "docs/evidence/ui-refresh-admin-mobile.png",
+      fullPage: true,
+      animations: "disabled",
+    });
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.screenshot({
+      path: "docs/evidence/ui-refresh-admin-desktop.png",
+      fullPage: true,
+      animations: "disabled",
+    });
+    await page
+      .getByRole("button", { name: "Chuyển sang giao diện tối", exact: true })
+      .click();
+    await page.screenshot({
+      path: "docs/evidence/ui-refresh-admin-dark.png",
+      fullPage: true,
+      animations: "disabled",
+    });
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,

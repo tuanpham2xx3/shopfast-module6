@@ -1,0 +1,30 @@
+[
+  {
+    "file": "headphones.jpg",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Sony-MDR-CD580-Headphones.jpg",
+    "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/ff/Sony-MDR-CD580-Headphones.jpg/500px-Sony-MDR-CD580-Headphones.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "author": "Evan-Amos",
+    "license": "Public domain",
+    "changes": "Unmodified Wikimedia thumbnail; illustrative demo product image",
+    "bytes": 56287
+  },
+  {
+    "file": "speaker.jpg",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:JBL_GO2_Bluetooth_speaker_00_10_21_131000.jpeg",
+    "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7e/JBL_GO2_Bluetooth_speaker_00_10_21_131000.jpeg/500px-JBL_GO2_Bluetooth_speaker_00_10_21_131000.jpeg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "author": "Pittigrilli",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "changes": "Unmodified Wikimedia thumbnail; illustrative demo product image",
+    "bytes": 49520
+  },
+  {
+    "file": "microphone.jpg",
+    "sourcePage": "https://commons.wikimedia.org/wiki/File:Yeti-USB-Microphone.jpg",
+    "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d7/Yeti-USB-Microphone.jpg/500px-Yeti-USB-Microphone.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "author": "Evan-Amos",
+    "license": "Public domain",
+    "changes": "Unmodified Wikimedia thumbnail; illustrative demo product image",
+    "bytes": 78122
+  }
+]
