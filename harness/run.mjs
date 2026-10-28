@@ -90,6 +90,12 @@ switch (profile) {
     break;
   }
   case "ci":
+    await command("HARNESS-SOURCE", ["harness/check-source.mjs"]);
+    await command("HARNESS-FORMAT", [
+      "node_modules/prettier/bin/prettier.cjs",
+      "--check",
+      "harness/*.{mjs,cjs,json}",
+    ]);
     await command("HARNESS-SELFTEST", [
       "--test",
       "harness/core.test.mjs",

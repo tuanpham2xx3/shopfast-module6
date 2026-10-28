@@ -41,6 +41,7 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      - run: npm run harness:check
       - run: node --test harness/core.test.mjs harness/evidence.test.mjs harness/remote-evidence.test.mjs
       - name: Validate deployment scripts
         run: for script in deploy/*.sh; do bash -n "$script"; done
