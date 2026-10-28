@@ -37,6 +37,7 @@ export function CartDropdown({
   const root = useRef<HTMLDivElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   const panelId = useId();
+  const loaded = useRef(false);
   useEffect(() => {
     if (!open) return;
     const outside = (event: PointerEvent) => {
@@ -62,7 +63,10 @@ export function CartDropdown({
       setError("");
       api<{ items: Item[] }>("/cart", {}, token)
         .then((result) => {
-          if (active) setItems(result.items);
+          if (active) {
+            loaded.current = true;
+            setItems(result.items);
+          }
         })
         .catch((e) => {
           if (active) setError(e.message);
@@ -76,6 +80,7 @@ export function CartDropdown({
     };
   }, [open, canShop, token, revision, retry]);
   async function update(item: Item, quantity: number) {
+    if (busy || loading) return;
     setBusy(true);
     setError("");
     try {
@@ -188,7 +193,7 @@ export function CartDropdown({
                   </button>
                 </div>
               )}
-              {loading ? (
+              {loading && !loaded.current ? (
                 <p role="status" className="cart-menu-empty">
                   Đang tải giỏ hàng…
                 </p>
@@ -207,7 +212,7 @@ export function CartDropdown({
                           type="button"
                           className="switch"
                           aria-label={`Xóa ${item.name} khỏi giỏ nhanh`}
-                          disabled={busy || loading}
+                          aria-disabled={busy || loading}
                           onClick={() => void update(item, 0)}
                         >
                           Xóa
@@ -221,7 +226,8 @@ export function CartDropdown({
                           <button
                             type="button"
                             aria-label={`Giảm số lượng ${item.name}`}
-                            disabled={busy || loading || item.quantity <= 1}
+                            disabled={item.quantity <= 1}
+                            aria-disabled={busy || loading}
                             onClick={() => void update(item, item.quantity - 1)}
                           >
                             −
@@ -233,11 +239,9 @@ export function CartDropdown({
                             type="button"
                             aria-label={`Tăng số lượng ${item.name}`}
                             disabled={
-                              busy ||
-                              loading ||
-                              !item.active ||
-                              item.quantity >= item.available
+                              !item.active || item.quantity >= item.available
                             }
+                            aria-disabled={busy || loading}
                             onClick={() => void update(item, item.quantity + 1)}
                           >
                             +
@@ -254,7 +258,7 @@ export function CartDropdown({
                   ))}
                 </ul>
               )}
-              {!loading && items.length > 0 && (
+              {loaded.current && items.length > 0 && (
                 <footer>
                   <div>
                     <span>Tạm tính</span>
@@ -271,7 +275,7 @@ export function CartDropdown({
                   <button
                     type="button"
                     className="cart-checkout"
-                    disabled={busy || Boolean(error)}
+                    disabled={busy || loading || Boolean(error)}
                     onClick={() => {
                       setOpen(false);
                       onCheckout();

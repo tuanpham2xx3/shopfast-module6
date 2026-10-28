@@ -50,7 +50,6 @@ function App() {
   const canShop = Boolean(user?.verified && user.role === "CUSTOMER");
   useEffect(() => {
     let active = true;
-    setCartCount(null);
     if (canShop) {
       api<{ items: { quantity: number }[] }>("/cart", {}, accessToken)
         .then((result) => {
@@ -68,6 +67,9 @@ function App() {
     };
   }, [canShop, user?.id, accessToken, cartRevision, screen]);
   useEffect(() => {
+    setCartCount(null);
+  }, [user?.id]);
+  useEffect(() => {
     if (cartRequested && canShop) {
       setScreen("cart");
       setCartRequested(false);
@@ -76,6 +78,17 @@ function App() {
   const [rateUntil, setRateUntil] = useState(0);
   const [now, setNow] = useState(Date.now());
   const [resendUntil, setResendUntil] = useState(0);
+  useEffect(() => {
+    const until = Math.max(rateUntil, resendUntil);
+    if (until <= Date.now()) return;
+    setNow(Date.now());
+    const timer = setInterval(() => {
+      const time = Date.now();
+      setNow(time);
+      if (time >= until) clearInterval(timer);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [rateUntil, resendUntil]);
   useEffect(() => {
     setShowPassword(false);
   }, [mode]);
@@ -112,10 +125,8 @@ function App() {
         }
       })
       .catch(() => undefined);
-    const timer = setInterval(() => setNow(Date.now()), 1000);
     return () => {
       active = false;
-      clearInterval(timer);
       window.removeEventListener("shopfast:session", session);
       window.removeEventListener("shopfast:rate-limited", rate);
     };
@@ -236,6 +247,7 @@ function App() {
         </button>
         {(!user || user.role === "CUSTOMER") && (
           <CartDropdown
+            key={user?.id ?? "guest"}
             token={accessToken}
             canShop={canShop}
             count={cartCount}
