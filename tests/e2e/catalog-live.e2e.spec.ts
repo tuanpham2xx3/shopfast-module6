@@ -73,7 +73,7 @@ test("UI-01 RT-04 real browser purchase, role operations and offline socket reco
       },
     });
     expect(product.ok()).toBeTruthy();
-    await page.reload();
+    await page.goto("/account");
     await expect(
       page.getByRole("heading", { name: "Chào Browser Admin" }),
     ).toBeVisible();
@@ -89,9 +89,13 @@ test("UI-01 RT-04 real browser purchase, role operations and offline socket reco
           .evaluate((image) => (image as HTMLImageElement).naturalWidth),
       )
       .toBeGreaterThan(0);
+    await page.getByRole("button", { name: "Kho", exact: true }).click();
+    await expect(page).toHaveURL(/\/staff\/inventory$/);
     await page.getByLabel("Thay đổi").fill("7");
     await page.getByLabel("Lý do").fill("Browser initial stock");
     await page.getByRole("button", { name: "Lưu điều chỉnh" }).click();
+    await expect(page.getByText(/Tồn 7/)).toBeVisible();
+    await page.getByRole("button", { name: "Cửa hàng", exact: true }).click();
     await expect(
       page.getByText("Còn 7 sản phẩm", { exact: true }),
     ).toBeVisible();
@@ -108,7 +112,7 @@ test("UI-01 RT-04 real browser purchase, role operations and offline socket reco
       `UPDATE "${schema}".users SET role='CUSTOMER' WHERE email=$1`,
       [email],
     );
-    await page.reload();
+    await page.goto("/account");
     await expect(
       page.getByRole("heading", { name: "Chào Browser Admin" }),
     ).toBeVisible();
@@ -281,11 +285,11 @@ test("UI-01 RT-04 real browser purchase, role operations and offline socket reco
     // This accelerated test reuses one synthetic account for every role. Respect
     // the conservative per-user fallback window instead of bypassing the limiter.
     await page.waitForTimeout(61000);
-    await page.reload();
+    await page.goto("/account");
     await expect(
       page.getByRole("heading", { name: "Chào Browser Admin" }),
     ).toBeVisible();
-    await page.getByRole("button", { name: "Khám phá sản phẩm" }).click();
+    await page.getByRole("button", { name: "Đơn hàng", exact: true }).click();
     await page.getByRole("button").filter({ hasText: "SHIPPING" }).click();
     for (const target of ["DELIVERED"]) {
       await page
@@ -306,7 +310,7 @@ test("UI-01 RT-04 real browser purchase, role operations and offline socket reco
       `UPDATE "${schema}".users SET role='CUSTOMER' WHERE email=$1`,
       [email],
     );
-    await page.reload();
+    await page.goto("/account");
     await expect(
       page.getByRole("heading", { name: "Chào Browser Admin" }),
     ).toBeVisible();
@@ -327,7 +331,7 @@ test("UI-01 RT-04 real browser purchase, role operations and offline socket reco
       `UPDATE "${schema}".users SET role='SUPPORT' WHERE email=$1`,
       [email],
     );
-    await page.reload();
+    await page.goto("/account");
     await expect(
       page.getByRole("heading", { name: "Chào Browser Admin" }),
     ).toBeVisible();
@@ -361,7 +365,7 @@ test("UI-01 RT-04 real browser purchase, role operations and offline socket reco
       `UPDATE "${schema}".users SET role='ADMIN' WHERE email=$1`,
       [email],
     );
-    await page.reload();
+    await page.goto("/account");
     await expect(
       page.getByRole("heading", { name: "Chào Browser Admin" }),
     ).toBeVisible();
@@ -372,6 +376,7 @@ test("UI-01 RT-04 real browser purchase, role operations and offline socket reco
       page.getByRole("heading", { name: "Quản trị ShopFast", exact: true }),
     ).toBeVisible();
     await expect.poll(() => page.evaluate(() => scrollY)).toBe(0);
+    await page.getByRole("link", { name: "Vận hành", exact: true }).click();
     if (process.env.TEST_REDIS_URL) {
       const [queueResponse] = await Promise.all([
         page.waitForResponse((response) =>
@@ -407,6 +412,9 @@ test("UI-01 RT-04 real browser purchase, role operations and offline socket reco
         () => document.documentElement.scrollWidth <= innerWidth,
       ),
     ).toBe(true);
+    await page
+      .getByRole("link", { name: "Danh mục và sản phẩm", exact: true })
+      .click();
     await expect(
       page
         .locator(".admin-grid article")

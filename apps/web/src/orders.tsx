@@ -40,6 +40,10 @@ export function Orders({
   revision,
   onChange,
   showCart = true,
+  routeId,
+  basePath,
+  onNavigate,
+  checkoutEnabled = true,
 }: {
   api: Api;
   token: string;
@@ -47,6 +51,10 @@ export function Orders({
   revision: number;
   onChange: () => void;
   showCart?: boolean;
+  routeId?: string;
+  basePath?: string;
+  onNavigate?: (path: string) => void;
+  checkoutEnabled?: boolean;
 }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [cartLoading, setCartLoading] = useState(false);
@@ -63,6 +71,34 @@ export function Orders({
   const [statusFilter, setStatusFilter] = useState("");
   const selectedId = selected?.id;
   const prefix = staff ? "/staff/orders" : "/orders";
+  useEffect(() => {
+    if (!onNavigate) return;
+    let active = true;
+    setError("");
+    if (!routeId) {
+      setSelected(null);
+      return;
+    }
+    setSelected((current) => (current?.id === routeId ? current : null));
+    api<Order>(`${prefix}/${encodeURIComponent(routeId)}`, {}, token)
+      .then((order) => {
+        if (active)
+          setSelected((current) =>
+            current?.id === order.id && current.version > order.version
+              ? current
+              : order,
+          );
+      })
+      .catch((e) => {
+        if (active) {
+          setSelected(null);
+          setError(e.message);
+        }
+      });
+    return () => {
+      active = false;
+    };
+  }, [api, token, prefix, routeId, Boolean(onNavigate)]);
   useEffect(() => {
     let active = true;
     api<{ items: Order[]; total: number }>(
@@ -298,6 +334,7 @@ export function Orders({
         token,
       );
       setSelected(order);
+      onNavigate?.(`${basePath ?? "/orders"}/${encodeURIComponent(order.id)}`);
       mutationKeys.delete(attempt);
       onChange();
     } catch (e) {
@@ -308,6 +345,10 @@ export function Orders({
     }
   }
   async function detail(order: Order) {
+    if (onNavigate) {
+      onNavigate(`${basePath ?? prefix}/${encodeURIComponent(order.id)}`);
+      return;
+    }
     try {
       setSelected(await api<Order>(`${prefix}/${order.id}`, {}, token));
     } catch (e) {
@@ -412,7 +453,15 @@ export function Orders({
               ))
             )}
           </div>
-          {!cartLoading && !cartError && cart.length > 0 && (
+          {!cartLoading &&
+            !cartError &&
+            cart.length > 0 &&
+            !checkoutEnabled && (
+              <button onClick={() => onNavigate?.("/checkout")}>
+                Tiến hành thanh toán
+              </button>
+            )}
+          {!cartLoading && !cartError && cart.length > 0 && checkoutEnabled && (
             <form className="checkout-form" onSubmit={checkout}>
               <h3>Thông tin nhận hàng</h3>
               <label>
@@ -514,7 +563,12 @@ export function Orders({
         <section className="product-detail" aria-label="Chi tiết đơn hàng">
           <h3>Đơn {selected.code}</h3>
           <p role="status">{tracking}</p>
-          <button className="switch" onClick={() => setSelected(null)}>
+          <button
+            className="switch"
+            onClick={() =>
+              onNavigate ? onNavigate(basePath ?? prefix) : setSelected(null)
+            }
+          >
             Đóng đơn
           </button>
           <p>

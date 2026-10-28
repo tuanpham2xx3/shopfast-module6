@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
 type Api = <T>(
   path: string,
   options?: RequestInit,
@@ -18,7 +19,15 @@ type Failed = {
   reason?: string;
   businessKey?: string;
 };
-export function Admin({ api, token }: { api: Api; token: string }) {
+export function Admin({
+  api,
+  token,
+  panel = "catalog",
+}: {
+  api: Api;
+  token: string;
+  panel?: string;
+}) {
   const [categories, setCategories] = useState<Taxonomy[]>([]);
   const [brands, setBrands] = useState<Taxonomy[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
@@ -139,238 +148,253 @@ export function Admin({ api, token }: { api: Api; token: string }) {
   return (
     <main className="workspace">
       <h1 className="workspace-title">Quản trị ShopFast</h1>
+      <nav className="section-nav" aria-label="Khu vực quản trị">
+        <NavLink to="/admin/catalog">Danh mục và sản phẩm</NavLink>
+        <NavLink to="/admin/promotions">Khuyến mãi</NavLink>
+        <NavLink to="/admin/operations">Vận hành</NavLink>
+      </nav>
       {message && (
         <p role="status" className="message">
           {message}
         </p>
       )}
       <div className="admin-grid">
-        {["categories", "brands"].map((kind) => (
-          <form
-            className="panel"
-            key={kind}
-            onSubmit={(e) => taxonomy(e, kind)}
-          >
-            <h2>{kind === "categories" ? "Danh mục" : "Thương hiệu"}</h2>
-            <p>
-              Để tạo mới, để trống ID. Khi sửa, điền ID và tên; trạng thái ảnh
-              hưởng toàn bộ sản phẩm liên quan.
-            </p>
-            <label>
-              ID khi sửa
-              <input name="id" />
-            </label>
-            <label>
-              Tên
-              <input name="name" required maxLength={100} />
-            </label>
-            <label>
-              Slug khi tạo
-              <input name="slug" pattern="[a-z0-9]+(-[a-z0-9]+)*" />
-            </label>
-            <label>
-              Trạng thái
-              <select name="active">
-                <option value="true">Hoạt động</option>
-                <option value="false">Ngừng hoạt động</option>
-              </select>
-            </label>
-            <button disabled={busy}>
-              Lưu {kind === "categories" ? "danh mục" : "thương hiệu"}
-            </button>
-            <ul>
-              {(kind === "categories" ? categories : brands).map((t) => (
-                <li key={t.id}>
-                  {t.name} <code>{t.id}</code>
-                </li>
-              ))}
-            </ul>
-          </form>
-        ))}
-        <form className="panel" onSubmit={product}>
-          <h2>Sản phẩm</h2>
-          <label>
-            ID khi sửa
-            <input name="id" />
-          </label>
-          <label>
-            Phiên bản khi sửa
-            <input name="expectedVersion" type="number" min={1} />
-          </label>
-          <label>
-            SKU khi tạo
-            <input name="sku" />
-          </label>
-          <label>
-            Slug
-            <input name="slug" required pattern="[a-z0-9]+(-[a-z0-9]+)*" />
-          </label>
-          <label>
-            Tên sản phẩm
-            <input name="name" required maxLength={200} />
-          </label>
-          <label>
-            Mô tả
-            <textarea name="description" maxLength={10000} />
-          </label>
-          <label>
-            URL ảnh
-            <input name="imageUrl" type="url" required />
-          </label>
-          <label>
-            Danh mục
-            <select name="categoryId" required>
-              {categories.map((c) => (
-                <option value={c.id} key={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            Thương hiệu
-            <select name="brandId" required>
-              {brands.map((b) => (
-                <option value={b.id} key={b.id}>
-                  {b.name}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            Giá VND
-            <input
-              name="price"
-              type="number"
-              min={0}
-              max={Number.MAX_SAFE_INTEGER}
-              step={1}
-              required
-            />
-          </label>
-          <label>
-            Trạng thái
-            <select name="active">
-              <option value="true">Hoạt động</option>
-              <option value="false">Ngừng bán</option>
-            </select>
-          </label>
-          <button disabled={busy}>Lưu sản phẩm</button>
-        </form>
-        <section className="panel">
-          <h2>Sản phẩm đang bán</h2>
-          {products.map((p) => (
-            <article key={p.id}>
-              <strong>{p.name}</strong>
-              <p>
-                {p.sku} · {p.price.toLocaleString("vi-VN")} ₫ · v{p.version}
-              </p>
-              <code>{p.id}</code>
-            </article>
-          ))}
-        </section>
-        <form className="panel" onSubmit={promotion}>
-          <h2>Tạo khuyến mãi</h2>
-          <p>
-            Giảm cố định. Mỗi khách dùng tối đa một lần; hủy/hết hạn không hoàn
-            quota.
-          </p>
-          <label>
-            Mã
-            <input name="code" required maxLength={80} />
-          </label>
-          <label>
-            Số tiền giảm
-            <input name="amount" type="number" min={1} required />
-          </label>
-          <label>
-            Giá trị đơn tối thiểu
-            <input
-              name="minOrderAmount"
-              type="number"
-              min={0}
-              defaultValue={0}
-              required
-            />
-          </label>
-          <label>
-            Tổng lượt
-            <input name="totalQuota" type="number" min={1} required />
-          </label>
-          <label>
-            Bắt đầu
-            <input name="startsAt" type="datetime-local" required />
-          </label>
-          <label>
-            Kết thúc
-            <input name="endsAt" type="datetime-local" required />
-          </label>
-          <button disabled={busy}>Tạo khuyến mãi</button>
-        </form>
-        <form
-          className="panel"
-          onSubmit={(e) => {
-            e.preventDefault();
-            const d = new FormData(e.currentTarget);
-            void save(
-              `/admin/promotions/${d.get("id")}`,
-              { active: d.get("active") === "true" },
-              "PATCH",
-            );
-          }}
-        >
-          <h2>Trạng thái khuyến mãi</h2>
-          <label>
-            ID khuyến mãi
-            <input name="id" required />
-          </label>
-          <label>
-            Trạng thái
-            <select name="active">
-              <option value="true">Hoạt động</option>
-              <option value="false">Dừng</option>
-            </select>
-          </label>
-          <button disabled={busy}>Lưu trạng thái mã</button>
-        </form>
-      </div>
-      <section className="panel">
-        <h2>Vận hành và tác vụ nền</h2>
-        <button onClick={refreshOps}>Kiểm tra dịch vụ và queue</button>
-        <div className="admin-grid">
-          <pre>
-            {ops === null
-              ? "Chưa kiểm tra health"
-              : JSON.stringify(ops, null, 2)}
-          </pre>
-          <pre>
-            {queues === null
-              ? "Chưa kiểm tra queue"
-              : JSON.stringify(queues, null, 2)}
-          </pre>
-        </div>
-        <h3>Tác vụ lỗi</h3>
-        {failed.length === 0 ? (
-          <p>Chưa tải hoặc không có tác vụ lỗi.</p>
-        ) : (
-          failed.map((job) => (
-            <article key={job.id}>
-              <p>
-                {job.type} · {job.reason}
-              </p>
-              <button
-                disabled={busy}
-                onClick={async () => {
-                  await save(`/admin/failed-jobs/${job.id}/retry`, {});
-                  await refreshOps();
-                }}
+        {panel === "catalog" && (
+          <>
+            {["categories", "brands"].map((kind) => (
+              <form
+                className="panel"
+                key={kind}
+                onSubmit={(e) => taxonomy(e, kind)}
               >
-                Thử lại tác vụ {job.id}
-              </button>
-            </article>
-          ))
+                <h2>{kind === "categories" ? "Danh mục" : "Thương hiệu"}</h2>
+                <p>
+                  Để tạo mới, để trống ID. Khi sửa, điền ID và tên; trạng thái
+                  ảnh hưởng toàn bộ sản phẩm liên quan.
+                </p>
+                <label>
+                  ID khi sửa
+                  <input name="id" />
+                </label>
+                <label>
+                  Tên
+                  <input name="name" required maxLength={100} />
+                </label>
+                <label>
+                  Slug khi tạo
+                  <input name="slug" pattern="[a-z0-9]+(-[a-z0-9]+)*" />
+                </label>
+                <label>
+                  Trạng thái
+                  <select name="active">
+                    <option value="true">Hoạt động</option>
+                    <option value="false">Ngừng hoạt động</option>
+                  </select>
+                </label>
+                <button disabled={busy}>
+                  Lưu {kind === "categories" ? "danh mục" : "thương hiệu"}
+                </button>
+                <ul>
+                  {(kind === "categories" ? categories : brands).map((t) => (
+                    <li key={t.id}>
+                      {t.name} <code>{t.id}</code>
+                    </li>
+                  ))}
+                </ul>
+              </form>
+            ))}
+            <form className="panel" onSubmit={product}>
+              <h2>Sản phẩm</h2>
+              <label>
+                ID khi sửa
+                <input name="id" />
+              </label>
+              <label>
+                Phiên bản khi sửa
+                <input name="expectedVersion" type="number" min={1} />
+              </label>
+              <label>
+                SKU khi tạo
+                <input name="sku" />
+              </label>
+              <label>
+                Slug
+                <input name="slug" required pattern="[a-z0-9]+(-[a-z0-9]+)*" />
+              </label>
+              <label>
+                Tên sản phẩm
+                <input name="name" required maxLength={200} />
+              </label>
+              <label>
+                Mô tả
+                <textarea name="description" maxLength={10000} />
+              </label>
+              <label>
+                URL ảnh
+                <input name="imageUrl" type="url" required />
+              </label>
+              <label>
+                Danh mục
+                <select name="categoryId" required>
+                  {categories.map((c) => (
+                    <option value={c.id} key={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Thương hiệu
+                <select name="brandId" required>
+                  {brands.map((b) => (
+                    <option value={b.id} key={b.id}>
+                      {b.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Giá VND
+                <input
+                  name="price"
+                  type="number"
+                  min={0}
+                  max={Number.MAX_SAFE_INTEGER}
+                  step={1}
+                  required
+                />
+              </label>
+              <label>
+                Trạng thái
+                <select name="active">
+                  <option value="true">Hoạt động</option>
+                  <option value="false">Ngừng bán</option>
+                </select>
+              </label>
+              <button disabled={busy}>Lưu sản phẩm</button>
+            </form>
+            <section className="panel">
+              <h2>Sản phẩm đang bán</h2>
+              {products.map((p) => (
+                <article key={p.id}>
+                  <strong>{p.name}</strong>
+                  <p>
+                    {p.sku} · {p.price.toLocaleString("vi-VN")} ₫ · v{p.version}
+                  </p>
+                  <code>{p.id}</code>
+                </article>
+              ))}
+            </section>
+          </>
         )}
-      </section>
+        {panel === "promotions" && (
+          <>
+            <form className="panel" onSubmit={promotion}>
+              <h2>Tạo khuyến mãi</h2>
+              <p>
+                Giảm cố định. Mỗi khách dùng tối đa một lần; hủy/hết hạn không
+                hoàn quota.
+              </p>
+              <label>
+                Mã
+                <input name="code" required maxLength={80} />
+              </label>
+              <label>
+                Số tiền giảm
+                <input name="amount" type="number" min={1} required />
+              </label>
+              <label>
+                Giá trị đơn tối thiểu
+                <input
+                  name="minOrderAmount"
+                  type="number"
+                  min={0}
+                  defaultValue={0}
+                  required
+                />
+              </label>
+              <label>
+                Tổng lượt
+                <input name="totalQuota" type="number" min={1} required />
+              </label>
+              <label>
+                Bắt đầu
+                <input name="startsAt" type="datetime-local" required />
+              </label>
+              <label>
+                Kết thúc
+                <input name="endsAt" type="datetime-local" required />
+              </label>
+              <button disabled={busy}>Tạo khuyến mãi</button>
+            </form>
+            <form
+              className="panel"
+              onSubmit={(e) => {
+                e.preventDefault();
+                const d = new FormData(e.currentTarget);
+                void save(
+                  `/admin/promotions/${d.get("id")}`,
+                  { active: d.get("active") === "true" },
+                  "PATCH",
+                );
+              }}
+            >
+              <h2>Trạng thái khuyến mãi</h2>
+              <label>
+                ID khuyến mãi
+                <input name="id" required />
+              </label>
+              <label>
+                Trạng thái
+                <select name="active">
+                  <option value="true">Hoạt động</option>
+                  <option value="false">Dừng</option>
+                </select>
+              </label>
+              <button disabled={busy}>Lưu trạng thái mã</button>
+            </form>
+          </>
+        )}
+      </div>
+      {panel === "operations" && (
+        <section className="panel">
+          <h2>Vận hành và tác vụ nền</h2>
+          <button onClick={refreshOps}>Kiểm tra dịch vụ và queue</button>
+          <div className="admin-grid">
+            <pre>
+              {ops === null
+                ? "Chưa kiểm tra health"
+                : JSON.stringify(ops, null, 2)}
+            </pre>
+            <pre>
+              {queues === null
+                ? "Chưa kiểm tra queue"
+                : JSON.stringify(queues, null, 2)}
+            </pre>
+          </div>
+          <h3>Tác vụ lỗi</h3>
+          {failed.length === 0 ? (
+            <p>Chưa tải hoặc không có tác vụ lỗi.</p>
+          ) : (
+            failed.map((job) => (
+              <article key={job.id}>
+                <p>
+                  {job.type} · {job.reason}
+                </p>
+                <button
+                  disabled={busy}
+                  onClick={async () => {
+                    await save(`/admin/failed-jobs/${job.id}/retry`, {});
+                    await refreshOps();
+                  }}
+                >
+                  Thử lại tác vụ {job.id}
+                </button>
+              </article>
+            ))
+          )}
+        </section>
+      )}
     </main>
   );
 }

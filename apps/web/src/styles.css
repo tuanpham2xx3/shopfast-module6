@@ -1299,6 +1299,22 @@ pre {
   padding: 12px 0;
   font-size: 13px;
 }
+.section-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 16px 0 24px;
+}
+.section-nav a {
+  padding: 10px 14px;
+  border-radius: 10px;
+  color: var(--text);
+  text-decoration: none;
+}
+.section-nav a[aria-current="page"] {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
 .cart-dropdown button[aria-disabled="true"] {
   opacity: 0.55;
   cursor: wait;

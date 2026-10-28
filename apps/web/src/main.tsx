@@ -11,8 +11,50 @@ import { Admin } from "./admin";
 import { Orders } from "./orders";
 import { CartDropdown } from "./cart-dropdown";
 import { api, restoreSession, User } from "./client";
+import {
+  BrowserRouter,
+  Navigate,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
+import { AuthMode, Screen, resolveRoute, safeReturnTo } from "./routing";
 
 function App() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const route = resolveRoute(location.pathname);
+  const screen = route.screen;
+  const [restoring, setRestoring] = useState(true);
+  function setScreen(next: Screen) {
+    const paths: Partial<Record<Screen, string>> = {
+      catalog: "/products",
+      cart: "/checkout",
+      orders: user?.role === "CUSTOMER" ? "/orders" : "/staff/orders",
+      inventory: "/staff/inventory",
+      tickets:
+        user && ["SUPPORT", "ADMIN"].includes(user.role)
+          ? "/staff/tickets"
+          : "/tickets",
+      admin: "/admin/catalog",
+      auth: user ? "/account" : "/login",
+    };
+    navigate(paths[next] ?? "/products");
+  }
+  function setMode(next: AuthMode) {
+    const paths = {
+      login: "/login",
+      register: "/register",
+      verify: "/verify-email",
+      account: "/account",
+    };
+    const target = new URLSearchParams(window.location.search).get("next");
+    navigate(
+      next === "account" && target
+        ? safeReturnTo(target)
+        : paths[next] +
+            (target ? "?next=" + encodeURIComponent(safeReturnTo(target)) : ""),
+    );
+  }
   const [theme, setTheme] = useState<"light" | "dark">(() => {
     try {
       const saved = localStorage.getItem("shopfast:theme");
@@ -33,17 +75,13 @@ function App() {
       /* Optional preference. */
     }
   }, [theme]);
-  const [mode, setMode] = useState<"register" | "verify" | "login" | "account">(
-    "register",
-  );
   const [accessToken, setAccessToken] = useState("");
   const [user, setUser] = useState<User | null>(null);
+  const mode: AuthMode =
+    route.mode ?? (user ? (user.verified ? "account" : "verify") : "register");
   const [message, setMessage] = useState("");
   const [messageError, setMessageError] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [screen, setScreen] = useState<
-    "auth" | "catalog" | "tickets" | "admin" | "cart"
-  >("auth");
   const [cartRevision, setCartRevision] = useState(0);
   const [cartCount, setCartCount] = useState<number | null>(null);
   const [cartRequested, setCartRequested] = useState(false);
@@ -102,12 +140,16 @@ function App() {
       if (data) {
         setAccessToken(data.accessToken);
         setUser(data.user);
-        setMode(data.user.verified ? "account" : "verify");
       } else {
         setUser(null);
         setAccessToken("");
-        setMode("login");
-        setScreen("auth");
+        navigate(
+          "/login?next=" +
+            encodeURIComponent(
+              safeReturnTo(window.location.pathname + window.location.search),
+            ),
+          { replace: true },
+        );
       }
     };
     const rate = (event: Event) =>
@@ -121,10 +163,12 @@ function App() {
         if (active) {
           setAccessToken(result.accessToken);
           setUser(result.user);
-          setMode(result.user.verified ? "account" : "verify");
         }
       })
-      .catch(() => undefined);
+      .catch(() => undefined)
+      .finally(() => {
+        if (active) setRestoring(false);
+      });
     return () => {
       active = false;
       window.removeEventListener("shopfast:session", session);
@@ -231,6 +275,23 @@ function App() {
             Hỗ trợ
           </button>
         )}
+        {user?.verified &&
+          ["CUSTOMER", "WAREHOUSE", "ADMIN"].includes(user.role) && (
+            <button
+              aria-current={screen === "orders" ? "page" : undefined}
+              onClick={() => setScreen("orders")}
+            >
+              Đơn hàng
+            </button>
+          )}
+        {user?.verified && ["WAREHOUSE", "ADMIN"].includes(user.role) && (
+          <button
+            aria-current={screen === "inventory" ? "page" : undefined}
+            onClick={() => setScreen("inventory")}
+          >
+            Kho
+          </button>
+        )}
         {user?.verified && user.role === "ADMIN" && (
           <button
             aria-current={screen === "admin" ? "page" : undefined}
@@ -256,7 +317,6 @@ function App() {
             onCheckout={() => setScreen("cart")}
             onLogin={() => {
               setCartRequested(true);
-              setScreen("auth");
               setMode(user ? "verify" : "login");
               setMessageError(false);
               setMessage(
@@ -281,6 +341,61 @@ function App() {
       </button>
     </nav>
   );
+  const statusPage = (title: string, text: string) => (
+    <>
+      {navigation}
+      <main className="workspace">
+        <h1>{title}</h1>
+        <p>{text}</p>
+        <button onClick={() => setScreen("catalog")}>Về cửa hàng</button>
+      </main>
+    </>
+  );
+  if (route.roles !== undefined) {
+    if (restoring)
+      return statusPage(
+        "Đang khôi phục phiên…",
+        "Vui lòng chờ trong giây lát.",
+      );
+    const next = encodeURIComponent(location.pathname + location.search);
+    if (!user) return <Navigate replace to={"/login?next=" + next} />;
+    if (!route.unverified && !user.verified)
+      return <Navigate replace to={"/verify-email?next=" + next} />;
+    if (route.roles.length && !route.roles.includes(user.role))
+      return statusPage(
+        "403 — Không có quyền truy cập",
+        "Tài khoản của bạn không được phép truy cập khu vực này.",
+      );
+  }
+  if (screen === "notfound")
+    return statusPage(
+      "404 — Không tìm thấy trang",
+      "Đường dẫn này không tồn tại.",
+    );
+  if (screen === "orders" && user)
+    return (
+      <>
+        {navigation}
+        {rateNotice}
+        <main className="cart-page">
+          <Orders
+            api={api}
+            token={accessToken}
+            staff={location.pathname.startsWith("/staff/")}
+            showCart={false}
+            revision={cartRevision}
+            onChange={() => setCartRevision((value) => value + 1)}
+            routeId={route.id}
+            basePath={
+              location.pathname.startsWith("/staff/")
+                ? "/staff/orders"
+                : "/orders"
+            }
+            onNavigate={(path) => navigate(path)}
+          />
+        </main>
+      </>
+    );
   if (screen === "cart" && canShop)
     return (
       <>
@@ -300,6 +415,9 @@ function App() {
             staff={false}
             revision={cartRevision}
             onChange={() => setCartRevision((value) => value + 1)}
+            onNavigate={(path) => navigate(path)}
+            basePath="/orders"
+            checkoutEnabled={location.pathname !== "/cart"}
           />
         </main>
       </>
@@ -314,6 +432,13 @@ function App() {
           token={accessToken}
           userId={user.id}
           staff={["SUPPORT", "ADMIN"].includes(user.role)}
+          routeId={route.id}
+          basePath={
+            location.pathname.startsWith("/staff/")
+              ? "/staff/tickets"
+              : "/tickets"
+          }
+          onNavigate={(path) => navigate(path)}
         />
       </>
     );
@@ -322,10 +447,10 @@ function App() {
       <>
         {navigation}
         {rateNotice}
-        <Admin api={api} token={accessToken} />
+        <Admin api={api} token={accessToken} panel={route.panel} />
       </>
     );
-  if (screen === "catalog")
+  if (screen === "catalog" || screen === "inventory")
     return (
       <>
         {navigation}
@@ -333,6 +458,18 @@ function App() {
         <Catalog
           api={api}
           token={accessToken}
+          productId={screen === "catalog" ? route.id : undefined}
+          onOpenProduct={(id) =>
+            navigate("/products/" + encodeURIComponent(id) + location.search, {
+              state: { productOverlay: true },
+            })
+          }
+          onCloseProduct={() =>
+            location.state?.productOverlay
+              ? navigate(-1)
+              : navigate("/products" + location.search, { replace: true })
+          }
+          inventoryOnly={screen === "inventory"}
           onCartChange={() => setCartRevision((value) => value + 1)}
           customer={Boolean(user?.verified && user.role === "CUSTOMER")}
           staff={Boolean(
@@ -551,6 +688,8 @@ function App() {
 }
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </React.StrictMode>,
 );

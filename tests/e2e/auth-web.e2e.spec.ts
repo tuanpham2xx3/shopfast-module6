@@ -54,6 +54,7 @@ test("preserves password input and theme preference on mobile", async ({
     .getByRole("button", { name: "Chuyển sang giao diện tối", exact: true })
     .click();
   await page.reload();
+  await expect(page).toHaveURL(/\/login$/);
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   expect(
     await page.evaluate(
@@ -63,7 +64,7 @@ test("preserves password input and theme preference on mobile", async ({
   await page.emulateMedia({ reducedMotion: "reduce" });
   expect(
     await page
-      .getByRole("button", { name: "Tạo tài khoản", exact: true })
+      .getByRole("button", { name: "Đăng nhập", exact: true })
       .evaluate((element) => getComputedStyle(element).transitionDuration),
   ).toBe("0s");
 });

@@ -50,6 +50,7 @@
         await expect(
           page.getByRole("heading", { name: "Quản trị ShopFast", exact: true }),
         ).toBeVisible();
+        await page.getByRole("link", { name: "Vận hành", exact: true }).click();
         await expect(
           page.getByRole("heading", {
             name: "Vận hành và tác vụ nền",
@@ -58,18 +59,43 @@
         ).toBeVisible();
       } else {
         await page
-          .getByRole("button", { name: "Khám phá sản phẩm", exact: true })
+          .getByRole("button", { name: "Đơn hàng", exact: true })
           .click();
         await expect(
           page.getByRole("heading", {
-            name:
-              role === "warehouse"
-                ? "Xử lý đơn hàng"
-                : "Giỏ hàng và đơn của bạn",
+            name: role === "warehouse" ? "Xử lý đơn hàng" : "Đơn hàng của bạn",
             exact: true,
           }),
         ).toBeVisible();
       }
+      const expectedPath = {
+        customer: "/orders",
+        warehouse: "/staff/orders",
+        support: "/staff/tickets",
+        admin: "/admin/operations",
+      }[role];
+      await expect(page).toHaveURL(
+        "https://shopfast.tuanpq.com" + expectedPath,
+      );
+      await page.reload();
+      const expectedHeading = {
+        customer: "Đơn hàng của bạn",
+        warehouse: "Xử lý đơn hàng",
+        support: "Bàn hỗ trợ",
+        admin: "Vận hành và tác vụ nền",
+      }[role];
+      await expect(
+        page.getByRole("heading", { name: expectedHeading, exact: true }),
+      ).toBeVisible();
+      await expect(page).toHaveURL(
+        "https://shopfast.tuanpq.com" + expectedPath,
+      );
+      await expect(
+        page.getByRole("button", { name: "Tài khoản", exact: true }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole("heading", { name: /403|404|Đang khôi phục phiên/ }),
+      ).toHaveCount(0);
       await page.screenshot({
         path: "harness/reports/role-" + role + ".png",
         fullPage: true,
