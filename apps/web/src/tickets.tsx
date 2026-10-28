@@ -48,11 +48,17 @@ export function Tickets({
   token,
   staff,
   userId,
+  routeId,
+  basePath,
+  onNavigate,
 }: {
   api: Api;
   token: string;
   staff: boolean;
   userId: string;
+  routeId?: string;
+  basePath?: string;
+  onNavigate?: (path: string) => void;
 }) {
   const [items, setItems] = useState<Ticket[]>([]);
   const [ticket, setTicket] = useState<Ticket | null>(null);
@@ -67,6 +73,28 @@ export function Tickets({
   const [statusFilter, setStatusFilter] = useState("");
   const [lookup, setLookup] = useState<unknown>(null);
   const prefix = staff ? "/staff/tickets" : "/tickets";
+  useEffect(() => {
+    setTicket(null);
+    setError("");
+    setSession("");
+    setAnswer(null);
+    setDraft("");
+    setLookup(null);
+  }, [prefix, routeId]);
+  useEffect(() => {
+    let active = true;
+    if (routeId)
+      api<Ticket>(`${prefix}/${encodeURIComponent(routeId)}`, {}, token)
+        .then((result) => {
+          if (active) setTicket(result);
+        })
+        .catch((e) => {
+          if (active) setError(e.message);
+        });
+    return () => {
+      active = false;
+    };
+  }, [api, token, prefix, routeId]);
   useEffect(() => {
     let active = true;
     api<{ items: Ticket[]; total: number }>(
@@ -88,6 +116,10 @@ export function Tickets({
     };
   }, [api, token, prefix, page, revision, statusFilter]);
   async function open(id: string) {
+    if (onNavigate) {
+      onNavigate(`${basePath ?? prefix}/${encodeURIComponent(id)}`);
+      return;
+    }
     setError("");
     try {
       setTicket(await api<Ticket>(`${prefix}/${id}`, {}, token));

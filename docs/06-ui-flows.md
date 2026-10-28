@@ -22,6 +22,12 @@ UI phục vụ hoàn thành nghiệp vụ và minh họa tính năng; không xâ
 
 Route guard chỉ hỗ trợ trải nghiệm, mọi quyền bắt buộc kiểm tra lại ở server. Menu ẩn theo role; URL trực tiếp sai quyền có trang 403. Unknown route có 404.
 
+Triển khai 29/10/2026 dùng React Router với BrowserRouter; URL là nguồn chọn màn hình, không còn state `screen` độc lập. `/` giữ trang giới thiệu/đăng ký và lời chào khi đã đăng nhập; `/account` là tài khoản riêng. `/cart` sửa giỏ, `/checkout` có form địa chỉ; `/orders` và `/staff/orders` là lịch sử/xử lý đơn riêng. Menu có lối tắt đơn hàng và kho theo role. Admin tách catalog, promotions và operations thành ba URL và nội dung riêng.
+
+Chi tiết sản phẩm giữ dạng popup tại `/products/:id`; mở trực tiếp/refresh vẫn lấy đúng sản phẩm qua API. Popup mở từ catalog đóng bằng Back; truy cập trực tiếp đóng về catalog. Query categoryId/brandId/minPrice/maxPrice/sort/page của catalog nằm trong URL và khôi phục khi refresh hoặc Back/Forward. Chi tiết đơn/ticket được tải từ ID trên URL, không phụ thuộc phải bấm từ danh sách trước.
+
+Route riêng tư đợi khôi phục session xong rồi mới gọi API nghiệp vụ. Guest chuyển tới `/login?next=...`; người chưa xác minh tới `/verify-email?next=...`; hoàn tất quay lại URL nội bộ hợp lệ. Sai role hiển thị 403 và không mount component gọi API đặc quyền. HTTP API vẫn kiểm ownership/quyền độc lập. Nginx trả SPA cho `/orders/:id`; socket dùng transport `/socket.io/`, namespace `/orders` không cần HTTP proxy cùng tên.
+
 ## 2. Luồng mua hàng
 
 Catalog: nút “Xem …” mở dialog chi tiết có ảnh, giá, tồn khả dụng, SKU, thương hiệu, danh mục và mô tả. Dialog khóa cuộn nền, giữ focus bên trong; đóng bằng X, Escape hoặc bấm ngoài và trả focus về nút mở. Bố cục một cột trên mobile.

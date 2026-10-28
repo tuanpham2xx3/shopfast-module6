@@ -35,6 +35,7 @@ for (const width of [1280, 390]) {
         };
       else if (path === "/categories" || path === "/brands") data = [];
       else if (path === "/products") data = { items: [product], total: 1 };
+      else if (path === "/products/product-1") data = product;
       else if (path === "/cart/items" && route.request().method() === "POST")
         quantity++;
       else if (path === "/cart/items/product-1") {
@@ -97,6 +98,7 @@ for (const width of [1280, 390]) {
     await popup.getByRole("button", { name: "Đóng chi tiết" }).click();
     await expect(popup).toHaveCount(0);
     await trigger.click();
+    await expect(popup).toBeVisible();
     await page.mouse.click(2, 2);
     await expect(popup).toHaveCount(0);
     await expect(page.getByLabel("Người nhận")).toHaveCount(0);
