@@ -79,7 +79,10 @@ try {
       await request("/auth/login", {
         method: "POST",
         body: {
-          email: `${role}@shopfast.test`,
+          email:
+            role === "admin" && seed.DEV_SEED_ADMIN_EMAIL
+              ? seed.DEV_SEED_ADMIN_EMAIL
+              : `${role}@shopfast.test`,
           password: seed.DEV_SEED_PASSWORD,
         },
       })

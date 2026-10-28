@@ -6,6 +6,7 @@ Trạng thái từng gate nằm trong [execution ledger](evidence/aws-delivery-p
 
 - Domain `shopfast.tuanpq.com`, EC2 Sydney; Nginx HTTPS + API/worker private, PostgreSQL16/Redis7 named volumes.
 - `/opt/shopfast/.env`: mật khẩu bootstrap DB và image references. `/opt/shopfast/app.env`: application DB role DML, signing keys, Gemini và Resend sending-only key. Files mode600, không commit/cat vào log.
+- Admin production phải có email nhận thật được chủ dự án cấp để nhận báo cáo ngày; không để địa chỉ `.test` cho recipient thật. `DEV_SEED_ADMIN_EMAIL` trong credential file ignored ghi email đăng nhập admin production (có thể dùng alias inbox nghiệm thu). Dev local vẫn có thể dùng địa chỉ seed `.test` với fake adapter.
 - `.secrets/deployment-seed.env` local giữ credential demo; không reset password người dùng có sẵn. Thay đổi secret/role phải có kế hoạch đồng bộ API/worker và refresh sessions.
 - `releases/<commit>/web`, symlink `releases/current`, `nginx/default.conf` và `release.json` lưu release active. Không xóa previous release trước khi nghiệm thu.
 
