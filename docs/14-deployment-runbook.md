@@ -50,13 +50,14 @@ npm run harness:performance
 npm run harness:backup-restore
 npm run harness:deploy-rollback
 npm run harness:report
+npm run harness:all
 ```
 
 Profiles provider chỉ chạy khi `HARNESS_LIVE_PROVIDERS=true`, vào EMAIL_TEST_TO và model backend đã cấp; respect RPM. Redis integration local có thể dùng SSH tunnel tới DB15 với random keys/queues, không flush DB0.
 
 Report trong ignored `harness/reports/`, theo commit/config hash; summary không reuse run khác SHA. Profile thiếu phải BLOCKED và exit nonzero. Secrets scan không thay thế audit lịch sử/image; logs phải redacted trước chia sẻ.
 
-Performance script tạo200kcustomer/10kproduct/100korder trong schema riêng và Redis DB14, không worker gửi provider.50catalogVU,10checkoutVU nhịp6.5s để tôn trọng10checkout/min/account;100socket đo riêng; warmup2min,measure10min quaTLS Nginx nội bộ không public port benchmark. Load generator dùng cùng host nên ghi rõ CPU contention; kết quả không là capacity guarantee hoặc Internet RTT. Script cleanup đúng fixture schema và container, không chạm dữ liệu demo. Không chạy hai suite DB/load song song trên máy nhỏ.
+Performance script tạo200kcustomer/10kproduct/100korder trong schema riêng và Redis DB14, không worker gửi provider.50catalogVU,10checkoutVU nhịp6.5s để tôn trọng10checkout/min/account;100socket đo riêng; warmup2min,measure10min quaTLS Nginx nội bộ không public port benchmark. Steady arrival phân bố catalog20ms và checkout650ms giữa các VU, giữ50catalogrequests/sec; kết quả burst đồng bộ ban đầu được giữ riêng, không xóa hoặc đổi ngưỡng để che FAIL. Load generator dùng cùng host nên ghi rõ CPU contention; kết quả không là capacity guarantee hoặc Internet RTT. Script cleanup đúng fixture schema và container, không chạm dữ liệu demo. Không chạy hai suite DB/load song song trên máy nhỏ.
 
 ## Sự cố
 

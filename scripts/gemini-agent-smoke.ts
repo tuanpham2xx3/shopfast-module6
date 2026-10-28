@@ -24,6 +24,7 @@ async function main() {
   const checks: string[] = [];
   let nextRequestAt = 0,
     requests = 0;
+  const trace: Record<string, unknown>[] = [];
   const google = new GoogleGeminiProvider();
   const paced: GeminiProvider = {
     async generate(request: ProviderRequest) {
@@ -32,7 +33,45 @@ async function main() {
       request.signal.throwIfAborted();
       nextRequestAt = Date.now() + 5000;
       requests++;
-      return google.generate(request);
+      const start = Date.now();
+      try {
+        const result = await google.generate(request);
+        const entry: Record<string, unknown> = {
+          request: requests,
+          durationMs: Date.now() - start,
+          functions: result
+            .filter((p) => p.functionCall)
+            .map((p) => p.functionCall!.name),
+        };
+        const text = result
+          .map((p) => p.text ?? "")
+          .join("")
+          .replace(/^```(?:json)?\s*|\s*```$/g, "");
+        if (text) {
+          try {
+            const parsed = JSON.parse(text);
+            entry.outputShape = {
+              keys: Object.keys(parsed),
+              status: parsed.status,
+              claimsCount: Array.isArray(parsed.claims)
+                ? parsed.claims.length
+                : null,
+            };
+          } catch {
+            entry.outputShape = "INVALID_JSON";
+          }
+        }
+        trace.push(entry);
+        return result;
+      } catch (error) {
+        trace.push({
+          request: requests,
+          durationMs: Date.now() - start,
+          errorType: error instanceof Error ? error.name : "Unknown",
+          httpStatus: (error as { status?: number }).status ?? null,
+        });
+        throw error;
+      }
     },
   };
   try {
@@ -166,6 +205,7 @@ async function main() {
           model: process.env.GEMINI_MODEL,
           intervalMs: 5000,
           requests,
+          trace,
           checks,
           acceptance: checks.length === 4 ? "PASS" : "FAIL",
         },

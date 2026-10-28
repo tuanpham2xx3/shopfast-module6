@@ -1,0 +1,48 @@
+{
+  "status": "PASS",
+  "executedAt": "2026-10-28T05:25:39.195Z",
+  "fixtureSchema": "harness_load_1793164400",
+  "dataset": {
+    "customers": 200000,
+    "products": 10000,
+    "orders": 100000
+  },
+  "warmupMs": 120000,
+  "measureMs": 600000,
+  "vus": {
+    "catalog": 50,
+    "checkout": 10,
+    "sockets": 100
+  },
+  "arrivalSchedule": "Catalog50requests/sec staggered20ms; checkout10VUs each6.5seconds staggered650ms. Earlier synchronized burst result retained separately.",
+  "stats": {
+    "catalog": {
+      "count": 30007,
+      "p95": 7.280380000011064,
+      "max": 143.6108959999401
+    },
+    "checkout": {
+      "count": 920,
+      "p95": 18.472146000014618,
+      "max": 56.53123700001743
+    },
+    "secondRead": {
+      "count": 30,
+      "p95": 7.433821999999964,
+      "max": 13.030738000000042
+    },
+    "realtime": {
+      "count": 100,
+      "p95": 14,
+      "max": 22
+    }
+  },
+  "failures": 0,
+  "rateLimited": 0,
+  "cacheHitRate": 0.9678441575769705,
+  "limitations": [
+    "Single host load generator competes for CPU with services",
+    "Fixture worker intentionally not sending provider traffic"
+  ],
+  "acceptance": "PASS"
+}

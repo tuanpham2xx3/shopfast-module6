@@ -9,7 +9,7 @@ set -a
 . ./.env
 set +a
 image=${HARNESS_APP_IMAGE:-${APP_IMAGE:?}}
-[[ "$image" =~ ^shopfast-app:[a-z0-9-]+$ || "$image" =~ ^ghcr.io/tuanpham2xx3/shopfast-module6-app: ]] || exit 1
+[[ "$image" =~ ^shopfast-app:[a-z0-9-]+$ || "$image" =~ ^ghcr.io/tuanpham2xx3/shopfast-module6-app(:|@sha256:) ]] || exit 1
 install -d -m 0770 reports
 chown ubuntu:ubuntu reports
 cleanup(){

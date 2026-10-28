@@ -5,6 +5,10 @@ exec 9>release.lock
 flock -n 9 || { echo 'Another release is active'; exit 1; }
 sha=${1:?Commit SHA required}
 [[ "$sha" =~ ^[0-9a-f]{40}$ ]] || exit 1
+if [ "${HARNESS_FORCE_ROLLBACK:-0}" != 1 ] && [ -f release.json ] && [ "$(jq -r .commit release.json)" = "$sha" ] && [ "$(readlink releases/current)" = "$sha" ]; then
+  curl --fail --silent --max-time 15 https://shopfast.tuanpq.com/api/v1/health/ready | jq -e '.data.status == "ok"' >/dev/null
+  echo 'Exact release already active and healthy'; exit 0
+fi
 app="ghcr.io/tuanpham2xx3/shopfast-module6-app:$sha"
 web="ghcr.io/tuanpham2xx3/shopfast-module6-web:$sha"
 start=$SECONDS
@@ -17,11 +21,12 @@ container=$(docker create "$web")
 docker cp "$container:/usr/share/nginx/html/." "releases/$sha/web/"
 docker rm "$container" >/dev/null
 api="shopfast-api-$sha"
+if [ "${HARNESS_FORCE_ROLLBACK:-0}" = 1 ]; then api="${api}-rehearsal"; fi
 docker inspect "$api" >/dev/null 2>&1 || docker run -d --name "$api" --network shopfast_default --env-file app.env --restart unless-stopped --memory 768m "$app"
 if [ "$(docker inspect -f '{{.State.Running}}' "$api")" != true ]; then docker start "$api" >/dev/null; fi
 ready=false
 for attempt in $(seq 1 24); do
-  if docker exec "$api" node -e "fetch('http://127.0.0.1:3000/api/v1/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"; then ready=true; break; fi
+  if docker exec "$api" node -e "fetch('http://127.0.0.1:3000/api/v1/health/ready').then(r=>r.json()).then(r=>process.exit(r.data?.status==='ok'?0:1)).catch(()=>process.exit(1))"; then ready=true; break; fi
   sleep 2
 done
 test "$ready" = true || { docker stop "$api"; echo 'Candidate not ready; old release unchanged'; exit 1; }
@@ -43,7 +48,7 @@ rollback(){
 }
 if ! docker compose -f compose.infra.yml -f compose.app.yml exec -T web nginx -t; then rollback; exit 1; fi
 docker compose -f compose.infra.yml -f compose.app.yml exec -T web nginx -s reload
-if [ "${HARNESS_FORCE_ROLLBACK:-0}" = 1 ] || ! curl --fail --silent --max-time 15 https://shopfast.tuanpq.com/api/v1/health/ready >/dev/null; then rollback; exit 1; fi
+if [ "${HARNESS_FORCE_ROLLBACK:-0}" = 1 ] || ! curl --fail --silent --max-time 15 https://shopfast.tuanpq.com/api/v1/health/ready | jq -e '.data.status == "ok"' >/dev/null; then rollback; exit 1; fi
 # Worker switchover after API is healthy. Preserve old worker for rollback.
 worker="shopfast-worker-$sha"
 old_worker=$(docker ps --format '{{.Names}}' | grep '^shopfast-worker-' | head -n1 || true)
@@ -59,6 +64,19 @@ if [ "$(docker inspect -f '{{.State.Running}}' "$worker")" != true ]; then
   [ -z "$old_worker" ] || docker start "$old_worker" >/dev/null
   rollback; exit 1
 fi
-printf '{"commit":"%s","appImageId":"%s","durationSeconds":%s,"previous":"%s"}\n' "$sha" "$(docker image inspect -f '{{.Id}}' "$app")" "$((SECONDS-start))" "$previous" > release.json
-test "$((SECONDS-start))" -lt 600
+if [ "$((SECONDS-start))" -ge 600 ]; then
+  docker stop "$worker" >/dev/null
+  [ -z "$old_worker" ] || docker start "$old_worker" >/dev/null
+  rollback; echo 'Release exceeded deadline'; exit 1
+fi
+printf '{"commit":"%s","appImageId":"%s","durationSeconds":%s,"previous":"%s"}\n' "$sha" "$(docker image inspect -f '{{.Id}}' "$app")" "$((SECONDS-start))" "$previous" > release.json.tmp
+mv release.json.tmp release.json
+sed -i '/^APP_IMAGE=/d; /^WEB_IMAGE=/d' .env
+printf 'APP_IMAGE=%s\nWEB_IMAGE=%s\n' "$app" "$web" >> .env
+chmod 600 .env
+# Keep containers available for recovery without consuming RAM after draining requests.
+sleep 15
+while IFS= read -r old_api; do
+  [ "$old_api" = "$api" ] || docker stop --time 30 "$old_api" >/dev/null
+done < <(docker ps --format '{{.Names}}' | grep '^shopfast-api-' || true)
 echo "Release promoted: $sha"

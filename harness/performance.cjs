@@ -172,6 +172,11 @@ async function main() {
     }
   }, warmup);
   async function vu(actor, index, checkout) {
+    // Fixed-rate arrivals are staggered so50VUs do not create an artificial
+    // once-per-second synchronized burst. The earlier burst result is retained.
+    await new Promise((resolve) =>
+      setTimeout(resolve, checkout ? index * 650 : index * 20),
+    );
     const started = Date.now();
     let next = started;
     while (Date.now() - started < warmup + measure) {
@@ -246,6 +251,8 @@ async function main() {
         warmupMs: warmup,
         measureMs: measure,
         vus: { catalog: 50, checkout: 10, sockets: 100 },
+        arrivalSchedule:
+          "Catalog50requests/sec staggered20ms; checkout10VUs each6.5seconds staggered650ms. Earlier synchronized burst result retained separately.",
         stats,
         failures,
         rateLimited,

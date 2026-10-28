@@ -44,7 +44,8 @@
     "harness:backup-restore": "node harness/run.mjs backup-restore",
     "harness:deploy-rollback": "node harness/run.mjs deploy-rollback",
     "harness:report": "node harness/run.mjs report",
-    "test:unit:coverage": "jest --config jest.unit-business.config.js --runInBand"
+    "test:unit:coverage": "jest --config jest.unit-business.config.js --runInBand",
+    "harness:all": "node harness/all.mjs"
   },
   "dependencies": {
     "@nestjs/common": "10.4.22",

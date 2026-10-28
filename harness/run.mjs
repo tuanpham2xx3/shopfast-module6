@@ -22,6 +22,17 @@ const configHash = createHash("sha256")
       live: process.env.HARNESS_LIVE_PROVIDERS === "true",
       databaseConfigured: !!process.env.TEST_DATABASE_URL,
       redisConfigured: !!process.env.TEST_REDIS_URL,
+      candidate: process.env.HARNESS_CANDIDATE_SHA ?? null,
+      credentials: createHash("sha256")
+        .update(
+          [
+            process.env.GEMINI_API_KEY,
+            process.env.RESEND_API_KEY,
+            process.env.TEST_DATABASE_URL,
+            process.env.TEST_REDIS_URL,
+          ].join("|"),
+        )
+        .digest("hex"),
     }),
   )
   .digest("hex");
@@ -178,6 +189,16 @@ switch (profile) {
             RESEND_SMOKE_REPORT_PATH: `${directory}/resend.json`,
           },
         );
+      if (
+        required(
+          ["RESEND_API_KEY", "EMAIL_TEST_TO", "TEST_DATABASE_URL"],
+          "JOB-EMAIL-CRASH",
+        )
+      )
+        await command("JOB-EMAIL-CRASH", [
+          "node_modules/ts-node/dist/bin.js",
+          "scripts/resend-crash-smoke.ts",
+        ]);
     }
     break;
   case "resilience":
@@ -198,6 +219,19 @@ switch (profile) {
           ".secrets/shopfast-ec2.pem",
           "ubuntu@3.27.169.177",
           "sudo bash /opt/shopfast/resilience.sh",
+        ])
+      ).status,
+    );
+    add(
+      "REDIS-PROCESS-OUTAGE",
+      (
+        await runCommand("ssh", [
+          "-o",
+          "BatchMode=yes",
+          "-i",
+          ".secrets/shopfast-ec2.pem",
+          "ubuntu@3.27.169.177",
+          "sudo bash /opt/shopfast/redis-outage.sh",
         ])
       ).status,
     );
@@ -252,7 +286,7 @@ switch (profile) {
             "-i",
             ".secrets/shopfast-ec2.pem",
             "ubuntu@3.27.169.177",
-            `sudo bash /opt/shopfast/rollback-rehearsal.sh ${process.env.HARNESS_CANDIDATE_SHA}`,
+            `sudo bash /opt/shopfast/rollback-rehearsal.sh ${process.env.HARNESS_CANDIDATE_SHA} && sudo bash /opt/shopfast/deploy-release.sh ${process.env.HARNESS_CANDIDATE_SHA}`,
           ])
         ).status,
       );
@@ -263,6 +297,31 @@ switch (profile) {
         "WORKTREE",
         "Uncommitted changes; commit the tested source before final acceptance",
       );
+    try {
+      const deployed = JSON.parse(
+        execFileSync(
+          "ssh",
+          [
+            "-o",
+            "BatchMode=yes",
+            "-i",
+            ".secrets/shopfast-ec2.pem",
+            "ubuntu@3.27.169.177",
+            "cat /opt/shopfast/release.json",
+          ],
+          {
+            encoding: "utf8",
+            timeout: 15000,
+            stdio: ["ignore", "pipe", "pipe"],
+          },
+        ),
+      );
+      add("DEPLOYED-COMMIT", deployed.commit === commit ? "PASS" : "FAIL", {
+        deployedCommit: deployed.commit,
+      });
+    } catch {
+      blocked("DEPLOYED-COMMIT", "No verified release manifest on target");
+    }
     const latest = new Map();
     for (const file of await readdir(directory)) {
       if (!file.endsWith(".json")) continue;
@@ -311,6 +370,37 @@ await writeFile(
   `${directory}/${result.runId}.json`,
   JSON.stringify(result, null, 2) + "\n",
 );
+if (profile === "report") {
+  const lines = [
+    `# ShopFast acceptance — ${result.status}`,
+    "",
+    `Commit: ${commit}`,
+    `Executed: ${result.executedAt}`,
+    "",
+    "| Profile | Result | Reason |",
+    "| --- | --- | --- |",
+    ...cases.map(
+      (c) => `| ${c.id} | ${c.status} | ${c.reason ?? c.source ?? ""} |`,
+    ),
+  ];
+  await writeFile(`${directory}/summary.md`, lines.join("\n") + "\n");
+  const escape = (value) =>
+    String(value).replace(
+      /[&<>"']/g,
+      (c) =>
+        ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&apos;",
+        })[c],
+    );
+  await writeFile(
+    `${directory}/junit.xml`,
+    `<testsuite name="ShopFast acceptance" tests="${cases.length}" failures="${cases.filter((c) => c.status !== "PASS").length}">${cases.map((c) => `<testcase name="${escape(c.id)}">${c.status === "PASS" ? "" : `<failure type="${escape(c.status)}">${escape(c.reason ?? c.source ?? c.status)}</failure>`}</testcase>`).join("")}</testsuite>\n`,
+  );
+}
 console.log(
   `${profile}: ${result.status}; ${cases.length} cases; report ${directory}/${result.runId}.json`,
 );

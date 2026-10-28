@@ -39,6 +39,14 @@ export default defineConfig({
               ACCESS_TOKEN_SECRET:
                 "browser-e2e-only-secret-at-least-32-characters",
               WEB_ORIGIN: "http://127.0.0.1:4173",
+              // Deterministic browser suite must never inherit real provider credentials.
+              GEMINI_API_KEY: "",
+              GEMINI_MODEL: "",
+              RESEND_API_KEY: "",
+              EMAIL_PROVIDER: "",
+              EMAIL_PROVIDER_URL: "",
+              EMAIL_PROVIDER_TOKEN: "",
+              REDIS_URL: process.env.TEST_REDIS_URL ?? "",
             },
           },
         ]
