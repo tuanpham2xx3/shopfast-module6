@@ -1,0 +1,90 @@
+﻿import { randomUUID } from "node:crypto";
+import Redis from "ioredis";
+import { CatalogCache } from "../../libs/modules/runtime/catalog-cache";
+describe("real Redis catalog Lua, stampede and negative-cache acceptance", () => {
+  let redis: Redis;
+  let cache: CatalogCache;
+  const id = randomUUID();
+  beforeAll(async () => {
+    if (!process.env.TEST_REDIS_URL) throw Error("TEST_REDIS_URL required");
+    redis = new Redis(process.env.TEST_REDIS_URL, {
+      maxRetriesPerRequest: 1,
+      retryStrategy: () => null,
+    });
+    redis.on("error", () => undefined);
+    await redis.ping();
+    cache = new CatalogCache(redis);
+  });
+  afterAll(async () => {
+    if (!redis) return;
+    let cursor = "0";
+    do {
+      const result = await redis.scan(
+        cursor,
+        "MATCH",
+        `catalog:*${id}*`,
+        "COUNT",
+        100,
+      );
+      cursor = result[0];
+      if (result[1].length) await redis.del(...result[1]);
+    } while (cursor !== "0");
+    redis.disconnect();
+  });
+  it("CACHE-04 coalesces a hot-key burst and expires missing-key entries with a bounded TTL", async () => {
+    const key = `product:${id}:hot`,
+      tag = `product:${id}:hot`;
+    const load = jest.fn(async () => {
+      await new Promise((r) => setTimeout(r, 20));
+      return { price: 100 };
+    });
+    const values = await Promise.all(
+      Array.from({ length: 10 }, () => cache.remember(key, [tag], load)),
+    );
+    expect(values.every((v) => v.price === 100)).toBe(true);
+    expect(load).toHaveBeenCalledTimes(1);
+    const missing = jest.fn(async () => null),
+      unknown = `product:${id}:unknown`;
+    expect(await cache.remember(unknown, [unknown], missing)).toBeNull();
+    expect(await cache.remember(unknown, [unknown], missing)).toBeNull();
+    expect(missing).toHaveBeenCalledTimes(1);
+    expect(await redis.pttl("catalog:" + unknown)).toBeGreaterThan(0);
+    expect(await redis.pttl("catalog:" + unknown)).toBeLessThanOrEqual(18000);
+  });
+  it("CACHE-03 Lua generation fencing prevents an old loader from repopulating invalidated data", async () => {
+    const key = `product:${id}:race`,
+      tag = `product:${id}:race`;
+    let release!: (v: { price: number }) => void, started!: () => void;
+    const entered = new Promise<void>((r) => {
+        started = r;
+      }),
+      pending = new Promise<{ price: number }>((r) => {
+        release = r;
+      });
+    const old = cache.remember(key, [tag], () => {
+      started();
+      return pending;
+    });
+    await entered;
+    expect(await cache.invalidate([tag])).toBe(true);
+    release({ price: 10 });
+    await old;
+    expect(await redis.get("catalog:" + key)).toBeNull();
+    expect(
+      await cache.remember(key, [tag], async () => ({ price: 20 })),
+    ).toEqual({ price: 20 });
+  });
+  it("CACHE-02 invalidates all related real Redis indices and preserves unrelated lists", async () => {
+    const related = `category:${id}:a`,
+      other = `category:${id}:b`;
+    await cache.remember(`list:${id}:a`, [related], async () => [
+      { price: 10 },
+    ]);
+    await cache.remember(`list:${id}:empty`, [related], async () => []);
+    await cache.remember(`list:${id}:b`, [other], async () => [{ price: 30 }]);
+    expect(await cache.invalidate([related])).toBe(true);
+    expect(await redis.get(`catalog:list:${id}:a`)).toBeNull();
+    expect(await redis.get(`catalog:list:${id}:empty`)).toBeNull();
+    expect(await redis.get(`catalog:list:${id}:b`)).not.toBeNull();
+  });
+});

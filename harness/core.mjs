@@ -1,4 +1,6 @@
 import { spawn } from "node:child_process";
+import { mkdir, writeFile } from "node:fs/promises";
+import { createHash, randomUUID } from "node:crypto";
 export async function runCommand(
   command,
   args,
@@ -13,7 +15,7 @@ export async function runCommand(
     });
     let output = "";
     const append = (chunk) => {
-      output = (output + chunk.toString()).slice(-12000);
+      output += chunk.toString();
     };
     child.stdout.on("data", append);
     child.stderr.on("data", append);
@@ -27,9 +29,32 @@ export async function runCommand(
         )
           sanitized = sanitized.split(value).join("[REDACTED]");
       }
-      return sanitized
-        .replace(/postgres(?:ql)?:\/\/[^\s"']+/g, "[REDACTED_DATABASE_URL]")
-        .slice(-4000);
+      return sanitized.replace(
+        /postgres(?:ql)?:\/\/[^\s"']+/g,
+        "[REDACTED_DATABASE_URL]",
+      );
+    };
+    let finished = false;
+    const finish = async (result) => {
+      if (finished) return;
+      finished = true;
+      const content = safeOutput();
+      const path = `harness/reports/artifacts/${randomUUID()}.log`;
+      try {
+        await mkdir("harness/reports/artifacts", { recursive: true });
+        await writeFile(path, content);
+        resolve({
+          ...result,
+          output: content.slice(-4000),
+          artifact: {
+            path,
+            sha256: createHash("sha256").update(content).digest("hex"),
+            bytes: Buffer.byteLength(content),
+          },
+        });
+      } catch {
+        resolve({ ...result, status: "FAIL", reason: "EVIDENCE_WRITE_FAILED" });
+      }
     };
     let timedOut = false;
     const timer = setTimeout(() => {
@@ -38,21 +63,19 @@ export async function runCommand(
     }, timeoutMs);
     child.on("error", () => {
       clearTimeout(timer);
-      resolve({
+      void finish({
         status: "FAIL",
         reason: "SPAWN_FAILED",
         durationMs: Date.now() - start,
-        output: safeOutput(),
       });
     });
     child.on("close", (code) => {
       clearTimeout(timer);
-      resolve({
+      void finish({
         status: !timedOut && code === 0 ? "PASS" : "FAIL",
         exitCode: code,
         timedOut,
         durationMs: Date.now() - start,
-        output: safeOutput(),
       });
     });
   });

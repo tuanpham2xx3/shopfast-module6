@@ -1,0 +1,619 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "path": "Module 06 – Software Requirement Specification (SRS).docx.txt",
+    "sha256": "2741054a00b5f744f0ce021cb9fdaad518e79d1ec71b7f55032718877a301687"
+  },
+  "requirements": [
+    {
+      "id": "REQ-GENERAL-01",
+      "source": "Khách hàng (Customer): tra cứu sản phẩm, đặt hàng, theo dõi trạng thái đơn theo thời gian thực và trao đổi với bộ phận chăm sóc khách hàng.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-GENERAL-02",
+      "source": "Nhân viên chăm sóc khách hàng (Support Agent): tiếp nhận và xử lý ticket, sử dụng trợ lý AI để tra cứu nhanh thông tin đơn hàng và tồn kho.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-GENERAL-03",
+      "source": "Nhân viên vận hành kho (Warehouse Staff): cập nhật trạng thái đơn hàng, quản lý tồn kho.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-GENERAL-04",
+      "source": "Quản trị viên hệ thống (Admin/DevOps): theo dõi sức khoẻ hệ thống, quản lý hàng đợi công việc nền, vận hành pipeline triển khai.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-F01-01",
+      "source": "Phân loại tự động ticket của khách vào đúng nhóm nghiệp vụ.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-F01-02",
+      "source": "Cung cấp tối thiểu hai công cụ tra cứu để agent lấy dữ liệu thật: tra trạng thái đơn hàng và kiểm tra tồn kho theo mã sản phẩm.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-F01-03",
+      "source": "Agent phải từ chối lịch sự các câu hỏi ngoài phạm vi ShopFast và không được bịa thông tin đơn hàng khi chưa tra cứu.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-F01-04",
+      "source": "Mọi thao tác ghi dữ liệu do agent đề xuất đều phải qua bước xác nhận của con người.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-F02-01",
+      "source": "Khách hàng mở màn hình theo dõi và nhận cập nhật trạng thái đơn ngay khi kho thay đổi, không cần tải lại trang.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-F02-02",
+      "source": "Sự kiện cập nhật chỉ được gửi tới đúng những người đang theo dõi đơn hàng đó, không phát tán cho toàn bộ người dùng.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-F02-03",
+      "source": "Kết nối realtime phải được xác thực tại thời điểm bắt tay; khách chỉ theo dõi được đơn hàng thuộc về mình.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-F02-04",
+      "source": "Client tự kết nối lại và đăng ký lại kênh theo dõi sau khi mất mạng.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-F03-01",
+      "source": "Áp dụng hạn mức tần suất cho toàn bộ API, với hạn mức riêng chặt hơn cho các endpoint nhạy cảm gồm đăng nhập, gửi mã xác thực và đặt đơn khuyến mãi.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-F03-02",
+      "source": "Khoá định danh hạn mức tính theo tài khoản khi đã đăng nhập và theo địa chỉ IP khi chưa đăng nhập.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-F03-03",
+      "source": "Phản hồi khi vượt hạn mức trả về mã 429 kèm thời gian chờ và thông điệp tiếng Việt thân thiện.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-F03-04",
+      "source": "Cơ chế chặn leo thang cho hành vi dò mật khẩu, đếm theo từng tài khoản mục tiêu.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-F04-01",
+      "source": "Trang chi tiết sản phẩm và trang danh mục có bộ lọc được lưu đệm, thời gian phản hồi lần thứ hai dưới 20 mili giây.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-F04-02",
+      "source": "Khi giá hoặc tồn kho của một sản phẩm thay đổi, mọi bản ghi đệm liên quan phải được làm mới ngay, khách không được nhìn thấy giá cũ.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-F04-03",
+      "source": "Có cơ chế chống dồn dập khi khoá nóng hết hạn và chống dò khoá không tồn tại.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-F04-04",
+      "source": "Khi Redis không sẵn sàng, hệ thống vẫn phục vụ được, chỉ chậm hơn.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-F05-01",
+      "source": "Việc gửi email xác nhận, xuất hoá đơn và đồng bộ tồn kho với đối tác được đẩy ra hàng đợi, không chặn phản hồi cho khách.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-F05-02",
+      "source": "Mỗi tác vụ có cấu hình số lần thử và chiến lược giãn dần thời gian chờ; tác vụ hết lượt thử được chuyển sang nơi lưu trữ riêng kèm lý do thất bại.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-F05-03",
+      "source": "Mọi tác vụ phải bất biến khi lặp: chạy lại không được gây tác dụng phụ nhân đôi, khách chỉ nhận đúng một email cho mỗi đơn.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-F05-04",
+      "source": "Có tác vụ chạy theo lịch: nhắc thanh toán sau 30 phút và gửi báo cáo doanh thu hằng đêm.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-F06-01",
+      "source": "Danh mục sản phẩm có bộ lọc theo danh mục, khoảng giá, thương hiệu và phân trang.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-F06-02",
+      "source": "Giỏ hàng và đặt đơn, có kiểm tra tồn kho trước khi xác nhận, không cho phép bán vượt số lượng thực tế.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-F06-03",
+      "source": "Tra cứu lịch sử đơn hàng của khách và cập nhật trạng thái đơn từ phía kho.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-F06-04",
+      "source": "Xác thực và phân quyền bằng token, phân biệt rõ vai trò khách hàng, nhân viên và quản trị viên.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-F07-01",
+      "source": "Endpoint kiểm tra sức khoẻ trả về trạng thái kết nối tới cả cơ sở dữ liệu và Redis.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-F07-02",
+      "source": "Bảng theo dõi hàng đợi hiển thị số công việc đang chờ, đang chạy, đã hoàn tất và đã thất bại.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-F07-03",
+      "source": "Tài liệu API sinh tự động và truy cập được trên môi trường thử nghiệm.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-F07-04",
+      "source": "Sao lưu cơ sở dữ liệu tự động hằng ngày, lưu ở nơi tách biệt với máy chủ ứng dụng.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-TECH-01",
+      "source": "Backend sử dụng NestJS 10 trên Node.js 20 LTS với TypeScript, cơ sở dữ liệu PostgreSQL 16 và Redis 7.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-TECH-02",
+      "source": "Toàn bộ dịch vụ được đóng gói bằng Docker, dựng lên bằng Docker Compose.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-TECH-03",
+      "source": "Mã nguồn được quản lý phiên bản trên GitHub; mọi thay đổi vào nhánh chính đều đi qua yêu cầu hợp nhất mã.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-TECH-04",
+      "source": "Mã nguồn tổ chức theo Clean Code, tách bạch tầng controller, tầng nghiệp vụ và tầng truy cập dữ liệu.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-SEC-01",
+      "source": "Toàn bộ lưu lượng từ Internet đi qua HTTPS; truy cập bằng giao thức không bảo mật được chuyển hướng tự động.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-SEC-02",
+      "source": "Nhóm bảo mật của máy chủ chỉ mở cổng HTTP và HTTPS cho mọi nơi; cổng SSH giới hạn theo địa chỉ IP quản trị; cơ sở dữ liệu và Redis không phơi ra Internet.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-SEC-03",
+      "source": "Không tồn tại khoá truy cập dài hạn nào cho ứng dụng và pipeline; sử dụng Role và thông tin xác thực tạm thời.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-SEC-04",
+      "source": "Không có giá trị nhạy cảm nào nằm trong mã nguồn, trong Dockerfile hay trong tệp cấu hình pipeline.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-SEC-05",
+      "source": "Phân quyền trên tài khoản cloud tuân thủ nguyên tắc đặc quyền tối thiểu, cấp qua nhóm và bật xác thực hai lớp.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-REL-01",
+      "source": "Triển khai phiên bản mới không được gây gián đoạn dịch vụ cho người dùng đang thao tác.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-REL-02",
+      "source": "Có kiểm tra sức khoẻ sau triển khai; thất bại thì tự động quay lui về phiên bản đã chạy tốt gần nhất trong dưới 2 phút.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-REL-03",
+      "source": "Bản sao lưu cơ sở dữ liệu phải được diễn tập khôi phục thật, thời gian khôi phục dưới 30 phút.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-REL-04",
+      "source": "Khi một thành phần phụ trợ không sẵn sàng, hệ thống suy giảm chức năng có kiểm soát thay vì ngừng phục vụ hoàn toàn.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-QUALITY-01",
+      "source": "Độ phủ kiểm thử tầng nghiệp vụ đạt tối thiểu 60%.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-QUALITY-02",
+      "source": "Pipeline chạy kiểm tra định dạng mã, kiểm thử đơn vị và kiểm thử tích hợp; thất bại thì khoá việc hợp nhất mã.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-QUALITY-03",
+      "source": "Mọi image đều được gắn thẻ cố định theo mã commit để truy vết và quay lui.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-DELIVERY-01",
+      "source": "Link truy cập hệ thống đang chạy thật bằng tên miền có HTTPS.",
+      "kind": "deliverable"
+    },
+    {
+      "id": "REQ-DELIVERY-02",
+      "source": "Link kho mã nguồn trên GitHub, có tệp README mô tả cách cài đặt và chạy cục bộ.",
+      "kind": "deliverable"
+    },
+    {
+      "id": "REQ-DELIVERY-03",
+      "source": "Link lịch sử chạy pipeline, thể hiện các lần chạy thành công và ít nhất một lần bị chặn do kiểm thử thất bại.",
+      "kind": "deliverable"
+    },
+    {
+      "id": "REQ-DELIVERY-04",
+      "source": "Tài liệu kiến trúc: sơ đồ tổng thể hệ thống trên AWS, sơ đồ luồng dữ liệu và bảng liệt kê thành phần kèm lý do lựa chọn.",
+      "kind": "deliverable"
+    },
+    {
+      "id": "REQ-DELIVERY-05",
+      "source": "Bản đặc tả ngắn nêu rõ đã tích hợp những chủ đề nào và giải quyết bài toán nghiệp vụ nào.",
+      "kind": "deliverable"
+    },
+    {
+      "id": "REQ-DELIVERY-06",
+      "source": "Báo cáo độ phủ kiểm thử và biên bản diễn tập khôi phục từ bản sao lưu.",
+      "kind": "deliverable"
+    },
+    {
+      "id": "REQ-DELIVERY-07",
+      "source": "Slide trình bày 10 phút kèm kịch bản demo.",
+      "kind": "deliverable"
+    },
+    {
+      "id": "REQ-UI-01",
+      "source": "Có triển khai UI web.",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-PERF-cached-read-p95",
+      "source": "Thời gian phản hồi API tra cứu (có bộ nhớ đệm): Dưới 50 ms ở phân vị 95",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-PERF-checkout-p95",
+      "source": "Thời gian phản hồi endpoint đặt hàng: Dưới 300 ms ở phân vị 95",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-PERF-realtime",
+      "source": "Độ trễ cập nhật trạng thái đơn qua kênh realtime: Dưới 1 giây",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-PERF-cache-hit",
+      "source": "Tỉ lệ trúng bộ nhớ đệm cho dữ liệu sản phẩm: Tối thiểu 80%",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-PERF-deploy",
+      "source": "Thời gian hoàn tất một lần triển khai tự động: Dưới 10 phút",
+      "kind": "requirement"
+    },
+    {
+      "id": "REQ-DEFENSE-explanation",
+      "source": "Học viên không giải thích được các quyết định kỹ thuật trong sản phẩm của mình sẽ không được công nhận kết quả, kể cả khi hệ thống chạy tốt.",
+      "kind": "human-rehearsal"
+    }
+  ],
+  "cases": [
+    {
+      "id": "AUTH-01",
+      "given": "Đăng ký hợp lệ, đăng ký lại email khác hoa/thường",
+      "expected": "một user; không nâng quyền từ payload",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "AUTH-01A",
+      "given": "Đăng ký thành công rồi mở màn hình xác minh",
+      "expected": "có access session giới hạn và confirm OTP được ngay, không cần login vòng",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "AUTH-02",
+      "given": "Chưa verify gọi checkout; OTP hết hạn/sai 5 lần",
+      "expected": "chặn nghiệp vụ; mã không tái dùng",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "AUTH-03",
+      "given": "Refresh token đã rotate được dùng lại",
+      "expected": "family thu hồi, access/session/socket bị từ chối theo policy",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "AUTH-04",
+      "given": "Customer gọi API kho/admin; ID tài nguyên khách khác",
+      "expected": "403 role, 404 private resource, không lộ dữ liệu",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "CAT-01",
+      "given": "Kết hợp category/brand/price/sort/page",
+      "expected": "AND filters, totals đúng, input sai 400",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "CAT-02",
+      "given": "Inactive product/category/brand",
+      "expected": "không public/checkout; lịch sử đơn còn snapshot",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "CART-01",
+      "given": "Add cùng SKU, sửa/xóa, quantity 0/100",
+      "expected": "đúng quy tắc, cấm quantity sai, không giữ tồn",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "ORD-01",
+      "given": "Checkout đủ hàng",
+      "expected": "tổng server đúng, reservation/history/outbox/cart nguyên tử",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "ORD-02",
+      "given": "20 request đồng thời mua hàng chỉ còn 1",
+      "expected": "đúng 1 thành công; onHand/reserved không âm, không oversell",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "ORD-03",
+      "given": "Hai sản phẩm, sản phẩm thứ hai thiếu hàng",
+      "expected": "không giữ tồn sản phẩm đầu, không tạo đơn/job",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "ORD-04",
+      "given": "Cùng idempotency key gửi đồng thời/lặp sau restart",
+      "expected": "một đơn, kết quả ổn định; khác payload 409",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "ORD-05",
+      "given": "Giá đổi sau khi mở checkout",
+      "expected": "PRICE_CHANGED, khách xác nhận lại; không dùng giá client",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "ORD-06",
+      "given": "Payment/cancel/expiry chạy đồng thời",
+      "expected": "chỉ một transition thắng theo lock/version, tồn/payment hợp lệ",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "ORD-07",
+      "given": "Shipping gọi lại hoặc job release gọi lại",
+      "expected": "consume/release đúng một lần, history không trùng",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "ORD-08",
+      "given": "Sai transition hoặc stale version",
+      "expected": "409, không sửa đơn/tồn/outbox",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "ORD-09",
+      "given": "Promo còn 1 quota, nhiều khách checkout",
+      "expected": "không vượt quota; một redemption/customer; hủy không hoàn quota",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "ORD-10",
+      "given": "Giảm onHand xuống thấp hơn reserved",
+      "expected": "từ chối, có thông báo; không sửa inventory",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "RT-01",
+      "given": "Missing/expired JWT tại handshake",
+      "expected": "không kết nối được",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "RT-02",
+      "given": "Hai customer theo dõi hai đơn, kho đổi một đơn",
+      "expected": "chỉ chủ room đúng nhận event, không có PII",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "RT-03",
+      "given": "Subscribe đơn khách khác/room tự đặt",
+      "expected": "không join và không nhận event",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "RT-04",
+      "given": "Mất mạng, bỏ lỡ event rồi reconnect",
+      "expected": "resubscribe, REST resync, timeline không trùng/lùi",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "RATE-01",
+      "given": "Vượt global và sensitive thresholds",
+      "expected": "429, Retry-After và tiếng Việt; account/IP key đúng",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "RATE-02",
+      "given": "Nhiều IP dò cùng tài khoản mục tiêu",
+      "expected": "khóa leo thang theo account, không chỉ theo IP",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "RATE-03",
+      "given": "Redis down",
+      "expected": "read tiếp tục; sensitive limiter dùng DB, không mở bảo vệ",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "CACHE-01",
+      "given": "Đọc product/list lần hai với dữ liệu ổn định",
+      "expected": "cache hit, dữ liệu đúng, có latency evidence",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "CACHE-02",
+      "given": "Đổi giá/tồn/category/brand rồi mutation trả thành công",
+      "expected": "request mới không nhận version cũ; detail/list liên quan đúng, cache SKU không liên quan còn dùng được",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "CACHE-03",
+      "given": "Cache miss đang nạp trong lúc giá đổi",
+      "expected": "loader cũ không ghi đè value version mới; retry/fallback đúng",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "CACHE-04",
+      "given": "Nhiều request hot key hết TTL; unknown SKU",
+      "expected": "giảm duplicate loads bằng lock; negative cache có TTL",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "CACHE-05",
+      "given": "Redis timeout/down/recovery",
+      "expected": "fallback DB, không crash hoặc phục vụ stale price",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "JOB-01",
+      "given": "Provider email chậm 5 giây khi checkout",
+      "expected": "checkout không đợi provider, outbox tồn tại",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "JOB-02",
+      "given": "Transient fail rồi thành công/permanent fail",
+      "expected": "retry/backoff đúng; exhausted vào dead letter có lý do",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "JOB-03",
+      "given": "Crash sau external side effect trước DB DONE",
+      "expected": "email một lần theo provider key, invoice/partner không nhân đôi",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "JOB-04",
+      "given": "Outbox enqueue xong crash trước published",
+      "expected": "không tạo side effect lần hai khi publish lại",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "JOB-05",
+      "given": "Đơn chưa thanh toán 30 phút, đơn đã pay",
+      "expected": "chỉ đơn đủ điều kiện được nhắc; test clock giả lập",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "JOB-06",
+      "given": "Qua 60 phút/restart lỡ lịch",
+      "expected": "expire catch-up, release một lần; report đúng ngày Bangkok",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "JOB-07",
+      "given": "Đơn mới chưa thanh toán, sau đó payment confirmed/cancelled",
+      "expected": "chưa có invoice trước payment; đúng một invoice sau PAID; cancelled không có invoice",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "TKT-01",
+      "given": "Claim đồng thời và reply sai ownership",
+      "expected": "một support claim thành công, người khác bị chặn",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "TKT-02",
+      "given": "AI classification fail hoặc nhãn HUMAN có trước",
+      "expected": "ticket còn dùng được, không ghi đè nhãn HUMAN",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "AI-01",
+      "given": "Hỏi trạng thái đơn/inventory trong context hợp lệ",
+      "expected": "tool chạy service thật, câu trả lời có evidence",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "AI-02",
+      "given": "Mã đơn không tồn tại/khách khác; tool DB fail",
+      "expected": "không bịa hoặc tiết lộ; trả lỗi an toàn",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "AI-02A",
+      "given": "Ticket không linked order, tra orderCode thuộc customer ticket",
+      "expected": "tra được nhưng không tự link; mã của customer khác bị chặn cùng thông báo",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "AI-03",
+      "given": "Hỏi ngoài ShopFast/prompt injection/unknown tool",
+      "expected": "refusal hoặc chặn tool, không đổi quyền",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "AI-04",
+      "given": "AI đề xuất đổi nhãn, chưa bấm Confirm",
+      "expected": "ticket chưa đổi; text “đồng ý” không thực thi",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "AI-05",
+      "given": "Confirm lặp, expired, stale hoặc đổi assignment",
+      "expected": "không thực thi hai lần; hết quyền/hạn/version bị chặn",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "AI-06",
+      "given": "Gemini 429/timeout hoặc loop quá giới hạn",
+      "expected": "kết thúc có kiểm soát, thao tác thủ công vẫn dùng được",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "OPS-01",
+      "given": "DB down / Redis down",
+      "expected": "health phân biệt unavailable/degraded, không báo healthy giả",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "OPS-02",
+      "given": "Chạy Redis/BullMQ contract smoke trên Memurai local và Redis 7 Linux",
+      "expected": "Lua, Pub/Sub, delayed/retry/dedup cùng đạt; sai khác phải sửa trước nghiệm thu",
+      "kind": "acceptance-case"
+    },
+    {
+      "id": "UI-01",
+      "given": "Chạy toàn bộ customer/kho/support/admin flow",
+      "expected": "có loading/error/empty, quyền đúng, responsive",
+      "kind": "acceptance-case"
+    }
+  ],
+  "acceptanceSource": {
+    "path": "docs/08-acceptance.md",
+    "sha256": "77f57a5c156751017a6c5bac24f1f688b424688d1441fafecc2425c8b9d01c36"
+  }
+}

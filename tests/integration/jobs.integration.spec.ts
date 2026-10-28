@@ -118,6 +118,113 @@ describe("durable jobs, invoice authorization and crash recovery", () => {
     );
     expect(count).toBe(1);
   });
+  it("JOB-02 persists retry backoff before retrying and dead-letters exhausted jobs with a reason", async () => {
+    let attempts = 0;
+    service.setHandler("fixture.transient", async () => {
+      if (++attempts === 1) throw Error("Synthetic transient failure");
+    });
+    await service.enqueue("backoff-fixture", "fixture.transient", {}, 3);
+    const start = now.getTime();
+    await expect(service.drain(1, "backoff-fixture")).rejects.toThrow(
+      "JOB_PROCESSING_FAILED",
+    );
+    const [pending] = await source.query(
+      `SELECT status,attempts,available_at,last_error FROM "${schema}".job_executions WHERE business_key='backoff-fixture'`,
+    );
+    expect(pending.status).toBe("PENDING");
+    expect(pending.attempts).toBe(1);
+    expect(pending.last_error).toBeTruthy();
+    expect(
+      new Date(pending.available_at).getTime() - start,
+    ).toBeGreaterThanOrEqual(1000);
+    expect(
+      new Date(pending.available_at).getTime() - start,
+    ).toBeLessThanOrEqual(3000);
+    await service.drain(1, "backoff-fixture");
+    expect(attempts).toBe(1);
+    now = new Date(new Date(pending.available_at).getTime() + 1);
+    await service.drain(1, "backoff-fixture");
+    expect(attempts).toBe(2);
+    expect(
+      (
+        await source.query(
+          `SELECT status FROM "${schema}".job_executions WHERE business_key='backoff-fixture'`,
+        )
+      )[0].status,
+    ).toBe("SUCCEEDED");
+    service.setHandler("fixture.permanent", async () => {
+      throw Error("Synthetic repeated failure");
+    });
+    await service.enqueue("exhausted-fixture", "fixture.permanent", {}, 2);
+    await expect(service.drain(1, "exhausted-fixture")).rejects.toThrow();
+    const [retry] = await source.query(
+      `SELECT available_at FROM "${schema}".job_executions WHERE business_key='exhausted-fixture'`,
+    );
+    now = new Date(new Date(retry.available_at).getTime() + 1);
+    await expect(service.drain(1, "exhausted-fixture")).rejects.toThrow();
+    const [terminal] = await source.query(
+      `SELECT status,attempts,last_error FROM "${schema}".job_executions WHERE business_key='exhausted-fixture'`,
+    );
+    expect(terminal).toMatchObject({
+      status: "FAILED",
+      attempts: 2,
+      last_error: "JOB_PROCESSING_FAILED",
+    });
+    const [dead] = await source.query(
+      `SELECT reason,attempt FROM "${schema}".failed_jobs WHERE business_key='exhausted-fixture'`,
+    );
+    expect(dead).toMatchObject({ reason: "JOB_PROCESSING_FAILED", attempt: 2 });
+  });
+  it("JOB-05 schedules reminders at thirty minutes and skips an order paid before execution", async () => {
+    const unpaid = randomUUID(),
+      paid = randomUUID(),
+      start = now.getTime();
+    for (const id of [unpaid, paid])
+      await source.query(
+        `INSERT INTO "${schema}".orders(id,code,customer_id,status,payment_status,subtotal,discount,total,address_snapshot,expires_at,created_at) VALUES($1,$2,$3,'PENDING_PAYMENT','UNPAID',100,0,100,'{}',$4,$5)`,
+        [id, id, user, new Date(start + 3600000), new Date(start)],
+      );
+    now = new Date(start + 1800000 - 1);
+    await service.catchUp();
+    expect(
+      (
+        await source.query(
+          `SELECT count(*)::int count FROM "${schema}".job_executions WHERE business_key=ANY($1::text[])`,
+          [[`reminder:${unpaid}:30m`, `reminder:${paid}:30m`]],
+        )
+      )[0].count,
+    ).toBe(0);
+    now = new Date(start + 1800000);
+    await service.catchUp();
+    await service.catchUp();
+    expect(
+      (
+        await source.query(
+          `SELECT count(*)::int count FROM "${schema}".job_executions WHERE business_key=ANY($1::text[])`,
+          [[`reminder:${unpaid}:30m`, `reminder:${paid}:30m`]],
+        )
+      )[0].count,
+    ).toBe(2);
+    await source.query(
+      `UPDATE "${schema}".orders SET status='CONFIRMED',payment_status='PAID' WHERE id=$1`,
+      [paid],
+    );
+    await service.drain(1, `reminder:${unpaid}:30m`);
+    await service.drain(1, `reminder:${paid}:30m`);
+    const [delivery] = await source.query(
+      `SELECT count(*)::int count FROM "${schema}".fake_deliveries WHERE business_key=ANY($1::text[])`,
+      [[`reminder:${unpaid}:30m`, `reminder:${paid}:30m`]],
+    );
+    expect(delivery.count).toBe(1);
+    expect(
+      (
+        await source.query(
+          `SELECT result_ref FROM "${schema}".job_executions WHERE business_key=$1`,
+          [`reminder:${paid}:30m`],
+        )
+      )[0].result_ref,
+    ).toBe("SKIPPED");
+  });
   it("catches up Bangkok daily reports and expires through the domain service", async () => {
     const due = randomUUID();
     await source.query(

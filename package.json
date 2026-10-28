@@ -45,7 +45,13 @@
     "harness:deploy-rollback": "node harness/run.mjs deploy-rollback",
     "harness:report": "node harness/run.mjs report",
     "test:unit:coverage": "jest --config jest.unit-business.config.js --runInBand",
-    "harness:all": "node harness/all.mjs"
+    "harness:all": "node harness/all.mjs",
+    "harness:inventory": "node harness/inventory.mjs",
+    "harness:cases": "node harness/cases.mjs",
+    "harness:browser-cases": "node harness/browser-cases.mjs",
+    "harness:cloud-audit": "node harness/cloud-audit.mjs",
+    "harness:deploy-continuity": "node harness/deploy-continuity.mjs",
+    "harness:selftest": "node --test harness/core.test.mjs harness/evidence.test.mjs"
   },
   "dependencies": {
     "@nestjs/common": "10.4.22",

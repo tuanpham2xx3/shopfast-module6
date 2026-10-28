@@ -1,0 +1,619 @@
+{
+  "schemaVersion": 1,
+  "cases": [
+    {
+      "id": "AUTH-01",
+      "selectors": [
+        {
+          "file": "auth.integration.spec.ts",
+          "titleIncludes": "registers a normalized"
+        },
+        {
+          "file": "auth-http.integration.spec.ts",
+          "titleIncludes": "registers, verifies"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "AUTH-01A",
+      "selectors": [
+        {
+          "file": "auth-http.integration.spec.ts",
+          "titleIncludes": "registers, verifies"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "AUTH-02",
+      "selectors": [
+        {
+          "file": "auth.integration.spec.ts",
+          "titleIncludes": "rejects expired OTPs"
+        },
+        {
+          "file": "auth-guards.spec.ts",
+          "titleIncludes": "rejects unverified"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "AUTH-03",
+      "selectors": [
+        {
+          "file": "auth.integration.spec.ts",
+          "titleIncludes": "rotates refresh tokens"
+        },
+        {
+          "file": "realtime.integration.spec.ts",
+          "titleIncludes": "rejects anonymous"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "AUTH-04",
+      "selectors": [
+        {
+          "file": "catalog-http.integration.spec.ts",
+          "titleIncludes": "guards admin mutations"
+        },
+        {
+          "file": "tickets-ai.integration.spec.ts",
+          "titleIncludes": "hides customer ownership"
+        },
+        {
+          "file": "orders.integration.spec.ts",
+          "titleIncludes": "replays checkout"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "CAT-01",
+      "selectors": [
+        {
+          "file": "catalog.integration.spec.ts",
+          "titleIncludes": "creates zero stock"
+        },
+        {
+          "file": "runtime.spec.ts",
+          "titleIncludes": "canonicalizes defaults"
+        },
+        {
+          "file": "catalog-service.spec.ts",
+          "titleIncludes": "returns filtered pages"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "CAT-02",
+      "selectors": [
+        {
+          "file": "catalog.integration.spec.ts",
+          "titleIncludes": "hides products whose category"
+        },
+        {
+          "file": "catalog-http.integration.spec.ts",
+          "titleIncludes": "guards admin mutations"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "CART-01",
+      "selectors": [
+        {
+          "file": "orders.integration.spec.ts",
+          "titleIncludes": "CART-01"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "ORD-01",
+      "selectors": [
+        {
+          "file": "orders.integration.spec.ts",
+          "titleIncludes": "replays checkout"
+        },
+        {
+          "file": "outbox.integration.spec.ts",
+          "titleIncludes": "publishes committed events"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "ORD-02",
+      "selectors": [
+        {
+          "file": "orders.integration.spec.ts",
+          "titleIncludes": "allows exactly one of twenty"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "ORD-03",
+      "selectors": [
+        {
+          "file": "orders.integration.spec.ts",
+          "titleIncludes": "ORD-03"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "ORD-04",
+      "selectors": [
+        {
+          "file": "orders.integration.spec.ts",
+          "titleIncludes": "ORD-04"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "ORD-05",
+      "selectors": [
+        {
+          "file": "orders.integration.spec.ts",
+          "titleIncludes": "rejects changed prices"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "ORD-06",
+      "selectors": [
+        {
+          "file": "orders.integration.spec.ts",
+          "titleIncludes": "ORD-06"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "ORD-07",
+      "selectors": [
+        {
+          "file": "orders.integration.spec.ts",
+          "titleIncludes": "replays checkout"
+        },
+        {
+          "file": "orders.integration.spec.ts",
+          "titleIncludes": "expires unpaid"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "ORD-08",
+      "selectors": [
+        {
+          "file": "orders.integration.spec.ts",
+          "titleIncludes": "ORD-08"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "ORD-09",
+      "selectors": [
+        {
+          "file": "orders.integration.spec.ts",
+          "titleIncludes": "consumes the final promotion"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "ORD-10",
+      "selectors": [
+        {
+          "file": "orders.integration.spec.ts",
+          "titleIncludes": "ORD-10"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "RT-01",
+      "selectors": [
+        {
+          "file": "realtime.integration.spec.ts",
+          "titleIncludes": "rejects anonymous"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "RT-02",
+      "selectors": [
+        {
+          "file": "realtime.integration.spec.ts",
+          "titleIncludes": "rejects anonymous"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "RT-03",
+      "selectors": [
+        {
+          "file": "realtime.integration.spec.ts",
+          "titleIncludes": "rejects anonymous"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "RT-04",
+      "selectors": [],
+      "external": "browser-reconnect"
+    },
+    {
+      "id": "RATE-01",
+      "selectors": [
+        {
+          "file": "runtime.spec.ts",
+          "titleIncludes": "enforces rolling limits"
+        },
+        {
+          "file": "http.spec.ts",
+          "titleIncludes": "propagates Retry-After"
+        },
+        {
+          "file": "limiter.integration.spec.ts",
+          "titleIncludes": "serializes concurrent sensitive"
+        },
+        {
+          "file": "auth.integration.spec.ts",
+          "titleIncludes": "limits an IP"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "RATE-02",
+      "selectors": [
+        {
+          "file": "limiter.integration.spec.ts",
+          "titleIncludes": "protects normalized target"
+        },
+        {
+          "file": "limiter.integration.spec.ts",
+          "titleIncludes": "uses a rolling window"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "RATE-03",
+      "selectors": [
+        {
+          "file": "http.spec.ts",
+          "titleIncludes": "uses a conservative process fallback"
+        },
+        {
+          "file": "limiter.integration.spec.ts",
+          "titleIncludes": "serializes concurrent sensitive"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "CACHE-01",
+      "selectors": [],
+      "external": "performance"
+    },
+    {
+      "id": "CACHE-02",
+      "selectors": [
+        {
+          "file": "catalog.integration.spec.ts",
+          "titleIncludes": "writes durable invalidation"
+        },
+        {
+          "file": "catalog.integration.spec.ts",
+          "titleIncludes": "invalidates inventory"
+        },
+        {
+          "file": "cache-redis.integration.spec.ts",
+          "titleIncludes": "CACHE-02"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "CACHE-03",
+      "selectors": [
+        {
+          "file": "cache-redis.integration.spec.ts",
+          "titleIncludes": "CACHE-03"
+        },
+        {
+          "file": "cache.spec.ts",
+          "titleIncludes": "revalidates a raced"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "CACHE-04",
+      "selectors": [
+        {
+          "file": "cache-redis.integration.spec.ts",
+          "titleIncludes": "CACHE-04"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "CACHE-05",
+      "selectors": [
+        {
+          "file": "cache.spec.ts",
+          "titleIncludes": "bypasses stale data"
+        },
+        {
+          "file": "runtime.spec.ts",
+          "titleIncludes": "bypasses unavailable Redis"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "JOB-01",
+      "selectors": [
+        {
+          "file": "orders.integration.spec.ts",
+          "titleIncludes": "JOB-01"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "JOB-02",
+      "selectors": [
+        {
+          "file": "jobs.integration.spec.ts",
+          "titleIncludes": "JOB-02"
+        },
+        {
+          "file": "redis.integration.spec.ts",
+          "titleIncludes": "processes delayed"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "JOB-03",
+      "selectors": [
+        {
+          "file": "resend.integration.spec.ts",
+          "titleIncludes": "replays the same request"
+        },
+        {
+          "file": "resend.integration.spec.ts",
+          "titleIncludes": "refuses late retry"
+        },
+        {
+          "file": "jobs.integration.spec.ts",
+          "titleIncludes": "never overwrites a newer"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "JOB-04",
+      "selectors": [
+        {
+          "file": "outbox.integration.spec.ts",
+          "titleIncludes": "publishes committed events"
+        },
+        {
+          "file": "outbox.integration.spec.ts",
+          "titleIncludes": "releases a failed publish"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "JOB-05",
+      "selectors": [
+        {
+          "file": "jobs.integration.spec.ts",
+          "titleIncludes": "JOB-05"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "JOB-06",
+      "selectors": [
+        {
+          "file": "jobs.integration.spec.ts",
+          "titleIncludes": "catches up Bangkok"
+        },
+        {
+          "file": "orders.integration.spec.ts",
+          "titleIncludes": "expires unpaid"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "JOB-07",
+      "selectors": [
+        {
+          "file": "orders.integration.spec.ts",
+          "titleIncludes": "JOB-07"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "TKT-01",
+      "selectors": [
+        {
+          "file": "tickets-ai.integration.spec.ts",
+          "titleIncludes": "hides customer ownership"
+        },
+        {
+          "file": "tickets-service.spec.ts",
+          "titleIncludes": "conceals customer ownership"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "TKT-02",
+      "selectors": [
+        {
+          "file": "tickets-ai.integration.spec.ts",
+          "titleIncludes": "classifies structured"
+        },
+        {
+          "file": "tickets-ai.integration.spec.ts",
+          "titleIncludes": "deduplicates turns"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "AI-01",
+      "selectors": [
+        {
+          "file": "tickets-ai.integration.spec.ts",
+          "titleIncludes": "grounds both real DB tools"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "AI-02",
+      "selectors": [
+        {
+          "file": "tickets-ai.integration.spec.ts",
+          "titleIncludes": "does not disclose"
+        },
+        {
+          "file": "ai-service.spec.ts",
+          "titleIncludes": "refuses unsupported"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "AI-02A",
+      "selectors": [
+        {
+          "file": "tickets-ai.integration.spec.ts",
+          "titleIncludes": "grounds both real DB tools"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "AI-03",
+      "selectors": [
+        {
+          "file": "tickets-ai.integration.spec.ts",
+          "titleIncludes": "blocks ungrounded"
+        },
+        {
+          "file": "ai-service.spec.ts",
+          "titleIncludes": "refuses unsupported"
+        },
+        {
+          "file": "ai-service.spec.ts",
+          "titleIncludes": "bounds tool rounds"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "AI-04",
+      "selectors": [
+        {
+          "file": "tickets-ai.integration.spec.ts",
+          "titleIncludes": "grounds both real DB tools"
+        },
+        {
+          "file": "ai-service.spec.ts",
+          "titleIncludes": "creates a proposal"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "AI-05",
+      "selectors": [
+        {
+          "file": "tickets-ai.integration.spec.ts",
+          "titleIncludes": "deduplicates turns"
+        },
+        {
+          "file": "tickets-ai.integration.spec.ts",
+          "titleIncludes": "rejects stale"
+        },
+        {
+          "file": "tickets-ai.integration.spec.ts",
+          "titleIncludes": "does not disclose"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "AI-06",
+      "selectors": [
+        {
+          "file": "tickets-ai.integration.spec.ts",
+          "titleIncludes": "caps classification"
+        },
+        {
+          "file": "gemini-provider.spec.ts",
+          "titleIncludes": "times out even"
+        },
+        {
+          "file": "ai-deadline.spec.ts",
+          "titleIncludes": "bounds the entire"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "OPS-01",
+      "selectors": [
+        {
+          "file": "readiness.spec.ts",
+          "titleIncludes": "reports unavailable"
+        },
+        {
+          "file": "readiness.spec.ts",
+          "titleIncludes": "reports degraded"
+        },
+        {
+          "file": "readiness.spec.ts",
+          "titleIncludes": "reports ok"
+        }
+      ],
+      "external": null
+    },
+    {
+      "id": "OPS-02",
+      "selectors": [],
+      "external": "redis-platform-compatibility"
+    },
+    {
+      "id": "UI-01",
+      "selectors": [],
+      "external": "browser-all-roles"
+    }
+  ]
+}

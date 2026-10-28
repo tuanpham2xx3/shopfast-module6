@@ -44,3 +44,22 @@ test("runner redacts configured secrets and database URLs before writing evidenc
   assert(!result.output.includes("user:synthetic"));
   assert(result.output.includes("[REDACTED]"));
 });
+
+test("full output is retained with a verifiable hash while the console excerpt stays bounded", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const { createHash } = await import("node:crypto");
+  const result = await runCommand(process.execPath, [
+    "-e",
+    "console.log('START-'+ 'x'.repeat(14000)+'-END')",
+  ]);
+  assert.equal(result.status, "PASS");
+  const bytes = await readFile(result.artifact.path);
+  assert(bytes.toString().startsWith("START-"));
+  assert(bytes.toString().trimEnd().endsWith("-END"));
+  assert.equal(bytes.length, result.artifact.bytes);
+  assert.equal(
+    createHash("sha256").update(bytes).digest("hex"),
+    result.artifact.sha256,
+  );
+  assert(result.output.length <= 4000);
+});

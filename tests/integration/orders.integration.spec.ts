@@ -3,6 +3,10 @@ import { DataSource } from "typeorm";
 import { createDataSource } from "../../libs/platform/src/database/data-source";
 import { CatalogService } from "../../libs/modules/catalog/catalog.service";
 import { OrderService } from "../../libs/modules/orders/order.service";
+import {
+  JobsService,
+  DevelopmentEmailAdapter,
+} from "../../libs/modules/jobs/jobs.service";
 
 describe("order transaction invariants", () => {
   let source: DataSource;
@@ -309,5 +313,354 @@ describe("order transaction invariants", () => {
       ),
     );
     expect(results.filter((r) => r.status === "rejected")).toEqual([]);
+  });
+
+  async function acceptanceProduct(stock = 3) {
+    const id = randomUUID();
+    const [taxonomy] = await source.query(
+      `SELECT category_id,brand_id FROM "${schema}".products WHERE id=$1`,
+      [productId],
+    );
+    const product = await catalog.createProduct({
+      sku: id,
+      slug: id,
+      name: "Acceptance product",
+      description: "Synthetic isolated stock",
+      imageUrl: "https://example.test/demo.jpg",
+      categoryId: taxonomy.category_id,
+      brandId: taxonomy.brand_id,
+      price: 100000,
+    });
+    if (stock)
+      await catalog.adjust(product.id, staff, `stock-${id}`, {
+        delta: stock,
+        reason: "Acceptance stock",
+        expectedVersion: 1,
+      });
+    return product.id;
+  }
+  const purchase = (id: string) => ({
+    ...input(),
+    items: [{ productId: id, quantity: 1, expectedUnitPrice: 100000 }],
+  });
+
+  it("CART-01 adds, changes and removes a SKU without reserving stock and rejects boundary quantities", async () => {
+    const id = await acceptanceProduct();
+    await service.addCart(customer, id, 1);
+    await service.addCart(customer, id, 2);
+    expect(
+      (await service.cart(customer)).items.find(
+        (item: { productId: string }) => item.productId === id,
+      ).quantity,
+    ).toBe(3);
+    await service.setCart(customer, id, 4);
+    for (const quantity of [0, 100]) {
+      await expect(
+        service.addCart(customer, id, quantity),
+      ).rejects.toMatchObject({ code: "BAD_REQUEST" });
+      await expect(
+        service.setCart(customer, id, quantity),
+      ).rejects.toMatchObject({ code: "BAD_REQUEST" });
+    }
+    const [stock] = await source.query(
+      `SELECT on_hand,reserved FROM "${schema}".inventories WHERE product_id=$1`,
+      [id],
+    );
+    expect(stock).toMatchObject({ on_hand: 3, reserved: 0 });
+    await service.removeCart(customer, id);
+    expect(
+      (await service.cart(customer)).items.some(
+        (item: { productId: string }) => item.productId === id,
+      ),
+    ).toBe(false);
+  });
+
+  it("ORD-03 rolls back reservations, cart, order and outbox when the second real SKU is out of stock", async () => {
+    const stocked = await acceptanceProduct(),
+      empty = await acceptanceProduct(0);
+    await service.addCart(customer, stocked, 1);
+    const snapshot = async () =>
+      (
+        await source.query(
+          `SELECT (SELECT count(*)::int FROM "${schema}".orders) orders,(SELECT count(*)::int FROM "${schema}".outbox_events) events,(SELECT quantity FROM "${schema}".cart_items WHERE user_id=$1 AND product_id=$2) cart,(SELECT reserved FROM "${schema}".inventories WHERE product_id=$2) reserved`,
+          [customer, stocked],
+        )
+      )[0];
+    const before = await snapshot();
+    await expect(
+      service.checkout(customer, "real-two-item-rollback", {
+        ...purchase(stocked),
+        items: [...purchase(stocked).items, ...purchase(empty).items],
+      }),
+    ).rejects.toMatchObject({ code: "OUT_OF_STOCK" });
+    expect(await snapshot()).toEqual(before);
+  });
+
+  it("ORD-04 concurrent identical keys create one order and replay after service restart", async () => {
+    const id = await acceptanceProduct(),
+      body = purchase(id);
+    const results = await Promise.allSettled(
+      Array.from({ length: 12 }, () =>
+        service.checkout(customer, "concurrent-identical", body),
+      ),
+    );
+    const successes = results.filter(
+      (
+        r,
+      ): r is PromiseFulfilledResult<
+        Awaited<ReturnType<OrderService["checkout"]>>
+      > => r.status === "fulfilled",
+    );
+    expect(successes.length).toBeGreaterThan(0);
+    expect(new Set(successes.map((r) => r.value.id)).size).toBe(1);
+    for (const rejected of results.filter(
+      (r): r is PromiseRejectedResult => r.status === "rejected",
+    ))
+      expect(rejected.reason.code).toBe("REQUEST_IN_PROGRESS");
+    const restarted = new OrderService(source, schema);
+    expect(
+      await restarted.checkout(customer, "concurrent-identical", body),
+    ).toEqual(successes[0]!.value);
+    const [stock] = await source.query(
+      `SELECT reserved FROM "${schema}".inventories WHERE product_id=$1`,
+      [id],
+    );
+    expect(stock.reserved).toBe(1);
+    await expect(
+      restarted.checkout(customer, "concurrent-identical", {
+        ...body,
+        items: [{ ...body.items[0]!, quantity: 2 }],
+      }),
+    ).rejects.toMatchObject({ code: "IDEMPOTENCY_CONFLICT" });
+  });
+
+  it("ORD-06 serializes payment, cancellation and expiry with one history transition and valid reservations", async () => {
+    const id = await acceptanceProduct(),
+      order = await service.checkout(customer, "race-order", purchase(id));
+    await Promise.allSettled([
+      service.transition(
+        order.id,
+        { id: customer, role: "CUSTOMER" },
+        "CONFIRMED",
+        1,
+        "race-pay",
+      ),
+      service.transition(
+        order.id,
+        { id: customer, role: "CUSTOMER" },
+        "CANCELLED",
+        1,
+        "race-cancel",
+        "Concurrent cancellation",
+      ),
+      service.expireDue(new Date(Date.now() + 61 * 60000)),
+    ]);
+    const final = await service.detail(order.id, customer);
+    expect(["CONFIRMED", "CANCELLED", "EXPIRED"]).toContain(final.status);
+    expect(final.version).toBe(2);
+    const [history] = await source.query(
+      `SELECT count(*)::int count FROM "${schema}".order_status_history WHERE order_id=$1 AND order_version=2`,
+      [order.id],
+    );
+    expect(history.count).toBe(1);
+    const [stock] = await source.query(
+      `SELECT on_hand,reserved FROM "${schema}".inventories WHERE product_id=$1`,
+      [id],
+    );
+    expect(stock.on_hand).toBe(3);
+    expect(stock.reserved).toBe(final.status === "CONFIRMED" ? 1 : 0);
+    expect(final.paymentStatus).toBe(
+      final.status === "CONFIRMED" ? "PAID" : "UNPAID",
+    );
+  });
+
+  it("ORD-10 rejects reducing on-hand below reserved without changing stock or movements", async () => {
+    const id = await acceptanceProduct(2);
+    await service.checkout(customer, "reserved-reduction", purchase(id));
+    const [before] = await source.query(
+      `SELECT * FROM "${schema}".inventories WHERE product_id=$1`,
+      [id],
+    );
+    const [movements] = await source.query(
+      `SELECT count(*)::int count FROM "${schema}".inventory_movements WHERE product_id=$1`,
+      [id],
+    );
+    await expect(
+      catalog.adjust(id, staff, "unsafe-reduction", {
+        delta: -2,
+        reason: "Cannot remove reserved units",
+        expectedVersion: before.version,
+      }),
+    ).rejects.toMatchObject({ code: "INSUFFICIENT_STOCK" });
+    expect(
+      (
+        await source.query(
+          `SELECT * FROM "${schema}".inventories WHERE product_id=$1`,
+          [id],
+        )
+      )[0],
+    ).toEqual(before);
+    expect(
+      (
+        await source.query(
+          `SELECT count(*)::int count FROM "${schema}".inventory_movements WHERE product_id=$1`,
+          [id],
+        )
+      )[0],
+    ).toEqual(movements);
+  });
+
+  it("ORD-08 rejects stale and skipped transitions without changing order, stock or outbox", async () => {
+    const id = await acceptanceProduct(),
+      order = await service.checkout(customer, "stale-guard", purchase(id));
+    const before = await service.detail(order.id, customer);
+    const snapshot = async () =>
+      (
+        await source.query(
+          `SELECT (SELECT reserved FROM "${schema}".inventories WHERE product_id=$1) reserved,(SELECT count(*)::int FROM "${schema}".outbox_events WHERE aggregate_id=$2) events`,
+          [id, order.id],
+        )
+      )[0];
+    const state = await snapshot();
+    await expect(
+      service.transition(
+        order.id,
+        { id: staff, role: "WAREHOUSE" },
+        "SHIPPING",
+        1,
+        "skip-transition",
+      ),
+    ).rejects.toMatchObject({ code: "INVALID_TRANSITION" });
+    await expect(
+      service.transition(
+        order.id,
+        { id: customer, role: "CUSTOMER" },
+        "CONFIRMED",
+        0,
+        "stale-transition",
+      ),
+    ).rejects.toMatchObject({ code: "VERSION_CONFLICT" });
+    expect(await service.detail(order.id, customer)).toEqual(before);
+    expect(await snapshot()).toEqual(state);
+  });
+
+  it("JOB-01 checkout commits outbox while an email provider is still delayed for five seconds", async () => {
+    let begin!: () => void,
+      finished = false;
+    const started = new Promise<void>((resolve) => {
+      begin = resolve;
+    });
+    const jobs = new JobsService(
+      source,
+      {
+        mode: "deterministic-slow-fixture",
+        send: async () => {
+          begin();
+          await new Promise((resolve) => setTimeout(resolve, 5000));
+          finished = true;
+        },
+      },
+      "s".repeat(40),
+      schema,
+    );
+    await jobs.enqueue("slow-provider-fixture", "email.verification", {
+      recipient: "synthetic@example.test",
+    });
+    const worker = jobs.drain(1, "slow-provider-fixture");
+    try {
+      await started;
+      const id = await acceptanceProduct();
+      const order = await service.checkout(
+        customer,
+        "slow-provider-checkout",
+        purchase(id),
+      );
+      expect(finished).toBe(false);
+      expect((await service.detail(order.id, customer)).status).toBe(
+        "PENDING_PAYMENT",
+      );
+      const [event] = await source.query(
+        `SELECT count(*)::int count FROM "${schema}".outbox_events WHERE aggregate_id=$1 AND type='order.created'`,
+        [order.id],
+      );
+      expect(event.count).toBe(1);
+    } finally {
+      await worker;
+    }
+    expect(finished).toBe(true);
+  });
+
+  it("JOB-07 creates one invoice only after payment and none for cancelled unpaid orders", async () => {
+    const id = await acceptanceProduct(),
+      order = await service.checkout(
+        customer,
+        "invoice-lifecycle",
+        purchase(id),
+      );
+    const jobs = new JobsService(
+      source,
+      new DevelopmentEmailAdapter(source, schema),
+      "s".repeat(40),
+      schema,
+    );
+    const event = (type: string, orderId: string) => ({
+      id: randomUUID(),
+      businessKey: randomUUID(),
+      type,
+      aggregateId: orderId,
+      payload: {},
+    });
+    await jobs.route(event("order.created", order.id));
+    expect(
+      (
+        await source.query(
+          `SELECT count(*)::int count FROM "${schema}".job_executions WHERE type='invoice.generate' AND payload->>'orderId'=$1`,
+          [order.id],
+        )
+      )[0].count,
+    ).toBe(0);
+    await service.transition(
+      order.id,
+      { id: customer, role: "CUSTOMER" },
+      "CONFIRMED",
+      1,
+      "invoice-payment",
+    );
+    await jobs.route(event("payment.confirmed", order.id));
+    await jobs.route(event("payment.confirmed", order.id));
+    await jobs.drain(1, `invoice:${order.id}:v1`);
+    expect(
+      (
+        await source.query(
+          `SELECT count(*)::int count FROM "${schema}".invoices WHERE order_id=$1`,
+          [order.id],
+        )
+      )[0].count,
+    ).toBe(1);
+    const cancelled = await service.checkout(
+      customer,
+      "invoice-unpaid-cancel",
+      purchase(id),
+    );
+    await service.transition(
+      cancelled.id,
+      { id: customer, role: "CUSTOMER" },
+      "CANCELLED",
+      1,
+      "invoice-cancel",
+      "Cancelled before payment",
+    );
+    await jobs.enqueue(`invoice:${cancelled.id}:v1`, "invoice.generate", {
+      orderId: cancelled.id,
+    });
+    await jobs.drain(1, `invoice:${cancelled.id}:v1`);
+    expect(
+      (
+        await source.query(
+          `SELECT count(*)::int count FROM "${schema}".invoices WHERE order_id=$1`,
+          [cancelled.id],
+        )
+      )[0].count,
+    ).toBe(0);
   });
 });
