@@ -15,3 +15,8 @@ coverage/
 *.log
 *.tsbuildinfo
 .superpowers/
+
+# Local SSH keys and secrets
+/.secrets/
+*.pem
+*.ppk
