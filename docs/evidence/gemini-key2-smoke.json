@@ -1,0 +1,11 @@
+{
+  "executedAt": "2026-10-28T05:00:47.993Z",
+  "keyVariable": "GEMINI_API_KEY_2",
+  "model": "gemini-3.1-flash-lite",
+  "httpStatus": 200,
+  "providerStatus": null,
+  "schemaValid": true,
+  "predicted": "ORDER_STATUS",
+  "acceptance": "PASS",
+  "scope": "One synthetic classification request; not a tool-loop/quota-capacity evaluation"
+}
