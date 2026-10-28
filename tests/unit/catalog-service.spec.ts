@@ -1,7 +1,7 @@
-import { CatalogService } from "../../libs/modules/catalog/catalog.service";
+import { CatalogService } from "../../libs/modules/catalog/src/catalog.service";
 import { DataSource } from "typeorm";
 import { createHash } from "node:crypto";
-import { CatalogCache } from "../../libs/modules/runtime/catalog-cache";
+import { CatalogCache } from "../../libs/modules/runtime/src/catalog-cache";
 function fixture(results: unknown[] = [], cache?: CatalogCache) {
   const query = jest.fn();
   for (const value of results) query.mockResolvedValueOnce(value);

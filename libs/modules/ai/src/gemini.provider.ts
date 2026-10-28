@@ -1,5 +1,5 @@
 ﻿import { z } from "zod";
-import { categories } from "../tickets/tickets.service";
+import { categories } from "../../tickets/src/tickets.service";
 export interface Part {
   text?: string;
   functionCall?: { id?: string; name: string; args: unknown };

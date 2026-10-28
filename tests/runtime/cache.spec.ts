@@ -1,6 +1,6 @@
 import { RedisProtocol } from "./redis-protocol";
 import Redis from "ioredis";
-import { CatalogCache } from "../../libs/modules/runtime/catalog-cache";
+import { CatalogCache } from "../../libs/modules/runtime/src/catalog-cache";
 
 function setup() {
   const redis = new RedisProtocol();

@@ -2,7 +2,7 @@ import {
   TicketsService,
   Ticket,
   Actor,
-} from "../../libs/modules/tickets/tickets.service";
+} from "../../libs/modules/tickets/src/tickets.service";
 import { DataSource } from "typeorm";
 const customer: Actor = { id: "customer", role: "CUSTOMER" },
   support: Actor = { id: "support", role: "SUPPORT" },

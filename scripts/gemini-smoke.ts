@@ -4,7 +4,7 @@ import {
   GoogleGeminiProvider,
   classificationSchema,
   ProviderError,
-} from "../libs/modules/ai/gemini.provider";
+} from "../libs/modules/ai/src/gemini.provider";
 
 async function main() {
   if (!process.env.GEMINI_API_KEY || !process.env.GEMINI_MODEL)

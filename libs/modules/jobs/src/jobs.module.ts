@@ -19,15 +19,15 @@ import { Response } from "express";
 import Redis from "ioredis";
 import { Queue } from "bullmq";
 import { DataSource } from "typeorm";
-import { createDataSource } from "../../platform/src/database/data-source";
+import { createDataSource } from "../../../platform/src/database/data-source";
 import {
   AccessGuard,
   VerifiedGuard,
   RolesGuard,
   Roles,
   AuthenticatedRequest,
-} from "../auth/auth.guards";
-import { AuthModule } from "../auth/auth.module";
+} from "../../auth/src/auth.guards";
+import { AuthModule } from "../../auth/src/auth.module";
 import { ResendEmailAdapter } from "./resend-email";
 import {
   DevelopmentEmailAdapter,

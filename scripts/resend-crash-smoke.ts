@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { mkdir, readFile, writeFile, unlink } from "node:fs/promises";
 import { spawn } from "node:child_process";
 import { createDataSource } from "../libs/platform/src/database/data-source";
-import { ResendEmailAdapter } from "../libs/modules/jobs/resend-email";
+import { ResendEmailAdapter } from "../libs/modules/jobs/src/resend-email";
 async function main() {
   if (
     !process.env.TEST_DATABASE_URL ||

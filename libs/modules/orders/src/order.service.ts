@@ -1,9 +1,9 @@
 import { createHash, randomUUID } from "node:crypto";
 import { DataSource, EntityManager } from "typeorm";
-import { enqueueOutbox } from "../../platform/src/outbox/outbox";
-import { domainEvents } from "../../platform/src/domain-events";
-import { CatalogCache } from "../runtime/catalog-cache";
-import { enqueueCatalogInvalidation } from "../runtime/catalog-invalidation";
+import { enqueueOutbox } from "../../../platform/src/outbox/outbox";
+import { domainEvents } from "../../../platform/src/domain-events";
+import { CatalogCache } from "../../runtime/src/catalog-cache";
+import { enqueueCatalogInvalidation } from "../../runtime/src/catalog-invalidation";
 
 export class OrderError extends Error {
   constructor(public readonly code: string) {

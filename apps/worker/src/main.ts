@@ -6,11 +6,11 @@ import { parseEnvironment } from "../../../libs/platform/src/config/environment"
 import {
   FoundationWorker,
   registerOutboxSubscriber,
-} from "../../../libs/platform/src/queue/foundation-worker";
+} from "./foundation-worker";
 import {
   RuntimeModule,
   RuntimeServices,
-} from "../../../libs/modules/runtime/runtime.module";
+} from "../../../libs/modules/runtime/src/runtime.module";
 
 @Module({
   providers: [FoundationWorker],

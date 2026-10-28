@@ -10,13 +10,13 @@ import Redis from "ioredis";
 import * as jwt from "jsonwebtoken";
 import { DataSource } from "typeorm";
 import { z } from "zod";
-import { AuthModule } from "../auth/auth.module";
-import { AuthRuntime } from "../auth/auth.runtime";
-import { createDataSource } from "../../platform/src/database/data-source";
+import { AuthModule } from "../../auth/src/auth.module";
+import { AuthRuntime } from "../../auth/src/auth.runtime";
+import { createDataSource } from "../../../platform/src/database/data-source";
 import {
   domainEvents,
   OrderStatusEvent,
-} from "../../platform/src/domain-events";
+} from "../../../platform/src/domain-events";
 
 @Injectable()
 export class OrderRealtime

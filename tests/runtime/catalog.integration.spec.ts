@@ -2,12 +2,12 @@ import { randomUUID } from "node:crypto";
 import Redis from "ioredis";
 import { DataSource } from "typeorm";
 import { createDataSource } from "../../libs/platform/src/database/data-source";
-import { CatalogService } from "../../libs/modules/catalog/catalog.service";
-import { OrderService } from "../../libs/modules/orders/order.service";
+import { CatalogService } from "../../libs/modules/catalog/src/catalog.service";
+import { OrderService } from "../../libs/modules/orders/src/order.service";
 import {
   CatalogCache,
   catalogListKey,
-} from "../../libs/modules/runtime/catalog-cache";
+} from "../../libs/modules/runtime/src/catalog-cache";
 import { RedisProtocol } from "./redis-protocol";
 
 describe("catalog cache domain integration (native PostgreSQL, Redis protocol double)", () => {

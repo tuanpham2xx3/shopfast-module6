@@ -1,7 +1,10 @@
 import { randomUUID } from "node:crypto";
 import { DataSource } from "typeorm";
 import { createDataSource } from "../../libs/platform/src/database/data-source";
-import { AuthError, AuthService } from "../../libs/modules/auth/auth.service";
+import {
+  AuthError,
+  AuthService,
+} from "../../libs/modules/auth/src/auth.service";
 
 describe("auth service integration", () => {
   let source: DataSource;

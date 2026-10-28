@@ -4,11 +4,11 @@ import { DataSource } from "typeorm";
 import {
   RateLimitError,
   RuntimeLimiter,
-} from "../../libs/modules/runtime/limiter";
+} from "../../libs/modules/runtime/src/limiter";
 import {
   RuntimeRateInterceptor,
   RuntimeServices,
-} from "../../libs/modules/runtime/runtime.module";
+} from "../../libs/modules/runtime/src/runtime.module";
 describe("HTTP runtime limiter adapter", () => {
   it("uses a conservative process fallback and fails closed for sensitive scopes", async () => {
     const source = new DataSource({ type: "postgres" });

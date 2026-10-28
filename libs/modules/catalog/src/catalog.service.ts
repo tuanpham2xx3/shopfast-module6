@@ -1,12 +1,12 @@
 import { createHash, randomUUID } from "node:crypto";
 import { DataSource } from "typeorm";
-import { enqueueOutbox } from "../../platform/src/outbox/outbox";
+import { enqueueOutbox } from "../../../platform/src/outbox/outbox";
 import {
   CatalogCache,
   catalogListKey,
   catalogListTags,
-} from "../runtime/catalog-cache";
-import { enqueueCatalogInvalidation } from "../runtime/catalog-invalidation";
+} from "../../runtime/src/catalog-cache";
+import { enqueueCatalogInvalidation } from "../../runtime/src/catalog-invalidation";
 
 export class CatalogError extends Error {
   constructor(public readonly code: string) {

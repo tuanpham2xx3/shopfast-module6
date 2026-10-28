@@ -1,6 +1,6 @@
 ﻿import { randomUUID } from "node:crypto";
 import Redis from "ioredis";
-import { CatalogCache } from "../../libs/modules/runtime/catalog-cache";
+import { CatalogCache } from "../../libs/modules/runtime/src/catalog-cache";
 describe("real Redis catalog Lua, stampede and negative-cache acceptance", () => {
   let redis: Redis;
   let cache: CatalogCache;

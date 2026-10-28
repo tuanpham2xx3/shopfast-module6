@@ -1,7 +1,7 @@
 import {
   CACHE_INVALIDATE_SCRIPT,
   CACHE_WRITE_SCRIPT,
-} from "../../libs/modules/runtime/catalog-cache";
+} from "../../libs/modules/runtime/src/catalog-cache";
 /** Deterministic Redis protocol double; live Lua execution remains a separate acceptance check. */
 export class RedisProtocol {
   readonly data = new Map<string, string>();

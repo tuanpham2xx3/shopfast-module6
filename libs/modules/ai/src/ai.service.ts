@@ -6,7 +6,7 @@ import {
   categories,
   TicketError,
   TicketsService,
-} from "../tickets/tickets.service";
+} from "../../tickets/src/tickets.service";
 import {
   BoundedProvider,
   classificationSchema,

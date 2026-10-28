@@ -29,17 +29,20 @@ import {
 import { Type } from "class-transformer";
 import { OmitType, PartialType } from "@nestjs/swagger";
 import { DataSource } from "typeorm";
-import { createDataSource } from "../../platform/src/database/data-source";
+import { createDataSource } from "../../../platform/src/database/data-source";
 import {
   AccessGuard,
   AuthenticatedRequest,
   Roles,
   RolesGuard,
   VerifiedGuard,
-} from "../auth/auth.guards";
-import { AuthModule } from "../auth/auth.module";
+} from "../../auth/src/auth.guards";
+import { AuthModule } from "../../auth/src/auth.module";
 import { CatalogService } from "./catalog.service";
-import { RuntimeModule, RuntimeServices } from "../runtime/runtime.module";
+import {
+  RuntimeModule,
+  RuntimeServices,
+} from "../../runtime/src/runtime.module";
 
 class PageDto {
   @IsOptional()

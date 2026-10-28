@@ -36,17 +36,20 @@ import {
   ValidateNested,
 } from "class-validator";
 import { DataSource } from "typeorm";
-import { createDataSource } from "../../platform/src/database/data-source";
-import { AuthModule } from "../auth/auth.module";
+import { createDataSource } from "../../../platform/src/database/data-source";
+import { AuthModule } from "../../auth/src/auth.module";
 import {
   AccessGuard,
   AuthenticatedRequest,
   Roles,
   RolesGuard,
   VerifiedGuard,
-} from "../auth/auth.guards";
+} from "../../auth/src/auth.guards";
 import { OrderService } from "./order.service";
-import { RuntimeModule, RuntimeServices } from "../runtime/runtime.module";
+import {
+  RuntimeModule,
+  RuntimeServices,
+} from "../../runtime/src/runtime.module";
 
 class QuantityDto {
   @IsInt() @Min(1) @Max(99) quantity!: number;

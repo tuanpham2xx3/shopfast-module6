@@ -27,17 +27,17 @@ import {
   Min,
 } from "class-validator";
 import { DataSource } from "typeorm";
-import { createDataSource } from "../../platform/src/database/data-source";
+import { createDataSource } from "../../../platform/src/database/data-source";
 import {
   AccessGuard,
   AuthenticatedRequest,
   Roles,
   RolesGuard,
   VerifiedGuard,
-} from "../auth/auth.guards";
-import { AuthModule } from "../auth/auth.module";
+} from "../../auth/src/auth.guards";
+import { AuthModule } from "../../auth/src/auth.module";
 import { categories, TicketsService } from "./tickets.service";
-import { AiService } from "../ai/ai.service";
+import { AiService } from "../../ai/src/ai.service";
 class PageDto {
   @IsOptional() @Type(() => Number) @IsInt() @Min(1) page?: number;
   @IsOptional()

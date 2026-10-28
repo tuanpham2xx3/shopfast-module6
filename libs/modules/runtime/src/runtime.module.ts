@@ -12,10 +12,10 @@ import { Request, Response } from "express";
 import Redis from "ioredis";
 import { DataSource } from "typeorm";
 import { catchError, from, mergeMap, throwError } from "rxjs";
-import { createDataSource } from "../../platform/src/database/data-source";
+import { createDataSource } from "../../../platform/src/database/data-source";
 import { CatalogCache } from "./catalog-cache";
 import { RateLimitError, RuntimeLimiter } from "./limiter";
-import { AuthService } from "../auth/auth.service";
+import { AuthService } from "../../auth/src/auth.service";
 
 @Injectable()
 export class RuntimeServices implements OnApplicationShutdown {

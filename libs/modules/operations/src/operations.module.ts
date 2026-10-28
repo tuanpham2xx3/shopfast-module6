@@ -1,18 +1,28 @@
 import { Controller, Get, Module, UseGuards } from "@nestjs/common";
-import { AuthModule } from "../auth/auth.module";
+import { AuthModule } from "../../auth/src/auth.module";
 import {
   AccessGuard,
   Roles,
   RolesGuard,
   VerifiedGuard,
-} from "../auth/auth.guards";
-import { JobsModule, JobsRuntime, queueSnapshot } from "../jobs/jobs.module";
-import { TicketsModule, TicketsRuntime } from "../tickets/tickets.module";
-import { RuntimeModule, RuntimeServices } from "../runtime/runtime.module";
+} from "../../auth/src/auth.guards";
+import {
+  JobsModule,
+  JobsRuntime,
+  queueSnapshot,
+} from "../../jobs/src/jobs.module";
+import {
+  TicketsModule,
+  TicketsRuntime,
+} from "../../tickets/src/tickets.module";
+import {
+  RuntimeModule,
+  RuntimeServices,
+} from "../../runtime/src/runtime.module";
 import {
   probeDatabase,
   probeRedis,
-} from "../../platform/src/health/dependency-probes";
+} from "../../../platform/src/health/dependency-probes";
 
 @Controller("admin")
 @UseGuards(AccessGuard, VerifiedGuard, RolesGuard)

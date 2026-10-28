@@ -1,8 +1,8 @@
-import { SlidingWindow } from "../../libs/modules/runtime/limiter";
+import { SlidingWindow } from "../../libs/modules/runtime/src/limiter";
 import {
   canonicalCatalogQuery,
   CatalogCache,
-} from "../../libs/modules/runtime/catalog-cache";
+} from "../../libs/modules/runtime/src/catalog-cache";
 describe("runtime protections", () => {
   it("enforces rolling limits and expires precisely", () => {
     let now = 0;

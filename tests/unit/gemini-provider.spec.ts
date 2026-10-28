@@ -2,7 +2,7 @@
   BoundedProvider,
   GoogleGeminiProvider,
   ProviderError,
-} from "../../libs/modules/ai/gemini.provider";
+} from "../../libs/modules/ai/src/gemini.provider";
 describe("Gemini provider boundaries", () => {
   it("declares numeric confidence in the provider classification schema", async () => {
     const transport = jest.spyOn(globalThis, "fetch").mockResolvedValue(
