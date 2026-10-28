@@ -39,6 +39,8 @@ Nguồn yêu cầu: `../Module 06 – Software Requirement Specification (SRS).d
 
 ## Đối chiếu gần nhất
 
+- [Hướng dẫn chạy và kiểm chứng harness](17-harness-guide.md).
+
 - [Plan đóng toàn bộ yêu cầu SRS và hồ sơ bảo vệ](16-srs-completion-plan.md): nguồn tiến độ/gate hiện tại; các baseline cũ bên dưới cần đọc theo ngày và release.
 
 - [Cải thiện UI/UX và nguồn ảnh](15-ui-refresh.md).

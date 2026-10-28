@@ -6,6 +6,7 @@ import { harnessContext } from "./context.mjs";
 import { runCommand, aggregate } from "./core.mjs";
 import { assessRequirements, verifyArtifact } from "./evidence.mjs";
 import { deriveRequirements } from "./derive.mjs";
+import { recordCommandGates } from "./gates.mjs";
 const profile = process.argv[2] ?? "preflight";
 const directory = "harness/reports";
 await mkdir(directory, { recursive: true });
@@ -22,6 +23,12 @@ const add = (id, status, details = {}) => {
 const command = async (id, args, env = process.env) => {
   const result = await runCommand(process.execPath, args, { env });
   add(id, result.status, { ...result, command: ["node", ...args] });
+  await recordCommandGates({
+    id,
+    result,
+    command: ["node", ...args],
+    context: { commit, dirty, configHash },
+  });
 };
 const blocked = (id, reason) => add(id, "BLOCKED", { reason });
 const required = (keys, id) => {
