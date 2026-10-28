@@ -1,0 +1,97 @@
+{
+  "sourceReceipt": "harness\\reports\\receipts\\e711fe53-8d84-4873-903d-2dc18a6f0550-remote.json",
+  "receipts": [
+    {
+      "runId": "e711fe53-8d84-4873-903d-2dc18a6f0550",
+      "caseId": "GATE-s3-restore",
+      "commit": "f8d169625a2820f54cdc6214f76dbd9dec7e1f17",
+      "dirty": false,
+      "configHash": "11adada81b612c3897cb97b4d1c70bd51e2912a86d1210892efc5954004a808a",
+      "executedAt": "2026-10-28T12:09:58.032Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "ssh",
+        "-o",
+        "BatchMode=yes",
+        "-i",
+        ".secrets/shopfast-ec2.pem",
+        "ubuntu@3.27.169.177",
+        "sudo python3 -c 'import json,os; p=\"/opt/shopfast/restore/latest-report.json\"; print(json.dumps({\"mtime\":os.path.getmtime(p),\"report\":json.load(open(p))}))'"
+      ],
+      "assertions": [
+        {
+          "name": "remote report freshly written by this execution",
+          "expected": "mtime >= run start minus 5 seconds",
+          "actual": 1793189361.0351562,
+          "passed": true
+        },
+        {
+          "name": "report status",
+          "expected": "PASS",
+          "actual": "PASS",
+          "passed": true
+        },
+        {
+          "name": "checksumVerified",
+          "expected": true,
+          "actual": true,
+          "passed": true
+        },
+        {
+          "name": "isolatedDatabase",
+          "expected": true,
+          "actual": true,
+          "passed": true
+        },
+        {
+          "name": "tableCountsMatched",
+          "expected": true,
+          "actual": true,
+          "passed": true
+        },
+        {
+          "name": "restoredLogin",
+          "expected": true,
+          "actual": true,
+          "passed": true
+        },
+        {
+          "name": "restoredOrderRead",
+          "expected": true,
+          "actual": true,
+          "passed": true
+        },
+        {
+          "name": "invoicePdfAndChecksum",
+          "expected": true,
+          "actual": true,
+          "passed": true
+        },
+        {
+          "name": "restore deadline",
+          "expected": "<1800s",
+          "actual": 7,
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/111ec444-4b16-454a-987b-d3f94ee48d31.log",
+          "sha256": "90e1d543ead19513de24d8638581f37653492af907c91ba89557d9582cfdb74c",
+          "bytes": 452
+        }
+      ],
+      "scope": "backup-restore"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "harness/reports/artifacts/111ec444-4b16-454a-987b-d3f94ee48d31.log",
+      "sha256": "90e1d543ead19513de24d8638581f37653492af907c91ba89557d9582cfdb74c",
+      "bytes": 452,
+      "exportedPath": "docs/evidence/runs/a91198117f40a921/90e1d543ead19513de24d8638581f37653492af907c91ba89557d9582cfdb74c.txt"
+    }
+  ],
+  "note": "PNG reviewed separately before commit/publication; hash integrity does not prove assertion coverage."
+}

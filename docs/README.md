@@ -39,6 +39,9 @@ Nguồn yêu cầu: `../Module 06 – Software Requirement Specification (SRS).d
 
 ## Đối chiếu gần nhất
 
+- [Kịch bản bàn giao, demo 10 phút và Q&A](18-defense-walkthrough.md).
+- [Hiệu năng và S3 restore đã kiểm chứng trên release f8d1696](evidence/verified-performance-restore.md).
+
 - [Hướng dẫn chạy và kiểm chứng harness](17-harness-guide.md).
 
 - [Plan đóng toàn bộ yêu cầu SRS và hồ sơ bảo vệ](16-srs-completion-plan.md): nguồn tiến độ/gate hiện tại; các baseline cũ bên dưới cần đọc theo ngày và release.

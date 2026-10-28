@@ -1,0 +1,9 @@
+{
+  "startedAt": "2026-10-28T12:09:54.403Z",
+  "finishedAt": "2026-10-28T12:09:58.029Z",
+  "status": "PASS",
+  "exitCode": 0,
+  "timedOut": false,
+  "durationMs": 3626,
+  "output": "{\"mtime\": 1793189361.0351562, \"report\": {\"status\": \"PASS\", \"durationSeconds\": 7, \"checksumVerified\": true, \"isolatedDatabase\": true, \"tableCountsMatched\": true, \"restoredLogin\": true, \"restoredOrderRead\": true, \"invoicePdfAndChecksum\": true}}\n"
+}
