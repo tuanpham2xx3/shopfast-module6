@@ -10,6 +10,31 @@ Baseline: EC2 Sydney `i-05647e511e0e1780b`, `m7i-flex.large`, Ubuntu24.04, EBS40
 
 ## 2. Checklist người dùng cần chuẩn bị trước
 
+### Cập nhật đầu vào đã cấp — 28/10/2026
+
+- Người dùng đã cho phép push branch, tạo PR, merge khi CI đạt và deploy lên EC2 hiện tại; cho phép dùng key Gemini hiện có trên EC2. Không cần xin lại từng bước trong phạm vi này. Quy tắc không force-push/bypass checks vẫn giữ.
+- Domain ứng dụng `shopfast.tuanpq.com` đã có A record đúng EC2; Cloudflare CLI local có quyền DNS.
+- AWS CLI profile `shopfast` đã đăng nhập tạm qua `aws login`; STS, EC2, IAM list và S3 list đã kiểm tra thành công. SG22 giới hạn IP quản trị /32,80/443 public; EBS40GiB gp3 encrypted. Phiên hết hạn có thể cần người dùng login lại, không tạo key dài hạn.
+- Ngân sách: chỉ dùng credit miễn phí hiện có (người dùng báo còn180USD), không chấp nhận phát sinh tiền ngoài credit. Không phải180USD/tháng. Chưa tạo tài nguyên tính phí mới nếu chưa xác minh eligibility/coverage; không tự nâng máy hoặc chuyển paid plan. Credit không được xem là hard spending cap.
+- Resend setup key ở `.env` ignored đã có Full access; domain `mail.shopfast.tuanpq.com` và4DNS verified. Inbox `EMAIL_TEST_TO` đã cấu hình. Provider smoke báo delivered và replay cùng key trả cùng messageID; chưa phải nghiệm thu worker adapter.
+- Không cần người dùng thêm DNS/email record hoặc cấp lại SSH/GitHub/Gemini/Resend. Agent tạo sending-only domain-scoped key, lưu bảo mật cho app; chỉ thu hồi setup key sau khi xác minh không còn phụ thuộc và có đường quản trị thay thế.
+- Các blocker có thể còn: AWS account policy không cho IAM/OIDC/S3, credit không áp dụng/hết hạn, phiên login hết hạn, yêu cầu đổi gói hoặc cần IP/DNS thay đổi. Agent báo chính xác khi gặp, không yêu cầu user setup dự phòng vô ích.
+
+### Email thương hiệu — người dùng đã yêu cầu
+
+Xây HTML responsive đồng bộ ShopFast, tiếng Việt rõ dấu, layout600px dễ đọc trên mobile, CSS inline tương thích Gmail/Outlook, màu chữ đủ tương phản, typography sạch và bản plain text. Không phụ thuộc ảnh bên ngoài để đọc OTP/nội dung; không dùng form/script/tracking pixel. Escape toàn bộ biến không tin cậy; không log OTP, token hoặc rendered sensitive HTML.
+
+| Template | Nội dung và hành động |
+| --- | --- |
+| OTP xác minh | Mã6số nổi bật, hạn10phút khớp auth, lưu ý không chia sẻ mã; không nhúng mã vào URL |
+| Xác nhận đơn | Mã đơn, item snapshot, số lượng, giá/tổng/giảm VND, nút Xem đơn tới trang thật; không đưa địa chỉ/PII dư thừa |
+| Nhắc thanh toán | Mã đơn và thời hạn thực tế từ DB, CTA tiếp tục thanh toán; gửi khi còn hợp lệ, không mô tả đã thanh toán |
+| Báo cáo doanh thu | Ngày nghiệp vụ Bangkok, số đơn DELIVERED và doanh thu đúng formula, CTA trang admin cần đăng nhập; không gắn bearer/signed secrets vào email |
+
+Sender `ShopFast <no-reply@mail.shopfast.tuanpq.com>`; link về HTTPS `shopfast.tuanpq.com`, chỉ tạo link tới route đã implement và kiểm tra ownership server-side. Payload render lấy snapshot dữ liệu ổn định; retry dùng cùng body/idempotency key, không chèn timestamp render ngẫu nhiên gây409. Không gửi attachment/report dữ liệu nhạy cảm nếu chưa có contract.
+
+Kiểm tra: snapshot/escape/link/format unit tests; preview HTML và mobile screenshot; plain text tương đương; gửi mẫu có nhãn DEMO vào EMAIL_TEST_TO sau khi có adapter, xác minh provider event và người dùng có thể xem Gmail. Ghi evidence hiển thị thực tế, không giả định screenshot browser chứng minh Outlook/Gmail. Không gửi email mẫu hàng loạt hoặc tới customer fixture. Chưa đánh dấu triển khai/PASS.
+
 | Cần cung cấp/thao tác | Đầu vào cụ thể | Vì sao / cách giao |
 | --- | --- | --- |
 | Domain/subdomain và quyền DNS | Ví dụ `shopfast.example.com`; quyền tạo A/TXT và email quản trị chứng chỉ | Người dùng giữ tài khoản registrar; agent đưa bản ghi chính xác để người dùng nhập nếu không có API DNS. Không gửi mật khẩu registrar. Không bắt buộc Route53. |
@@ -91,7 +116,7 @@ Các lệnh trên là target plan, CHƯA tồn tại/CHƯA chạy. Runner không
 
 ## 7. Điểm quyết định và giới hạn
 
-- User mới cho phép lập plan và chuẩn bị inputs; push/merge tự động, DNS và tài nguyên tính phí sẽ thực hiện trong phạm vi user xác nhận checklist. SSH baseline đã được phép và đã làm.
+- Người dùng đã cấp quyền push/PR/merge khi CI đạt/deploy và dùng Gemini trên EC2 theo cập nhật mục2; tài nguyên tính phí vẫn chịu giới hạn credit-only. SSH baseline/DNS/Resend smoke đã thực hiện. Những dòng checklist ban đầu mô tả yêu cầu đầu vào, trạng thái mới nhất ở cập nhật mục2 được ưu tiên.
 - Agent tự sửa bug, bổ sung test, commit, chạy harness trong phạm vi. Không dừng hỏi lại từng lệnh reversible; chỉ hỏi khi thiếu quyền/secret hoặc phát sinh chi phí/phá hủy nằm ngoài phạm vi.
 - Daily backup không đồng nghĩa zero data loss; deploy blue/green một host không đồng nghĩa HA toàn hệ thống. Worker quiescence/backlog phải đo riêng.
 - Không coi partner mock/email fake là provider thật; demo partner service được gắn nhãn rõ và tested contract, yêu cầu đối tác thật cần endpoint riêng nếu người dùng có.
