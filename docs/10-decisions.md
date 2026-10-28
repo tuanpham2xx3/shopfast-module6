@@ -54,6 +54,14 @@ Thiết kế sau phải xử lý migration tương thích khi chạy hai version
 
 ## 3. Rủi ro cần theo dõi
 
+### D25 — Đối tác tồn kho demo được người dùng chấp thuận
+
+28/10/2026: người dùng xác nhận “Không có, dùng đối tác demo”. Nghiệm thu luồng `inventory.partner-sync` với `partner_inventory` mô phỏng có version và business key; ghi rõ đây là demo trong API/dashboard/report/slide. Không yêu cầu credential/endpoint đối tác thật và không tuyên bố đã gửi dữ liệu ra bên thứ ba. Vẫn kiểm queue không chặn checkout, retry/dedup và snapshot cũ không ghi đè mới. Gate `partner-http-contract` trước đây đổi thành `partner-versioned-demo`; không suy việc người dùng chấp thuận thành test đã PASS.
+
+### D24 — Nginx graceful reload giữ HTTP keep-alive tối thiểu
+
+Rehearsal active session28/10/2026 phát hiện `UND_ERR_SOCKET` khi reload dù health/deploy/rollback đều đạt. Dùng Nginx1.28 runtime, thêm `keepalive_min_timeout 5s` và `keepalive_timeout 10s`; minimum giữ kết nối cho request reuse lúc graceful shutdown, thấp hơn thời gian drain API15s. Không retry request để che lỗi. Chỉ đóng gate zero-downtime khi rehearsal có authenticated browser/order reads/socket đạt; từng lần FAIL giữ riêng. Directive yêu cầu Nginx>=1.27.4 theo [tài liệu chính thức](https://nginx.org/en/docs/http/ngx_http_core_module.html#keepalive_min_timeout).
+
 | Rủi ro                                               | Cách xử lý                                                                           |
 | ---------------------------------------------------- | ------------------------------------------------------------------------------------ |
 | Email duplicate sau crash                            | Chọn provider có idempotency/status lookup; test crash window                        |

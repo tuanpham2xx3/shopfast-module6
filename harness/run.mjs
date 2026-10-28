@@ -2,48 +2,35 @@ import "dotenv/config";
 import { readFile, mkdir, writeFile, readdir } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
 import { lookup } from "node:dns/promises";
-import { createHash } from "node:crypto";
+import { harnessContext } from "./context.mjs";
 import { runCommand, aggregate } from "./core.mjs";
+import { assessRequirements, verifyArtifact } from "./evidence.mjs";
+import { deriveRequirements } from "./derive.mjs";
+import { recordCommandGates } from "./gates.mjs";
+import { recordRemoteProfile } from "./remote-evidence.mjs";
+const startedAt = Date.now();
 const profile = process.argv[2] ?? "preflight";
 const directory = "harness/reports";
 await mkdir(directory, { recursive: true });
-const commit = execFileSync("git", ["rev-parse", "HEAD"], {
-  encoding: "utf8",
-}).trim();
+const { commit, dirty, configHash } = harnessContext();
 const cases = [];
-const dirty = !!execFileSync("git", ["status", "--porcelain"], {
-  encoding: "utf8",
-}).trim();
-const configHash = createHash("sha256")
-  .update(
-    JSON.stringify({
-      target: "https://shopfast.tuanpq.com",
-      model: process.env.GEMINI_MODEL,
-      live: process.env.HARNESS_LIVE_PROVIDERS === "true",
-      reboot: process.env.HARNESS_REBOOT_HOST === "true",
-      databaseConfigured: !!process.env.TEST_DATABASE_URL,
-      redisConfigured: !!process.env.TEST_REDIS_URL,
-      candidate: process.env.HARNESS_CANDIDATE_SHA ?? null,
-      credentials: createHash("sha256")
-        .update(
-          [
-            process.env.GEMINI_API_KEY,
-            process.env.RESEND_API_KEY,
-            process.env.TEST_DATABASE_URL,
-            process.env.TEST_REDIS_URL,
-          ].join("|"),
-        )
-        .digest("hex"),
-    }),
-  )
-  .digest("hex");
 const add = (id, status, details = {}) => {
+  if (typeof status === "object") {
+    details = { ...status, ...details };
+    status = status.status;
+  }
   cases.push({ id, status, ...details });
   console.log(`${id}: ${status}`);
 };
 const command = async (id, args, env = process.env) => {
   const result = await runCommand(process.execPath, args, { env });
   add(id, result.status, { ...result, command: ["node", ...args] });
+  await recordCommandGates({
+    id,
+    result,
+    command: ["node", ...args],
+    context: { commit, dirty, configHash },
+  });
 };
 const blocked = (id, reason) => add(id, "BLOCKED", { reason });
 const required = (keys, id) => {
@@ -103,7 +90,18 @@ switch (profile) {
     break;
   }
   case "ci":
-    await command("HARNESS-SELFTEST", ["--test", "harness/core.test.mjs"]);
+    await command("HARNESS-SOURCE", ["harness/check-source.mjs"]);
+    await command("HARNESS-FORMAT", [
+      "node_modules/prettier/bin/prettier.cjs",
+      "--check",
+      "harness/*.{mjs,cjs,json}",
+    ]);
+    await command("HARNESS-SELFTEST", [
+      "--test",
+      "harness/core.test.mjs",
+      "harness/evidence.test.mjs",
+      "harness/remote-evidence.test.mjs",
+    ]);
     await command("FORMAT", [
       "node_modules/prettier/bin/prettier.cjs",
       "--check",
@@ -143,17 +141,9 @@ switch (profile) {
       "apps/web",
     ]);
     if (required(["TEST_DATABASE_URL", "TEST_REDIS_URL"], "INTEGRATION"))
-      await command("INTEGRATION-COVERAGE", [
-        "node_modules/jest/bin/jest.js",
-        "--config",
-        "jest.business.config.js",
-        "--runInBand",
-      ]);
+      await command("INTEGRATION-COVERAGE", ["harness/cases.mjs", "--collect"]);
     if (required(["TEST_DATABASE_URL"], "BROWSER-E2E"))
-      await command("BROWSER-E2E", [
-        "node_modules/@playwright/test/cli.js",
-        "test",
-      ]);
+      await command("BROWSER-E2E", ["harness/browser-cases.mjs"]);
     break;
   case "staging":
     await staging();
@@ -213,63 +203,55 @@ switch (profile) {
       ]);
     add(
       "WORKER-PROCESS-CRASH",
-      (
-        await runCommand("ssh", [
-          "-o",
-          "BatchMode=yes",
-          "-i",
-          ".secrets/shopfast-ec2.pem",
-          "ubuntu@3.27.169.177",
-          "sudo bash /opt/shopfast/resilience.sh",
-        ])
-      ).status,
+      await runCommand("ssh", [
+        "-o",
+        "BatchMode=yes",
+        "-i",
+        ".secrets/shopfast-ec2.pem",
+        "ubuntu@3.27.169.177",
+        "sudo bash /opt/shopfast/resilience.sh",
+      ]),
     );
     add(
       "REDIS-PROCESS-OUTAGE",
-      (
-        await runCommand("ssh", [
-          "-o",
-          "BatchMode=yes",
-          "-i",
-          ".secrets/shopfast-ec2.pem",
-          "ubuntu@3.27.169.177",
-          "sudo bash /opt/shopfast/redis-outage.sh",
-        ])
-      ).status,
+      await runCommand("ssh", [
+        "-o",
+        "BatchMode=yes",
+        "-i",
+        ".secrets/shopfast-ec2.pem",
+        "ubuntu@3.27.169.177",
+        "sudo bash /opt/shopfast/redis-outage.sh",
+      ]),
     );
     break;
   case "performance":
     add(
       "PERFORMANCE",
-      (
-        await runCommand(
-          "ssh",
-          [
-            "-o",
-            "BatchMode=yes",
-            "-i",
-            ".secrets/shopfast-ec2.pem",
-            "ubuntu@3.27.169.177",
-            "sudo bash /opt/shopfast/performance.sh",
-          ],
-          { timeoutMs: 1500000 },
-        )
-      ).status,
-    );
-    break;
-  case "backup-restore":
-    add(
-      "BACKUP-RESTORE",
-      (
-        await runCommand("ssh", [
+      await runCommand(
+        "ssh",
+        [
           "-o",
           "BatchMode=yes",
           "-i",
           ".secrets/shopfast-ec2.pem",
           "ubuntu@3.27.169.177",
-          "sudo bash /opt/shopfast/backup.sh && sudo bash /opt/shopfast/restore-rehearsal.sh",
-        ])
-      ).status,
+          "sudo bash /opt/shopfast/performance.sh",
+        ],
+        { timeoutMs: 1500000 },
+      ),
+    );
+    break;
+  case "backup-restore":
+    add(
+      "BACKUP-RESTORE",
+      await runCommand("ssh", [
+        "-o",
+        "BatchMode=yes",
+        "-i",
+        ".secrets/shopfast-ec2.pem",
+        "ubuntu@3.27.169.177",
+        "sudo bash /opt/shopfast/backup.sh && sudo bash /opt/shopfast/restore-rehearsal.sh",
+      ]),
     );
     if (process.env.HARNESS_REBOOT_HOST === "true")
       await command("HOST-RESTART", ["harness/host-restart.mjs"]);
@@ -288,19 +270,18 @@ switch (profile) {
     else
       add(
         "DEPLOY-ROLLBACK",
-        (
-          await runCommand("ssh", [
-            "-o",
-            "BatchMode=yes",
-            "-i",
-            ".secrets/shopfast-ec2.pem",
-            "ubuntu@3.27.169.177",
-            `sudo bash /opt/shopfast/rollback-rehearsal.sh ${process.env.HARNESS_CANDIDATE_SHA} && sudo bash /opt/shopfast/deploy-release.sh ${process.env.HARNESS_CANDIDATE_SHA}`,
-          ])
-        ).status,
+        await runCommand("ssh", [
+          "-o",
+          "BatchMode=yes",
+          "-i",
+          ".secrets/shopfast-ec2.pem",
+          "ubuntu@3.27.169.177",
+          `sudo bash /opt/shopfast/rollback-rehearsal.sh ${process.env.HARNESS_CANDIDATE_SHA} && sudo bash /opt/shopfast/deploy-release.sh ${process.env.HARNESS_CANDIDATE_SHA}`,
+        ]),
       );
     break;
   case "report": {
+    await deriveRequirements({ commit, dirty, configHash });
     if (dirty)
       blocked(
         "WORKTREE",
@@ -357,13 +338,69 @@ switch (profile) {
       "deploy-rollback",
     ]) {
       const report = latest.get(required);
-      if (report) add(required, report.status, { source: report.file });
-      else blocked(required, "No matching commit/config run");
+      if (report) {
+        const artifacts = report.cases.map((c) => c.artifact).filter(Boolean);
+        const valid = (
+          await Promise.all(artifacts.map((a) => verifyArtifact(a)))
+        ).every(Boolean);
+        add(required, valid ? report.status : "FAIL", {
+          source: report.file,
+          ...(valid ? {} : { reason: "Profile artifact integrity failed" }),
+        });
+      } else blocked(required, "No matching commit/config run");
     }
+    const registry = JSON.parse(
+      await readFile("harness/requirements.json", "utf8"),
+    );
+    const receipts = [];
+    await mkdir(`${directory}/receipts`, { recursive: true });
+    for (const file of await readdir(`${directory}/receipts`)) {
+      if (!file.endsWith(".json")) continue;
+      const receipt = JSON.parse(
+        await readFile(`${directory}/receipts/${file}`, "utf8"),
+      );
+      receipts.push(...(Array.isArray(receipt) ? receipt : [receipt]));
+    }
+    const assessment = await assessRequirements({
+      registry,
+      receipts,
+      commit,
+      configHash,
+    });
+    await writeFile(
+      `${directory}/requirements-assessment.json`,
+      JSON.stringify({ commit, configHash, ...assessment }, null, 2),
+    );
+    for (const requirement of assessment.results)
+      add(requirement.id, requirement.status, {
+        reason: requirement.reason,
+        runId: requirement.runId,
+      });
     break;
   }
   default:
     throw new Error("Unknown harness profile");
+}
+for (const remoteProfile of {
+  performance: ["performance"],
+  resilience: ["worker-crash", "redis-outage"],
+  "backup-restore": ["backup-restore"],
+  "deploy-rollback": ["deploy-rollback"],
+}[profile] ?? []) {
+  try {
+    add(
+      "EVIDENCE-" + remoteProfile,
+      await recordRemoteProfile(
+        remoteProfile,
+        { commit, dirty, configHash },
+        startedAt,
+      ),
+    );
+  } catch {
+    add("EVIDENCE-" + remoteProfile, "FAIL", {
+      reason: "Remote execution evidence could not be verified",
+    });
+  }
 }
 const result = {
   runId: `${Date.now()}-${profile}`,

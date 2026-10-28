@@ -1,0 +1,3037 @@
+{
+  "sourceReceipt": "harness\\reports\\receipts\\4ed5b56b-3e53-47e3-9a79-e17cc8b48816-cases.json",
+  "receipts": [
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "AUTH-01",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "auth.integration.spec.ts#registers a normalized",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "auth service integration registers a normalized unverified customer without exposing OTP or hashes",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "auth-http.integration.spec.ts#registers, verifies",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "auth HTTP vertical slice registers, verifies, reads current user, refreshes and logs out",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/auth.integration.spec.ts",
+          "bytes": 8171,
+          "sha256": "e5f97cfdae93950ae67a480075b976c63d4d6c70b09cea83ce8265a8acb8e0bf"
+        },
+        {
+          "path": "tests/integration/auth-http.integration.spec.ts",
+          "bytes": 3580,
+          "sha256": "54521c7d83cb743293148280c90ed7db4bbff7ae10cf00106e4657a5ebf9db3a"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "AUTH-01A",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "auth-http.integration.spec.ts#registers, verifies",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "auth HTTP vertical slice registers, verifies, reads current user, refreshes and logs out",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/auth-http.integration.spec.ts",
+          "bytes": 3580,
+          "sha256": "54521c7d83cb743293148280c90ed7db4bbff7ae10cf00106e4657a5ebf9db3a"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "AUTH-02",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "auth.integration.spec.ts#rejects expired OTPs",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "auth service integration rejects expired OTPs and locks a code after five wrong attempts",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "auth-guards.spec.ts#rejects unverified",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "auth guards rejects unverified users",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/auth.integration.spec.ts",
+          "bytes": 8171,
+          "sha256": "e5f97cfdae93950ae67a480075b976c63d4d6c70b09cea83ce8265a8acb8e0bf"
+        },
+        {
+          "path": "tests/unit/auth-guards.spec.ts",
+          "bytes": 1629,
+          "sha256": "d027b86f210e3505e4b9bbb9bac490a310363bdbb6a8d589d4968b75d48bc9ac"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "AUTH-03",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "auth.integration.spec.ts#rotates refresh tokens",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "auth service integration rotates refresh tokens and revokes the family when an old token is reused",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "realtime.integration.spec.ts#rejects anonymous",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "realtime authorization and post-commit delivery rejects anonymous/unverified and denies another customer's subscription",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/auth.integration.spec.ts",
+          "bytes": 8171,
+          "sha256": "e5f97cfdae93950ae67a480075b976c63d4d6c70b09cea83ce8265a8acb8e0bf"
+        },
+        {
+          "path": "tests/integration/realtime.integration.spec.ts",
+          "bytes": 5367,
+          "sha256": "744c03c159df3bb57a582b93aa8fdd3b0e9f3172c9172284380dec104989c3a2"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "AUTH-04",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "catalog-http.integration.spec.ts#guards admin mutations",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "catalog HTTP roles and vertical flow guards admin mutations and carries product stock into public catalog",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "tickets-ai.integration.spec.ts#hides customer ownership",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "tickets and AI ownership/confirmation integration hides customer ownership and serializes competing claims",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "orders.integration.spec.ts#replays checkout",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "order transaction invariants replays checkout and follows mock payment through delivery exactly once",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/catalog-http.integration.spec.ts",
+          "bytes": 4462,
+          "sha256": "b31127b34711a132485f9f6cbe118366ff1d45bb3cde52310637eed7c9ac7521"
+        },
+        {
+          "path": "tests/integration/tickets-ai.integration.spec.ts",
+          "bytes": 14142,
+          "sha256": "3067eb188ce85eb10766eab25c349c9162da10e42f0585510351389fcf595e6c"
+        },
+        {
+          "path": "tests/integration/orders.integration.spec.ts",
+          "bytes": 21997,
+          "sha256": "dbc8f7432bf66a8ab7ebea131d67b7b3d55726a8ff1432eaccca4f7d04a4025e"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "CAT-01",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "catalog.integration.spec.ts#creates zero stock",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "catalog and inventory integration creates zero stock and combines all public filters",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "runtime.spec.ts#canonicalizes defaults",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "runtime protections canonicalizes defaults and rejects unbounded or unrecognized filters",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "catalog-service.spec.ts#returns filtered pages",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "catalog and inventory domain contracts returns filtered pages, safe integer offsets and known sort modes",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/runtime/catalog.integration.spec.ts",
+          "bytes": 5650,
+          "sha256": "e41004c6757a95dec21eef4e03864a8ebb631576775fda055f56643e547dc7de"
+        },
+        {
+          "path": "tests/integration/catalog.integration.spec.ts",
+          "bytes": 3783,
+          "sha256": "cca1cde32df193f6422bea58ae8c7c8841fbcbdc07d82e4a2e511877920f82a8"
+        },
+        {
+          "path": "tests/runtime/runtime.spec.ts",
+          "bytes": 1452,
+          "sha256": "acc7d54fc32747af945af61ef46b763990c02c909bf28df61df1bab7f9dcfe3e"
+        },
+        {
+          "path": "tests/unit/catalog-service.spec.ts",
+          "bytes": 6140,
+          "sha256": "f3388d2748307dea7d7306d63e3892540ce22cf6396830c1b33850fde4c4b1d7"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "CAT-02",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "catalog.integration.spec.ts#hides products whose category",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "catalog and inventory integration hides products whose category is inactive and enforces versions",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "catalog-http.integration.spec.ts#guards admin mutations",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "catalog HTTP roles and vertical flow guards admin mutations and carries product stock into public catalog",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/runtime/catalog.integration.spec.ts",
+          "bytes": 5650,
+          "sha256": "e41004c6757a95dec21eef4e03864a8ebb631576775fda055f56643e547dc7de"
+        },
+        {
+          "path": "tests/integration/catalog.integration.spec.ts",
+          "bytes": 3783,
+          "sha256": "cca1cde32df193f6422bea58ae8c7c8841fbcbdc07d82e4a2e511877920f82a8"
+        },
+        {
+          "path": "tests/integration/catalog-http.integration.spec.ts",
+          "bytes": 4462,
+          "sha256": "b31127b34711a132485f9f6cbe118366ff1d45bb3cde52310637eed7c9ac7521"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "CART-01",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "orders.integration.spec.ts#CART-01",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "order transaction invariants CART-01 adds, changes and removes a SKU without reserving stock and rejects boundary quantities",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/orders.integration.spec.ts",
+          "bytes": 21997,
+          "sha256": "dbc8f7432bf66a8ab7ebea131d67b7b3d55726a8ff1432eaccca4f7d04a4025e"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "ORD-01",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "orders.integration.spec.ts#replays checkout",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "order transaction invariants replays checkout and follows mock payment through delivery exactly once",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "outbox.integration.spec.ts#publishes committed events",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "outbox delivery contract publishes committed events and applies a duplicate delivery once",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/orders.integration.spec.ts",
+          "bytes": 21997,
+          "sha256": "dbc8f7432bf66a8ab7ebea131d67b7b3d55726a8ff1432eaccca4f7d04a4025e"
+        },
+        {
+          "path": "tests/integration/outbox.integration.spec.ts",
+          "bytes": 3474,
+          "sha256": "c020852bef91a06e6c8c0b1dad6d4c6207d1d649025d10bd762e1b3a42e2d79b"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "ORD-02",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "orders.integration.spec.ts#allows exactly one of twenty",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "order transaction invariants allows exactly one of twenty buyers to reserve the last unit",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/orders.integration.spec.ts",
+          "bytes": 21997,
+          "sha256": "dbc8f7432bf66a8ab7ebea131d67b7b3d55726a8ff1432eaccca4f7d04a4025e"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "ORD-03",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "orders.integration.spec.ts#ORD-03",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "order transaction invariants ORD-03 rolls back reservations, cart, order and outbox when the second real SKU is out of stock",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/orders.integration.spec.ts",
+          "bytes": 21997,
+          "sha256": "dbc8f7432bf66a8ab7ebea131d67b7b3d55726a8ff1432eaccca4f7d04a4025e"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "ORD-04",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "orders.integration.spec.ts#ORD-04",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "order transaction invariants ORD-04 concurrent identical keys create one order and replay after service restart",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/orders.integration.spec.ts",
+          "bytes": 21997,
+          "sha256": "dbc8f7432bf66a8ab7ebea131d67b7b3d55726a8ff1432eaccca4f7d04a4025e"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "ORD-05",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "orders.integration.spec.ts#rejects changed prices",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "order transaction invariants rejects changed prices and rolls back an entire multi-product request",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/orders.integration.spec.ts",
+          "bytes": 21997,
+          "sha256": "dbc8f7432bf66a8ab7ebea131d67b7b3d55726a8ff1432eaccca4f7d04a4025e"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "ORD-06",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "orders.integration.spec.ts#ORD-06",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "order transaction invariants ORD-06 serializes payment, cancellation and expiry with one history transition and valid reservations",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/orders.integration.spec.ts",
+          "bytes": 21997,
+          "sha256": "dbc8f7432bf66a8ab7ebea131d67b7b3d55726a8ff1432eaccca4f7d04a4025e"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "ORD-07",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "orders.integration.spec.ts#replays checkout",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "order transaction invariants replays checkout and follows mock payment through delivery exactly once",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "orders.integration.spec.ts#expires unpaid",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "order transaction invariants expires unpaid orders once and leaves paid orders reserved",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/orders.integration.spec.ts",
+          "bytes": 21997,
+          "sha256": "dbc8f7432bf66a8ab7ebea131d67b7b3d55726a8ff1432eaccca4f7d04a4025e"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "ORD-08",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "orders.integration.spec.ts#ORD-08",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "order transaction invariants ORD-08 rejects stale and skipped transitions without changing order, stock or outbox",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/orders.integration.spec.ts",
+          "bytes": 21997,
+          "sha256": "dbc8f7432bf66a8ab7ebea131d67b7b3d55726a8ff1432eaccca4f7d04a4025e"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "ORD-09",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "orders.integration.spec.ts#consumes the final promotion",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "order transaction invariants consumes the final promotion quota once under concurrent checkout",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/orders.integration.spec.ts",
+          "bytes": 21997,
+          "sha256": "dbc8f7432bf66a8ab7ebea131d67b7b3d55726a8ff1432eaccca4f7d04a4025e"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "ORD-10",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "orders.integration.spec.ts#ORD-10",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "order transaction invariants ORD-10 rejects reducing on-hand below reserved without changing stock or movements",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/orders.integration.spec.ts",
+          "bytes": 21997,
+          "sha256": "dbc8f7432bf66a8ab7ebea131d67b7b3d55726a8ff1432eaccca4f7d04a4025e"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "RT-01",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "realtime.integration.spec.ts#rejects anonymous",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "realtime authorization and post-commit delivery rejects anonymous/unverified and denies another customer's subscription",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/realtime.integration.spec.ts",
+          "bytes": 5367,
+          "sha256": "744c03c159df3bb57a582b93aa8fdd3b0e9f3172c9172284380dec104989c3a2"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "RT-02",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "realtime.integration.spec.ts#rejects anonymous",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "realtime authorization and post-commit delivery rejects anonymous/unverified and denies another customer's subscription",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/realtime.integration.spec.ts",
+          "bytes": 5367,
+          "sha256": "744c03c159df3bb57a582b93aa8fdd3b0e9f3172c9172284380dec104989c3a2"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "RT-03",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "realtime.integration.spec.ts#rejects anonymous",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "realtime authorization and post-commit delivery rejects anonymous/unverified and denies another customer's subscription",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/realtime.integration.spec.ts",
+          "bytes": 5367,
+          "sha256": "744c03c159df3bb57a582b93aa8fdd3b0e9f3172c9172284380dec104989c3a2"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "RT-04",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "BLOCKED",
+      "reason": "Requires external evidence: browser-reconnect; Jest cannot prove this case alone",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "RATE-01",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "runtime.spec.ts#enforces rolling limits",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "runtime protections enforces rolling limits and expires precisely",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "http.spec.ts#propagates Retry-After",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "HTTP runtime limiter adapter propagates Retry-After from downstream controller failures",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "limiter.integration.spec.ts#serializes concurrent sensitive",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "authoritative runtime limiting serializes concurrent sensitive requests across service instances",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "auth.integration.spec.ts#limits an IP",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "auth service integration limits an IP even when each request targets a different email",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/runtime/runtime.spec.ts",
+          "bytes": 1452,
+          "sha256": "acc7d54fc32747af945af61ef46b763990c02c909bf28df61df1bab7f9dcfe3e"
+        },
+        {
+          "path": "tests/runtime/http.spec.ts",
+          "bytes": 2625,
+          "sha256": "024475931b2e006f7203ce1906cf7d8bc2e07ee54850a0e54c5fe64c254ee744"
+        },
+        {
+          "path": "tests/runtime/limiter.integration.spec.ts",
+          "bytes": 2901,
+          "sha256": "8566424ac534b839f442a0eb983a9f675e056c99dfdb7ee39d8ecd2b0ec59589"
+        },
+        {
+          "path": "tests/integration/auth.integration.spec.ts",
+          "bytes": 8171,
+          "sha256": "e5f97cfdae93950ae67a480075b976c63d4d6c70b09cea83ce8265a8acb8e0bf"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "RATE-02",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "limiter.integration.spec.ts#protects normalized target",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "authoritative runtime limiting protects normalized target accounts and clears failures after success",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "limiter.integration.spec.ts#uses a rolling window",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "authoritative runtime limiting uses a rolling window and escalates target lock duration",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/runtime/limiter.integration.spec.ts",
+          "bytes": 2901,
+          "sha256": "8566424ac534b839f442a0eb983a9f675e056c99dfdb7ee39d8ecd2b0ec59589"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "RATE-03",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "http.spec.ts#uses a conservative process fallback",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "HTTP runtime limiter adapter uses a conservative process fallback and fails closed for sensitive scopes",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "limiter.integration.spec.ts#serializes concurrent sensitive",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "authoritative runtime limiting serializes concurrent sensitive requests across service instances",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/runtime/http.spec.ts",
+          "bytes": 2625,
+          "sha256": "024475931b2e006f7203ce1906cf7d8bc2e07ee54850a0e54c5fe64c254ee744"
+        },
+        {
+          "path": "tests/runtime/limiter.integration.spec.ts",
+          "bytes": 2901,
+          "sha256": "8566424ac534b839f442a0eb983a9f675e056c99dfdb7ee39d8ecd2b0ec59589"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "CACHE-01",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "BLOCKED",
+      "reason": "Requires external evidence: performance; Jest cannot prove this case alone",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "CACHE-02",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "catalog.integration.spec.ts#writes durable invalidation",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "catalog cache domain integration (native PostgreSQL, Redis protocol double) writes durable invalidation only inside successful mutation transactions",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "catalog.integration.spec.ts#invalidates inventory",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "catalog cache domain integration (native PostgreSQL, Redis protocol double) invalidates inventory after checkout, cancellation, and expiry",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "cache-redis.integration.spec.ts#CACHE-02",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "real Redis catalog Lua, stampede and negative-cache acceptance CACHE-02 invalidates all related real Redis indices and preserves unrelated lists",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/runtime/catalog.integration.spec.ts",
+          "bytes": 5650,
+          "sha256": "e41004c6757a95dec21eef4e03864a8ebb631576775fda055f56643e547dc7de"
+        },
+        {
+          "path": "tests/integration/catalog.integration.spec.ts",
+          "bytes": 3783,
+          "sha256": "cca1cde32df193f6422bea58ae8c7c8841fbcbdc07d82e4a2e511877920f82a8"
+        },
+        {
+          "path": "tests/integration/cache-redis.integration.spec.ts",
+          "bytes": 3561,
+          "sha256": "d20c26298aecd0f3bded5733a50fb3d005693bbdc9e17c1118f97ebb902682eb"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "CACHE-03",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "cache-redis.integration.spec.ts#CACHE-03",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "real Redis catalog Lua, stampede and negative-cache acceptance CACHE-03 Lua generation fencing prevents an old loader from repopulating invalidated data",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "cache.spec.ts#revalidates a raced",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "catalog cache race and outage behavior revalidates a raced DB version and does not hide database errors",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/cache-redis.integration.spec.ts",
+          "bytes": 3561,
+          "sha256": "d20c26298aecd0f3bded5733a50fb3d005693bbdc9e17c1118f97ebb902682eb"
+        },
+        {
+          "path": "tests/runtime/cache.spec.ts",
+          "bytes": 4080,
+          "sha256": "4e922241793adab14a033bc84c6c0d3e33ba571d18b63fd1f776fc2358ae73f0"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "CACHE-04",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "cache-redis.integration.spec.ts#CACHE-04",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "real Redis catalog Lua, stampede and negative-cache acceptance CACHE-04 coalesces a hot-key burst and expires missing-key entries with a bounded TTL",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/cache-redis.integration.spec.ts",
+          "bytes": 3561,
+          "sha256": "d20c26298aecd0f3bded5733a50fb3d005693bbdc9e17c1118f97ebb902682eb"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "CACHE-05",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "cache.spec.ts#bypasses stale data",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "catalog cache race and outage behavior bypasses stale data after an invalidation outage until a successful retry",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "runtime.spec.ts#bypasses unavailable Redis",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "runtime protections bypasses unavailable Redis without hiding loader failures",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/runtime/cache.spec.ts",
+          "bytes": 4080,
+          "sha256": "4e922241793adab14a033bc84c6c0d3e33ba571d18b63fd1f776fc2358ae73f0"
+        },
+        {
+          "path": "tests/runtime/runtime.spec.ts",
+          "bytes": 1452,
+          "sha256": "acc7d54fc32747af945af61ef46b763990c02c909bf28df61df1bab7f9dcfe3e"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "JOB-01",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "orders.integration.spec.ts#JOB-01",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "order transaction invariants JOB-01 checkout commits outbox while an email provider is still delayed for five seconds",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/orders.integration.spec.ts",
+          "bytes": 21997,
+          "sha256": "dbc8f7432bf66a8ab7ebea131d67b7b3d55726a8ff1432eaccca4f7d04a4025e"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "JOB-02",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "jobs.integration.spec.ts#JOB-02",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "durable jobs, invoice authorization and crash recovery JOB-02 persists retry backoff before retrying and dead-letters exhausted jobs with a reason",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "redis.integration.spec.ts#processes delayed",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "Redis/BullMQ native compatibility processes delayed jobs and retries a failed attempt",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/jobs.integration.spec.ts",
+          "bytes": 12172,
+          "sha256": "0e0932c12a0cb8cf927554fd9f08817c0b9a83863c7619a7ebd0d1718fc6f4c6"
+        },
+        {
+          "path": "tests/integration/redis.integration.spec.ts",
+          "bytes": 2581,
+          "sha256": "47f2c981bd154ace436fdcf6da7228d1e7770b03d5c53a7a3405eaf1c6d1ee04"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "JOB-03",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "resend.integration.spec.ts#replays the same request",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "Resend durable idempotency replays the same request after ambiguous timeout, persists provider ID and skips duplicate",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "resend.integration.spec.ts#refuses late retry",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "Resend durable idempotency refuses late retry outside the safe window even for a manually requeued job",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "jobs.integration.spec.ts#never overwrites a newer",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "durable jobs, invoice authorization and crash recovery never overwrites a newer partner inventory snapshot with older data",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/resend.integration.spec.ts",
+          "bytes": 2627,
+          "sha256": "70a3452a32569419084968907b7956db6e5222589e20aaa71973c1ba6d3984a2"
+        },
+        {
+          "path": "tests/integration/jobs.integration.spec.ts",
+          "bytes": 12172,
+          "sha256": "0e0932c12a0cb8cf927554fd9f08817c0b9a83863c7619a7ebd0d1718fc6f4c6"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "JOB-04",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "outbox.integration.spec.ts#publishes committed events",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "outbox delivery contract publishes committed events and applies a duplicate delivery once",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "outbox.integration.spec.ts#releases a failed publish",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "outbox delivery contract releases a failed publish for retry without marking it published",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/outbox.integration.spec.ts",
+          "bytes": 3474,
+          "sha256": "c020852bef91a06e6c8c0b1dad6d4c6207d1d649025d10bd762e1b3a42e2d79b"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "JOB-05",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "jobs.integration.spec.ts#JOB-05",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "durable jobs, invoice authorization and crash recovery JOB-05 schedules reminders at thirty minutes and skips an order paid before execution",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/jobs.integration.spec.ts",
+          "bytes": 12172,
+          "sha256": "0e0932c12a0cb8cf927554fd9f08817c0b9a83863c7619a7ebd0d1718fc6f4c6"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "JOB-06",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "jobs.integration.spec.ts#catches up Bangkok",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "durable jobs, invoice authorization and crash recovery catches up Bangkok daily reports and expires through the domain service",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "orders.integration.spec.ts#expires unpaid",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "order transaction invariants expires unpaid orders once and leaves paid orders reserved",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/jobs.integration.spec.ts",
+          "bytes": 12172,
+          "sha256": "0e0932c12a0cb8cf927554fd9f08817c0b9a83863c7619a7ebd0d1718fc6f4c6"
+        },
+        {
+          "path": "tests/integration/orders.integration.spec.ts",
+          "bytes": 21997,
+          "sha256": "dbc8f7432bf66a8ab7ebea131d67b7b3d55726a8ff1432eaccca4f7d04a4025e"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "JOB-07",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "orders.integration.spec.ts#JOB-07",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "order transaction invariants JOB-07 creates one invoice only after payment and none for cancelled unpaid orders",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/orders.integration.spec.ts",
+          "bytes": 21997,
+          "sha256": "dbc8f7432bf66a8ab7ebea131d67b7b3d55726a8ff1432eaccca4f7d04a4025e"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "TKT-01",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "tickets-ai.integration.spec.ts#hides customer ownership",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "tickets and AI ownership/confirmation integration hides customer ownership and serializes competing claims",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "tickets-service.spec.ts#conceals customer ownership",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "ticket domain permission and state rules conceals customer ownership and limits support assignment",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/tickets-ai.integration.spec.ts",
+          "bytes": 14142,
+          "sha256": "3067eb188ce85eb10766eab25c349c9162da10e42f0585510351389fcf595e6c"
+        },
+        {
+          "path": "tests/unit/tickets-service.spec.ts",
+          "bytes": 6802,
+          "sha256": "d762ee1015724194b7977b4ae31af5fe21aa914804391df2d44f1edfe95a3bd9"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "TKT-02",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "tickets-ai.integration.spec.ts#classifies structured",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "tickets and AI ownership/confirmation integration classifies structured results and fails malformed output into review",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "tickets-ai.integration.spec.ts#deduplicates turns",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "tickets and AI ownership/confirmation integration deduplicates turns, confirms once atomically and marks human classification",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/tickets-ai.integration.spec.ts",
+          "bytes": 14142,
+          "sha256": "3067eb188ce85eb10766eab25c349c9162da10e42f0585510351389fcf595e6c"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "AI-01",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "tickets-ai.integration.spec.ts#grounds both real DB tools",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "tickets and AI ownership/confirmation integration grounds both real DB tools, hides other customer orders, and requires explicit approval",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/tickets-ai.integration.spec.ts",
+          "bytes": 14142,
+          "sha256": "3067eb188ce85eb10766eab25c349c9162da10e42f0585510351389fcf595e6c"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "AI-02",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "tickets-ai.integration.spec.ts#does not disclose",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "tickets and AI ownership/confirmation integration does not disclose orders of another customer, and revokes session after reassignment",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "ai-service.spec.ts#refuses unsupported",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "AI policy, grounding and human approval decisions refuses unsupported scope and falls back for malformed or ungrounded output",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/tickets-ai.integration.spec.ts",
+          "bytes": 14142,
+          "sha256": "3067eb188ce85eb10766eab25c349c9162da10e42f0585510351389fcf595e6c"
+        },
+        {
+          "path": "tests/unit/ai-service.spec.ts",
+          "bytes": 9605,
+          "sha256": "b5ccc30d51252900672cd7b081fbf9919420d692ec968dcf477b1222c4aa387b"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "AI-02A",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "tickets-ai.integration.spec.ts#grounds both real DB tools",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "tickets and AI ownership/confirmation integration grounds both real DB tools, hides other customer orders, and requires explicit approval",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/tickets-ai.integration.spec.ts",
+          "bytes": 14142,
+          "sha256": "3067eb188ce85eb10766eab25c349c9162da10e42f0585510351389fcf595e6c"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "AI-03",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "tickets-ai.integration.spec.ts#blocks ungrounded",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "tickets and AI ownership/confirmation integration blocks ungrounded output, role injection and infinite tool calls",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "ai-service.spec.ts#refuses unsupported",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "AI policy, grounding and human approval decisions refuses unsupported scope and falls back for malformed or ungrounded output",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "ai-service.spec.ts#bounds tool rounds",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "AI policy, grounding and human approval decisions bounds tool rounds and blocks tools not allowlisted",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/tickets-ai.integration.spec.ts",
+          "bytes": 14142,
+          "sha256": "3067eb188ce85eb10766eab25c349c9162da10e42f0585510351389fcf595e6c"
+        },
+        {
+          "path": "tests/unit/ai-service.spec.ts",
+          "bytes": 9605,
+          "sha256": "b5ccc30d51252900672cd7b081fbf9919420d692ec968dcf477b1222c4aa387b"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "AI-04",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "tickets-ai.integration.spec.ts#grounds both real DB tools",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "tickets and AI ownership/confirmation integration grounds both real DB tools, hides other customer orders, and requires explicit approval",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "ai-service.spec.ts#creates a proposal",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "AI policy, grounding and human approval decisions creates a proposal without changing the ticket, confirms once and rejects wrong actor/version/expiry",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/tickets-ai.integration.spec.ts",
+          "bytes": 14142,
+          "sha256": "3067eb188ce85eb10766eab25c349c9162da10e42f0585510351389fcf595e6c"
+        },
+        {
+          "path": "tests/unit/ai-service.spec.ts",
+          "bytes": 9605,
+          "sha256": "b5ccc30d51252900672cd7b081fbf9919420d692ec968dcf477b1222c4aa387b"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "AI-05",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "tickets-ai.integration.spec.ts#deduplicates turns",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "tickets and AI ownership/confirmation integration deduplicates turns, confirms once atomically and marks human classification",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "tickets-ai.integration.spec.ts#rejects stale",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "tickets and AI ownership/confirmation integration rejects stale, expired and rejected proposals without changing label",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "tickets-ai.integration.spec.ts#does not disclose",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "tickets and AI ownership/confirmation integration does not disclose orders of another customer, and revokes session after reassignment",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/tickets-ai.integration.spec.ts",
+          "bytes": 14142,
+          "sha256": "3067eb188ce85eb10766eab25c349c9162da10e42f0585510351389fcf595e6c"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "AI-06",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "tickets-ai.integration.spec.ts#caps classification",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "tickets and AI ownership/confirmation integration caps classification at two provider calls during quota failure",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "gemini-provider.spec.ts#times out even",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "Gemini provider boundaries times out even a provider that ignores abort",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "ai-deadline.spec.ts#bounds the entire",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "bounds the entire AI request when the initial database lookup stalls",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/integration/tickets-ai.integration.spec.ts",
+          "bytes": 14142,
+          "sha256": "3067eb188ce85eb10766eab25c349c9162da10e42f0585510351389fcf595e6c"
+        },
+        {
+          "path": "tests/unit/gemini-provider.spec.ts",
+          "bytes": 3438,
+          "sha256": "fcef076ecf1ca7a013ec97c384f29a51ac03950f4f8b5942d37d5558d35272a0"
+        },
+        {
+          "path": "tests/unit/ai-deadline.spec.ts",
+          "bytes": 769,
+          "sha256": "2326930034681ec44822953c87e4e718a23a517a8b621b69843d890f1d723668"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "OPS-01",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [
+        {
+          "name": "readiness.spec.ts#reports unavailable",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "readiness reports unavailable when PostgreSQL is unavailable",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "readiness.spec.ts#reports degraded",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "readiness reports degraded when only Redis is unavailable",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        },
+        {
+          "name": "readiness.spec.ts#reports ok",
+          "expected": "one passing assertion",
+          "actual": [
+            {
+              "test": "readiness reports ok when both probes succeed",
+              "status": "passed"
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        },
+        {
+          "path": "tests/unit/readiness.spec.ts",
+          "bytes": 846,
+          "sha256": "58303248753c24ffbc44e8ed16a5193c296b78796acd28adf0539faa08a3c7ea"
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "OPS-02",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "BLOCKED",
+      "reason": "Requires external evidence: redis-platform-compatibility; Jest cannot prove this case alone",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        }
+      ]
+    },
+    {
+      "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+      "caseId": "UI-01",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:09:14.286Z",
+      "status": "BLOCKED",
+      "reason": "Requires external evidence: browser-all-roles; Jest cannot prove this case alone",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/jest/bin/jest.js",
+        "--config",
+        "jest.business.config.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=harness/reports/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json"
+      ],
+      "assertions": [],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+          "bytes": 45410,
+          "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e"
+        },
+        {
+          "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+          "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+          "bytes": 1982
+        }
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "harness/reports/artifacts/4ed5b56b-3e53-47e3-9a79-e17cc8b48816-assertions.json",
+      "bytes": 45410,
+      "sha256": "87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e",
+      "exportedPath": "docs/evidence/runs/3fdfa94785dd2c69/87fcbaf75aea0845fd4e8266ce2a9ebb3d0f34e18f541e093d86d312d8efd23e.txt"
+    },
+    {
+      "path": "harness/reports/artifacts/d629b378-63d7-4adb-955c-5fb1c17e6285.log",
+      "sha256": "d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e",
+      "bytes": 1982,
+      "exportedPath": "docs/evidence/runs/3fdfa94785dd2c69/d50a69c4a99ad0ef211a8d716ff67861a8e8bffcf875ad731c8f27cf4ded111e.txt"
+    },
+    {
+      "path": "tests/integration/auth.integration.spec.ts",
+      "bytes": 8171,
+      "sha256": "e5f97cfdae93950ae67a480075b976c63d4d6c70b09cea83ce8265a8acb8e0bf",
+      "exportedPath": "docs/evidence/runs/3fdfa94785dd2c69/e5f97cfdae93950ae67a480075b976c63d4d6c70b09cea83ce8265a8acb8e0bf.txt"
+    },
+    {
+      "path": "tests/integration/auth-http.integration.spec.ts",
+      "bytes": 3580,
+      "sha256": "54521c7d83cb743293148280c90ed7db4bbff7ae10cf00106e4657a5ebf9db3a",
+      "exportedPath": "docs/evidence/runs/3fdfa94785dd2c69/54521c7d83cb743293148280c90ed7db4bbff7ae10cf00106e4657a5ebf9db3a.txt"
+    },
+    {
+      "path": "tests/unit/auth-guards.spec.ts",
+      "bytes": 1629,
+      "sha256": "d027b86f210e3505e4b9bbb9bac490a310363bdbb6a8d589d4968b75d48bc9ac",
+      "exportedPath": "docs/evidence/runs/3fdfa94785dd2c69/d027b86f210e3505e4b9bbb9bac490a310363bdbb6a8d589d4968b75d48bc9ac.txt"
+    },
+    {
+      "path": "tests/integration/realtime.integration.spec.ts",
+      "bytes": 5367,
+      "sha256": "744c03c159df3bb57a582b93aa8fdd3b0e9f3172c9172284380dec104989c3a2",
+      "exportedPath": "docs/evidence/runs/3fdfa94785dd2c69/744c03c159df3bb57a582b93aa8fdd3b0e9f3172c9172284380dec104989c3a2.txt"
+    },
+    {
+      "path": "tests/integration/catalog-http.integration.spec.ts",
+      "bytes": 4462,
+      "sha256": "b31127b34711a132485f9f6cbe118366ff1d45bb3cde52310637eed7c9ac7521",
+      "exportedPath": "docs/evidence/runs/3fdfa94785dd2c69/b31127b34711a132485f9f6cbe118366ff1d45bb3cde52310637eed7c9ac7521.txt"
+    },
+    {
+      "path": "tests/integration/tickets-ai.integration.spec.ts",
+      "bytes": 14142,
+      "sha256": "3067eb188ce85eb10766eab25c349c9162da10e42f0585510351389fcf595e6c",
+      "exportedPath": "docs/evidence/runs/3fdfa94785dd2c69/3067eb188ce85eb10766eab25c349c9162da10e42f0585510351389fcf595e6c.txt"
+    },
+    {
+      "path": "tests/integration/orders.integration.spec.ts",
+      "bytes": 21997,
+      "sha256": "dbc8f7432bf66a8ab7ebea131d67b7b3d55726a8ff1432eaccca4f7d04a4025e",
+      "exportedPath": "docs/evidence/runs/3fdfa94785dd2c69/dbc8f7432bf66a8ab7ebea131d67b7b3d55726a8ff1432eaccca4f7d04a4025e.txt"
+    },
+    {
+      "path": "tests/runtime/catalog.integration.spec.ts",
+      "bytes": 5650,
+      "sha256": "e41004c6757a95dec21eef4e03864a8ebb631576775fda055f56643e547dc7de",
+      "exportedPath": "docs/evidence/runs/3fdfa94785dd2c69/e41004c6757a95dec21eef4e03864a8ebb631576775fda055f56643e547dc7de.txt"
+    },
+    {
+      "path": "tests/integration/catalog.integration.spec.ts",
+      "bytes": 3783,
+      "sha256": "cca1cde32df193f6422bea58ae8c7c8841fbcbdc07d82e4a2e511877920f82a8",
+      "exportedPath": "docs/evidence/runs/3fdfa94785dd2c69/cca1cde32df193f6422bea58ae8c7c8841fbcbdc07d82e4a2e511877920f82a8.txt"
+    },
+    {
+      "path": "tests/runtime/runtime.spec.ts",
+      "bytes": 1452,
+      "sha256": "acc7d54fc32747af945af61ef46b763990c02c909bf28df61df1bab7f9dcfe3e",
+      "exportedPath": "docs/evidence/runs/3fdfa94785dd2c69/acc7d54fc32747af945af61ef46b763990c02c909bf28df61df1bab7f9dcfe3e.txt"
+    },
+    {
+      "path": "tests/unit/catalog-service.spec.ts",
+      "bytes": 6140,
+      "sha256": "f3388d2748307dea7d7306d63e3892540ce22cf6396830c1b33850fde4c4b1d7",
+      "exportedPath": "docs/evidence/runs/3fdfa94785dd2c69/f3388d2748307dea7d7306d63e3892540ce22cf6396830c1b33850fde4c4b1d7.txt"
+    },
+    {
+      "path": "tests/integration/outbox.integration.spec.ts",
+      "bytes": 3474,
+      "sha256": "c020852bef91a06e6c8c0b1dad6d4c6207d1d649025d10bd762e1b3a42e2d79b",
+      "exportedPath": "docs/evidence/runs/3fdfa94785dd2c69/c020852bef91a06e6c8c0b1dad6d4c6207d1d649025d10bd762e1b3a42e2d79b.txt"
+    },
+    {
+      "path": "tests/runtime/http.spec.ts",
+      "bytes": 2625,
+      "sha256": "024475931b2e006f7203ce1906cf7d8bc2e07ee54850a0e54c5fe64c254ee744",
+      "exportedPath": "docs/evidence/runs/3fdfa94785dd2c69/024475931b2e006f7203ce1906cf7d8bc2e07ee54850a0e54c5fe64c254ee744.txt"
+    },
+    {
+      "path": "tests/runtime/limiter.integration.spec.ts",
+      "bytes": 2901,
+      "sha256": "8566424ac534b839f442a0eb983a9f675e056c99dfdb7ee39d8ecd2b0ec59589",
+      "exportedPath": "docs/evidence/runs/3fdfa94785dd2c69/8566424ac534b839f442a0eb983a9f675e056c99dfdb7ee39d8ecd2b0ec59589.txt"
+    },
+    {
+      "path": "tests/integration/cache-redis.integration.spec.ts",
+      "bytes": 3561,
+      "sha256": "d20c26298aecd0f3bded5733a50fb3d005693bbdc9e17c1118f97ebb902682eb",
+      "exportedPath": "docs/evidence/runs/3fdfa94785dd2c69/d20c26298aecd0f3bded5733a50fb3d005693bbdc9e17c1118f97ebb902682eb.txt"
+    },
+    {
+      "path": "tests/runtime/cache.spec.ts",
+      "bytes": 4080,
+      "sha256": "4e922241793adab14a033bc84c6c0d3e33ba571d18b63fd1f776fc2358ae73f0",
+      "exportedPath": "docs/evidence/runs/3fdfa94785dd2c69/4e922241793adab14a033bc84c6c0d3e33ba571d18b63fd1f776fc2358ae73f0.txt"
+    },
+    {
+      "path": "tests/integration/jobs.integration.spec.ts",
+      "bytes": 12172,
+      "sha256": "0e0932c12a0cb8cf927554fd9f08817c0b9a83863c7619a7ebd0d1718fc6f4c6",
+      "exportedPath": "docs/evidence/runs/3fdfa94785dd2c69/0e0932c12a0cb8cf927554fd9f08817c0b9a83863c7619a7ebd0d1718fc6f4c6.txt"
+    },
+    {
+      "path": "tests/integration/redis.integration.spec.ts",
+      "bytes": 2581,
+      "sha256": "47f2c981bd154ace436fdcf6da7228d1e7770b03d5c53a7a3405eaf1c6d1ee04",
+      "exportedPath": "docs/evidence/runs/3fdfa94785dd2c69/47f2c981bd154ace436fdcf6da7228d1e7770b03d5c53a7a3405eaf1c6d1ee04.txt"
+    },
+    {
+      "path": "tests/integration/resend.integration.spec.ts",
+      "bytes": 2627,
+      "sha256": "70a3452a32569419084968907b7956db6e5222589e20aaa71973c1ba6d3984a2",
+      "exportedPath": "docs/evidence/runs/3fdfa94785dd2c69/70a3452a32569419084968907b7956db6e5222589e20aaa71973c1ba6d3984a2.txt"
+    },
+    {
+      "path": "tests/unit/tickets-service.spec.ts",
+      "bytes": 6802,
+      "sha256": "d762ee1015724194b7977b4ae31af5fe21aa914804391df2d44f1edfe95a3bd9",
+      "exportedPath": "docs/evidence/runs/3fdfa94785dd2c69/d762ee1015724194b7977b4ae31af5fe21aa914804391df2d44f1edfe95a3bd9.txt"
+    },
+    {
+      "path": "tests/unit/ai-service.spec.ts",
+      "bytes": 9605,
+      "sha256": "b5ccc30d51252900672cd7b081fbf9919420d692ec968dcf477b1222c4aa387b",
+      "exportedPath": "docs/evidence/runs/3fdfa94785dd2c69/b5ccc30d51252900672cd7b081fbf9919420d692ec968dcf477b1222c4aa387b.txt"
+    },
+    {
+      "path": "tests/unit/gemini-provider.spec.ts",
+      "bytes": 3438,
+      "sha256": "fcef076ecf1ca7a013ec97c384f29a51ac03950f4f8b5942d37d5558d35272a0",
+      "exportedPath": "docs/evidence/runs/3fdfa94785dd2c69/fcef076ecf1ca7a013ec97c384f29a51ac03950f4f8b5942d37d5558d35272a0.txt"
+    },
+    {
+      "path": "tests/unit/ai-deadline.spec.ts",
+      "bytes": 769,
+      "sha256": "2326930034681ec44822953c87e4e718a23a517a8b621b69843d890f1d723668",
+      "exportedPath": "docs/evidence/runs/3fdfa94785dd2c69/2326930034681ec44822953c87e4e718a23a517a8b621b69843d890f1d723668.txt"
+    },
+    {
+      "path": "tests/unit/readiness.spec.ts",
+      "bytes": 846,
+      "sha256": "58303248753c24ffbc44e8ed16a5193c296b78796acd28adf0539faa08a3c7ea",
+      "exportedPath": "docs/evidence/runs/3fdfa94785dd2c69/58303248753c24ffbc44e8ed16a5193c296b78796acd28adf0539faa08a3c7ea.txt"
+    }
+  ],
+  "note": "PNG reviewed separately before commit/publication; hash integrity does not prove assertion coverage."
+}

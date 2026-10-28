@@ -1,0 +1,332 @@
+{
+  "schemaVersion": 1,
+  "requirements": [
+    {
+      "id": "REQ-GENERAL-01",
+      "dependencies": [
+        "CAT-01",
+        "CART-01",
+        "ORD-01",
+        "RT-04",
+        "TKT-01",
+        "UI-01"
+      ],
+      "externalGates": []
+    },
+    {
+      "id": "REQ-GENERAL-02",
+      "dependencies": ["TKT-01", "AI-01", "UI-01"],
+      "externalGates": []
+    },
+    {
+      "id": "REQ-GENERAL-03",
+      "dependencies": ["ORD-07", "ORD-10", "UI-01"],
+      "externalGates": []
+    },
+    {
+      "id": "REQ-GENERAL-04",
+      "dependencies": ["OPS-01", "UI-01"],
+      "externalGates": ["cloud-operations", "pipeline"]
+    },
+    {
+      "id": "REQ-F01-01",
+      "dependencies": ["TKT-02"],
+      "externalGates": ["live-classification"]
+    },
+    {
+      "id": "REQ-F01-02",
+      "dependencies": ["AI-01", "AI-02", "AI-02A"],
+      "externalGates": ["live-ai-tools"]
+    },
+    {
+      "id": "REQ-F01-03",
+      "dependencies": ["AI-02", "AI-03"],
+      "externalGates": ["live-refusal"]
+    },
+    {
+      "id": "REQ-F01-04",
+      "dependencies": ["AI-04", "AI-05"],
+      "externalGates": ["live-human-confirmation"]
+    },
+    {
+      "id": "REQ-F02-01",
+      "dependencies": ["RT-02"],
+      "externalGates": ["performance-realtime"]
+    },
+    {
+      "id": "REQ-F02-02",
+      "dependencies": ["RT-02", "RT-03"],
+      "externalGates": []
+    },
+    {
+      "id": "REQ-F02-03",
+      "dependencies": ["RT-01", "RT-03"],
+      "externalGates": []
+    },
+    {
+      "id": "REQ-F02-04",
+      "dependencies": ["RT-04"],
+      "externalGates": []
+    },
+    {
+      "id": "REQ-F03-01",
+      "dependencies": ["RATE-01", "AUTH-02"],
+      "externalGates": []
+    },
+    {
+      "id": "REQ-F03-02",
+      "dependencies": ["RATE-01", "RATE-02"],
+      "externalGates": []
+    },
+    {
+      "id": "REQ-F03-03",
+      "dependencies": ["RATE-01"],
+      "externalGates": []
+    },
+    {
+      "id": "REQ-F03-04",
+      "dependencies": ["RATE-02"],
+      "externalGates": []
+    },
+    {
+      "id": "REQ-F04-01",
+      "dependencies": ["CACHE-01"],
+      "externalGates": []
+    },
+    {
+      "id": "REQ-F04-02",
+      "dependencies": ["CACHE-02", "CACHE-03"],
+      "externalGates": []
+    },
+    {
+      "id": "REQ-F04-03",
+      "dependencies": ["CACHE-04"],
+      "externalGates": []
+    },
+    {
+      "id": "REQ-F04-04",
+      "dependencies": ["CACHE-05", "RATE-03"],
+      "externalGates": ["redis-process-outage"]
+    },
+    {
+      "id": "REQ-F05-01",
+      "dependencies": ["JOB-01", "JOB-04", "JOB-07"],
+      "externalGates": ["partner-versioned-demo", "live-worker-email"]
+    },
+    {
+      "id": "REQ-F05-02",
+      "dependencies": ["JOB-02"],
+      "externalGates": []
+    },
+    {
+      "id": "REQ-F05-03",
+      "dependencies": ["JOB-03", "JOB-04", "JOB-07"],
+      "externalGates": ["resend-crash-window"]
+    },
+    {
+      "id": "REQ-F05-04",
+      "dependencies": ["JOB-05", "JOB-06"],
+      "externalGates": ["production-scheduler"]
+    },
+    {
+      "id": "REQ-F06-01",
+      "dependencies": ["CAT-01"],
+      "externalGates": []
+    },
+    {
+      "id": "REQ-F06-02",
+      "dependencies": [
+        "CART-01",
+        "ORD-01",
+        "ORD-02",
+        "ORD-03",
+        "ORD-04",
+        "ORD-05",
+        "ORD-06",
+        "ORD-09",
+        "ORD-10"
+      ],
+      "externalGates": []
+    },
+    {
+      "id": "REQ-F06-03",
+      "dependencies": ["ORD-07", "ORD-08", "UI-01"],
+      "externalGates": []
+    },
+    {
+      "id": "REQ-F06-04",
+      "dependencies": ["AUTH-01", "AUTH-02", "AUTH-03", "AUTH-04"],
+      "externalGates": []
+    },
+    {
+      "id": "REQ-F07-01",
+      "dependencies": ["OPS-01"],
+      "externalGates": []
+    },
+    {
+      "id": "REQ-F07-02",
+      "dependencies": [],
+      "externalGates": ["queue-dashboard-counts"]
+    },
+    {
+      "id": "REQ-F07-03",
+      "dependencies": [],
+      "externalGates": ["swagger-generated-live"]
+    },
+    {
+      "id": "REQ-F07-04",
+      "dependencies": [],
+      "externalGates": ["daily-offhost-backup"]
+    },
+    {
+      "id": "REQ-TECH-01",
+      "dependencies": [],
+      "externalGates": ["runtime-versions"]
+    },
+    {
+      "id": "REQ-TECH-02",
+      "dependencies": [],
+      "externalGates": ["linux-compose-images"]
+    },
+    {
+      "id": "REQ-TECH-03",
+      "dependencies": [],
+      "externalGates": ["branch-protection-history"]
+    },
+    {
+      "id": "REQ-TECH-04",
+      "dependencies": [],
+      "externalGates": ["architecture-review"]
+    },
+    {
+      "id": "REQ-SEC-01",
+      "dependencies": [],
+      "externalGates": ["https-redirect"]
+    },
+    {
+      "id": "REQ-SEC-02",
+      "dependencies": [],
+      "externalGates": ["cloud-and-host-network"]
+    },
+    {
+      "id": "REQ-SEC-03",
+      "dependencies": [],
+      "externalGates": ["temporary-credentials"]
+    },
+    {
+      "id": "REQ-SEC-04",
+      "dependencies": [],
+      "externalGates": ["secret-history-image-bundle"]
+    },
+    {
+      "id": "REQ-SEC-05",
+      "dependencies": [],
+      "externalGates": ["cloud-human-group-mfa-leastprivilege"]
+    },
+    {
+      "id": "REQ-REL-01",
+      "dependencies": [],
+      "externalGates": ["active-deploy-continuity"]
+    },
+    {
+      "id": "REQ-REL-02",
+      "dependencies": [],
+      "externalGates": ["rollback-injection"]
+    },
+    {
+      "id": "REQ-REL-03",
+      "dependencies": [],
+      "externalGates": ["s3-restore"]
+    },
+    {
+      "id": "REQ-REL-04",
+      "dependencies": ["CACHE-05", "RATE-03", "OPS-01"],
+      "externalGates": ["redis-process-outage", "worker-process-crash"]
+    },
+    {
+      "id": "REQ-QUALITY-01",
+      "dependencies": [],
+      "externalGates": ["coverage"]
+    },
+    {
+      "id": "REQ-QUALITY-02",
+      "dependencies": [],
+      "externalGates": ["ci-fail-block"]
+    },
+    {
+      "id": "REQ-QUALITY-03",
+      "dependencies": [],
+      "externalGates": ["sha-digest-release"]
+    },
+    {
+      "id": "REQ-DELIVERY-01",
+      "dependencies": [],
+      "externalGates": ["https-live-url"]
+    },
+    {
+      "id": "REQ-DELIVERY-02",
+      "dependencies": [],
+      "externalGates": ["readme-local-github"]
+    },
+    {
+      "id": "REQ-DELIVERY-03",
+      "dependencies": [],
+      "externalGates": ["pipeline-success-fail-links"]
+    },
+    {
+      "id": "REQ-DELIVERY-04",
+      "dependencies": [],
+      "externalGates": ["aws-diagram-dataflow-components"]
+    },
+    {
+      "id": "REQ-DELIVERY-05",
+      "dependencies": [],
+      "externalGates": ["integration-brief"]
+    },
+    {
+      "id": "REQ-DELIVERY-06",
+      "dependencies": [],
+      "externalGates": ["published-coverage-restore"]
+    },
+    {
+      "id": "REQ-DELIVERY-07",
+      "dependencies": [],
+      "externalGates": ["slides-and-timed-demo"]
+    },
+    {
+      "id": "REQ-UI-01",
+      "dependencies": ["UI-01"],
+      "externalGates": []
+    },
+    {
+      "id": "REQ-PERF-cached-read-p95",
+      "dependencies": [],
+      "externalGates": ["performance-read"]
+    },
+    {
+      "id": "REQ-PERF-checkout-p95",
+      "dependencies": [],
+      "externalGates": ["performance-checkout"]
+    },
+    {
+      "id": "REQ-PERF-realtime",
+      "dependencies": [],
+      "externalGates": ["performance-realtime"]
+    },
+    {
+      "id": "REQ-PERF-cache-hit",
+      "dependencies": [],
+      "externalGates": ["performance-hit"]
+    },
+    {
+      "id": "REQ-PERF-deploy",
+      "dependencies": [],
+      "externalGates": ["pipeline-total-duration"]
+    },
+    {
+      "id": "REQ-DEFENSE-explanation",
+      "dependencies": [],
+      "externalGates": ["human-q-and-a"]
+    }
+  ]
+}

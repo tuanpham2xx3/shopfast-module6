@@ -1,5 +1,7 @@
 # ShopFast — Kế hoạch bàn giao end-to-end
 
+Kế hoạch đóng yêu cầu hiện tại: [docs16](16-srs-completion-plan.md). Baseline và checklist chưa hoàn thành trong tài liệu này ghi nhận giai đoạn setup trước; không phản ánh đầy đủ trạng thái release hiện tại. Giữ làm thiết kế kỹ thuật và lịch sử, dùng docs16 để quyết định gate nghiệm thu cuối.
+
 Ngày: 28/10/2026. Trạng thái: PLAN, chưa phải biên bản đạt nghiệm thu. Người dùng yêu cầu agent tự triển khai, test, debug, validate và bàn giao để người dùng nghiệm thu; chủ động gom những cấu hình ngoài quyền truy cập hiện tại.
 
 Đang thực thi: [execution ledger và blocker thực tế](evidence/aws-delivery-progress.md). Profile harness chưa đủ case luôn trả BLOCKED, không được coi lệnh đã tồn tại là tiêu chí đã đạt.

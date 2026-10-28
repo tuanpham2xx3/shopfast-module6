@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { createDataSource } from "../../libs/platform/src/database/data-source";
 
-test("real browser registers, verifies, creates catalog and adjusts stock", async ({
+test("UI-01 RT-04 real browser purchase, role operations and offline socket recovery", async ({
   page,
   request,
 }) => {
@@ -186,6 +186,85 @@ test("real browser registers, verifies, creates catalog and adjusts stock", asyn
         .getByText("CONFIRMED", { exact: true })
         .first(),
     ).toBeVisible();
+    // A separate warehouse identity changes the real order while the customer's
+    // browser is offline. Reconnect must resubscribe and recover the missed state.
+    const warehouseEmail = `reconnect-warehouse-${Date.now()}@example.test`;
+    const warehouseRegistration = await request.post(`${base}/auth/register`, {
+      data: {
+        email: warehouseEmail,
+        password: "BrowserWarehouse!2026",
+        displayName: "Reconnect Warehouse",
+      },
+    });
+    expect(warehouseRegistration.ok()).toBeTruthy();
+    await source.query(
+      `UPDATE "${schema}".users SET role='WAREHOUSE',email_verified_at=now() WHERE email=$1`,
+      [warehouseEmail],
+    );
+    const warehouseLogin = await request.post(`${base}/auth/login`, {
+      data: { email: warehouseEmail, password: "BrowserWarehouse!2026" },
+    });
+    expect(warehouseLogin.ok()).toBeTruthy();
+    const warehouseAuth = {
+      Authorization: `Bearer ${(await warehouseLogin.json()).data.accessToken}`,
+    };
+    const [trackedOrder] = await source.query(
+      `SELECT id,version FROM "${schema}".orders WHERE status='CONFIRMED'`,
+    );
+    const detail = page.getByLabel("Chi tiết đơn hàng");
+    await expect(
+      detail.getByText("Đang theo dõi trực tiếp", { exact: true }),
+    ).toBeVisible();
+    await page.context().setOffline(true);
+    // Chromium can retain an idle WebSocket until the heartbeat detects loss.
+    await expect(
+      detail.getByText("Mất kết nối; cập nhật mỗi 10 giây", { exact: true }),
+    ).toBeVisible({ timeout: 50000 });
+    const missedUpdate = await request.patch(
+      `${base}/staff/orders/${trackedOrder.id}/status`,
+      {
+        headers: { ...warehouseAuth, "Idempotency-Key": "offline-processing" },
+        data: {
+          targetStatus: "PROCESSING",
+          expectedVersion: trackedOrder.version,
+        },
+      },
+    );
+    expect(missedUpdate.ok()).toBeTruthy();
+    await expect(
+      detail.getByText("CONFIRMED", { exact: true }).first(),
+    ).toBeVisible();
+    await page.context().setOffline(false);
+    await expect(
+      detail.getByText("Đang theo dõi trực tiếp", { exact: true }),
+    ).toBeVisible({ timeout: 40000 });
+    await expect(
+      detail.getByText("PROCESSING", { exact: true }).first(),
+    ).toBeVisible();
+    await expect(
+      detail.locator("ol li").filter({ hasText: "PROCESSING" }),
+    ).toHaveCount(1);
+    const onlineUpdate = await request.patch(
+      `${base}/staff/orders/${trackedOrder.id}/status`,
+      {
+        headers: { ...warehouseAuth, "Idempotency-Key": "online-shipping" },
+        data: {
+          targetStatus: "SHIPPING",
+          expectedVersion: (await missedUpdate.json()).data.version,
+        },
+      },
+    );
+    expect(onlineUpdate.ok()).toBeTruthy();
+    await expect(
+      detail.getByText("SHIPPING", { exact: true }).first(),
+    ).toBeVisible({ timeout: 5000 });
+    await expect(
+      detail.locator("ol li").filter({ hasText: "PROCESSING" }),
+    ).toHaveCount(1);
+    await page.screenshot({
+      path: "harness/reports/reconnect-recovered.png",
+      fullPage: true,
+    });
     await source.query(
       `UPDATE "${schema}".users SET role='WAREHOUSE' WHERE email=$1`,
       [email],
@@ -198,8 +277,8 @@ test("real browser registers, verifies, creates catalog and adjusts stock", asyn
       page.getByRole("heading", { name: "Chào Browser Admin" }),
     ).toBeVisible();
     await page.getByRole("button", { name: "Khám phá sản phẩm" }).click();
-    await page.getByRole("button").filter({ hasText: "CONFIRMED" }).click();
-    for (const target of ["PROCESSING", "SHIPPING", "DELIVERED"]) {
+    await page.getByRole("button").filter({ hasText: "SHIPPING" }).click();
+    for (const target of ["DELIVERED"]) {
       await page
         .getByRole("button", { name: `Chuyển sang ${target}`, exact: true })
         .click();
@@ -266,7 +345,7 @@ test("real browser registers, verifies, creates catalog and adjusts stock", asyn
     await page.getByRole("button", { name: "Hỏi Gemini", exact: true }).click();
     await expect(page.getByText("UNAVAILABLE", { exact: true })).toBeVisible();
     await page.screenshot({
-      path: "docs/evidence/support-ui-mobile.png",
+      path: "harness/reports/support-ui-mobile.png",
       fullPage: true,
     });
     await source.query(
@@ -284,6 +363,36 @@ test("real browser registers, verifies, creates catalog and adjusts stock", asyn
       page.getByRole("heading", { name: "Quản trị ShopFast", exact: true }),
     ).toBeVisible();
     await expect.poll(() => page.evaluate(() => scrollY)).toBe(0);
+    if (process.env.TEST_REDIS_URL) {
+      const [queueResponse] = await Promise.all([
+        page.waitForResponse((response) =>
+          new URL(response.url()).pathname.endsWith("/admin/queues"),
+        ),
+        page
+          .getByRole("button", {
+            name: "Kiểm tra dịch vụ và queue",
+            exact: true,
+          })
+          .click(),
+      ]);
+      expect(queueResponse.ok()).toBe(true);
+      const queueSnapshot = (await queueResponse.json()).data.redisQueue;
+      expect(queueSnapshot.status).toBe("ok");
+      await test.info().attach("queue-counts", {
+        body: JSON.stringify(queueSnapshot),
+        contentType: "application/json",
+      });
+      for (const state of ["waiting", "active", "completed", "failed"]) {
+        expect(queueSnapshot.counts[state]).toEqual(expect.any(Number));
+        expect(queueSnapshot.counts[state]).toBeGreaterThanOrEqual(0);
+      }
+      await expect(
+        page.locator("pre").filter({ hasText: "redisQueue" }),
+      ).toContainText('"waiting"');
+      await expect(
+        page.locator("pre").filter({ hasText: "redisQueue" }),
+      ).toContainText('"failed"');
+    }
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,
@@ -296,13 +405,13 @@ test("real browser registers, verifies, creates catalog and adjusts stock", asyn
     ).toBeVisible();
     await page.evaluate(() => document.fonts.ready);
     await page.screenshot({
-      path: "docs/evidence/ui-refresh-admin-mobile.png",
+      path: "harness/reports/ui-refresh-admin-mobile.png",
       fullPage: true,
       animations: "disabled",
     });
     await page.setViewportSize({ width: 1440, height: 1000 });
     await page.screenshot({
-      path: "docs/evidence/ui-refresh-admin-desktop.png",
+      path: "harness/reports/ui-refresh-admin-desktop.png",
       fullPage: true,
       animations: "disabled",
     });
@@ -310,7 +419,7 @@ test("real browser registers, verifies, creates catalog and adjusts stock", asyn
       .getByRole("button", { name: "Chuyển sang giao diện tối", exact: true })
       .click();
     await page.screenshot({
-      path: "docs/evidence/ui-refresh-admin-dark.png",
+      path: "harness/reports/ui-refresh-admin-dark.png",
       fullPage: true,
       animations: "disabled",
     });

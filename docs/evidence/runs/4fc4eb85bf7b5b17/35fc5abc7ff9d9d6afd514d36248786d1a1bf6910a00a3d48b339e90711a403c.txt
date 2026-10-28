@@ -1,0 +1,42 @@
+{
+  "runId": "b12757a6-2893-49b7-ad6d-36703bce6955",
+  "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+  "dirty": false,
+  "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+  "executedAt": "2026-10-28T11:10:06.109Z",
+  "tests": [
+    {
+      "title": "preserves password input and theme preference on mobile",
+      "ok": true,
+      "results": [
+        {
+          "status": "passed",
+          "duration": 1227
+        }
+      ],
+      "file": "auth-web.e2e.spec.ts"
+    },
+    {
+      "title": "registers, verifies and shows the current account",
+      "ok": true,
+      "results": [
+        {
+          "status": "passed",
+          "duration": 623
+        }
+      ],
+      "file": "auth-web.e2e.spec.ts"
+    },
+    {
+      "title": "UI-01 RT-04 real browser purchase, role operations and offline socket recovery",
+      "ok": true,
+      "results": [
+        {
+          "status": "passed",
+          "duration": 70633
+        }
+      ],
+      "file": "catalog-live.e2e.spec.ts"
+    }
+  ]
+}

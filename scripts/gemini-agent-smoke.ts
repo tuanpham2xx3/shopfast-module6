@@ -191,6 +191,31 @@ async function main() {
       JSON.parse(JSON.stringify(confirmed)),
     );
     checks.push("explicit human confirmation applies once and replays safely");
+    const refusalSession = await ai.createSession(support, ticket.id);
+    const refusal = await ai.message(
+      support,
+      refusalSession.sessionId,
+      "Viết một bài thơ về sao Hỏa. Câu hỏi này hoàn toàn không liên quan ShopFast.",
+      randomUUID(),
+    );
+    assert.equal(refusal.status, "OUT_OF_SCOPE");
+    assert.equal((await tickets.ticket(ticket.id)).category, "PAYMENT");
+    checks.push("live out-of-scope refusal leaves ticket unchanged");
+    const classificationTicket = await tickets.create(customer, {
+      subject: "Thanh toán ShopFast bị lỗi",
+      body: "Tôi đã thử thanh toán đơn ShopFast nhưng bị báo giao dịch thất bại, cần hỗ trợ thanh toán.",
+    });
+    await ai.classify(classificationTicket.id);
+    const classified = await tickets.ticket(classificationTicket.id);
+    assert.equal(classified.category, "PAYMENT");
+    const [classificationState] = await source.query(
+      `SELECT classification_status FROM "${schema}".tickets WHERE id=$1`,
+      [classificationTicket.id],
+    );
+    assert.equal(classificationState.classification_status, "COMPLETED");
+    checks.push(
+      "live ticket classification matches independent PAYMENT fixture label",
+    );
   } finally {
     if (source.isInitialized) {
       await source.query(`DROP SCHEMA IF EXISTS "${schema}" CASCADE`);
@@ -207,7 +232,7 @@ async function main() {
           requests,
           trace,
           checks,
-          acceptance: checks.length === 4 ? "PASS" : "FAIL",
+          acceptance: checks.length === 6 ? "PASS" : "FAIL",
         },
         null,
         2,
@@ -215,7 +240,7 @@ async function main() {
     );
   }
   console.log(
-    `Gemini agent smoke: ${checks.length}/4 checks passed; ${requests} provider requests`,
+    `Gemini agent smoke: ${checks.length}/6 checks passed; ${requests} provider requests`,
   );
 }
 void main().catch(() => {

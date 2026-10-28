@@ -8,13 +8,17 @@ export default defineConfig({
   testDir: "tests/e2e",
   fullyParallel: false,
   retries: process.env.CI ? 1 : 0,
-  reporter: process.env.CI ? "github" : "list",
+  reporter: [
+    [process.env.CI ? "github" : "list"],
+    ["json", { outputFile: "harness/reports/playwright-results.json" }],
+  ],
   workers: 1,
   globalSetup: database ? "./tests/e2e/setup.ts" : undefined,
   use: {
     baseURL: "http://127.0.0.1:4173",
     browserName: "chromium",
     trace: "retain-on-failure",
+    screenshot: "only-on-failure",
   },
   webServer: [
     {

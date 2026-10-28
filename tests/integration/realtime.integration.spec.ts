@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { AddressInfo } from "node:net";
 import { io, Socket } from "socket.io-client";
 import { DataSource } from "typeorm";
+import * as jwt from "jsonwebtoken";
 import { createApiApp } from "../../apps/api/src/bootstrap";
 import { createDataSource } from "../../libs/platform/src/database/data-source";
 import { AuthService } from "../../libs/modules/auth/auth.service";
@@ -71,6 +72,15 @@ describe("realtime authorization and post-commit delivery", () => {
       displayName: "Other",
     });
     await source.query(`UPDATE "${schema}".users SET email_verified_at=now()`);
+    const expired = jwt.sign(
+      {
+        ...(jwt.decode(owner.accessToken) as jwt.JwtPayload),
+        exp: Math.floor(Date.now() / 1000) - 60,
+      },
+      secret,
+      { algorithm: "HS256" },
+    );
+    await expect(connect(expired)).rejects.toThrow();
     const catalog = new CatalogService(source, schema);
     const category = await catalog.createTaxonomy("categories", {
       name: "Socket",
@@ -115,6 +125,11 @@ describe("realtime authorization and post-commit delivery", () => {
         .emitWithAck("order.subscribe", { orderId: order.id }),
     ).toMatchObject({ ok: false, code: "NOT_FOUND" });
     expect(
+      await otherSocket
+        .timeout(2000)
+        .emitWithAck("order.subscribe", { orderId: randomUUID() }),
+    ).toMatchObject({ ok: false, code: "NOT_FOUND" });
+    expect(
       await ownSocket
         .timeout(2000)
         .emitWithAck("order.subscribe", { orderId: order.id }),
@@ -138,6 +153,19 @@ describe("realtime authorization and post-commit delivery", () => {
       version: 2,
     });
     expect(JSON.stringify(event)).not.toMatch(/address|phone|customerId/);
+    expect(events).toHaveLength(0);
+    const leaked = await new Promise<boolean>((resolve) => {
+      const timer = setTimeout(() => {
+        otherSocket.off("order.status.updated", listener);
+        resolve(false);
+      }, 200);
+      const listener = () => {
+        clearTimeout(timer);
+        resolve(true);
+      };
+      otherSocket.once("order.status.updated", listener);
+    });
+    expect(leaked).toBe(false);
     expect(events).toHaveLength(0);
     const disconnected = new Promise<void>((resolve) =>
       ownSocket.once("disconnect", () => resolve()),

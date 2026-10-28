@@ -37,6 +37,20 @@ describe("auth HTTP vertical slice", () => {
     }
   });
 
+  it("F07 generates and serves Swagger UI and OpenAPI from the test application routes", async () => {
+    const server = app.getHttpServer();
+    const document = await request(server).get("/api/docs-json").expect(200);
+    expect(document.body.openapi).toMatch(/^3\./);
+    expect(document.body.info.title).toBe("ShopFast API");
+    expect(document.body.paths["/api/v1/auth/login"].post).toBeDefined();
+    expect(document.body.paths["/api/v1/products"].get).toBeDefined();
+    expect(
+      document.body.paths["/api/v1/staff/orders/{id}/status"].patch,
+    ).toBeDefined();
+    const ui = await request(server).get("/api/docs/").expect(200);
+    expect(ui.text).toContain("swagger-ui");
+  });
+
   it("registers, verifies, reads current user, refreshes and logs out", async () => {
     const agent = request.agent(app.getHttpServer());
     const registered = await agent

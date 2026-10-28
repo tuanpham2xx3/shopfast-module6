@@ -3,9 +3,13 @@ import { spawn } from "node:child_process";
 const profiles = [
   "preflight",
   "ci",
+  { name: "platform-evidence", script: "harness/platform-cases.mjs" },
+  { name: "runtime-evidence", script: "harness/runtime-audit.mjs" },
+  { name: "cloud-audit", script: "harness/cloud-audit.mjs" },
   "deploy-rollback",
   "providers",
   "staging",
+  { name: "active-deploy-continuity", script: "harness/deploy-continuity.mjs" },
   "resilience",
   "backup-restore",
   "performance",
@@ -13,9 +17,14 @@ const profiles = [
 ];
 let failures = 0;
 for (const profile of profiles) {
-  console.log(`\n=== ShopFast harness: ${profile} ===`);
+  const name = typeof profile === "string" ? profile : profile.name;
+  const args =
+    typeof profile === "string"
+      ? ["harness/run.mjs", profile]
+      : [profile.script];
+  console.log(`\n=== ShopFast harness: ${name} ===`);
   const code = await new Promise((resolve) => {
-    const child = spawn(process.execPath, ["harness/run.mjs", profile], {
+    const child = spawn(process.execPath, args, {
       env: process.env,
       stdio: "inherit",
     });

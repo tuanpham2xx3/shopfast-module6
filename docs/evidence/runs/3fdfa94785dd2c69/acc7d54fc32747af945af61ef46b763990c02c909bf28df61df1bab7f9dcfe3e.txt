@@ -1,0 +1,36 @@
+import { SlidingWindow } from "../../libs/modules/runtime/limiter";
+import {
+  canonicalCatalogQuery,
+  CatalogCache,
+} from "../../libs/modules/runtime/catalog-cache";
+describe("runtime protections", () => {
+  it("enforces rolling limits and expires precisely", () => {
+    let now = 0;
+    const window = new SlidingWindow(() => now);
+    expect(window.consume("x", 2, 1000)).toBe(0);
+    expect(window.consume("x", 2, 1000)).toBe(0);
+    expect(window.consume("x", 2, 1000)).toBe(1);
+    now = 1000;
+    expect(window.consume("x", 2, 1000)).toBe(0);
+  });
+  it("canonicalizes defaults and rejects unbounded or unrecognized filters", () => {
+    expect(canonicalCatalogQuery({})).toEqual(
+      canonicalCatalogQuery({ page: 1, pageSize: 20, sort: "newest" }),
+    );
+    expect(() => canonicalCatalogQuery({ page: 10001 })).toThrow();
+    expect(() => canonicalCatalogQuery({ unknown: true })).toThrow();
+  });
+  it("bypasses unavailable Redis without hiding loader failures", async () => {
+    const cache = new CatalogCache();
+    const load = jest.fn().mockResolvedValue({ price: 20 });
+    expect(await cache.remember("product:p", ["product:p"], load)).toEqual({
+      price: 20,
+    });
+    await expect(
+      cache.remember("product:p", [], async () => {
+        throw Error("database");
+      }),
+    ).rejects.toThrow("database");
+    expect(await cache.invalidate(["product:p"])).toBe(false);
+  });
+});
