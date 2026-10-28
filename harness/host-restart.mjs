@@ -59,6 +59,21 @@ try {
         { signal: AbortSignal.timeout(5000) },
       );
       if (!health.ok || (await health.json()).data?.status !== "ok") continue;
+      const document = await fetch("https://shopfast.tuanpq.com/", {
+        signal: AbortSignal.timeout(5000),
+      });
+      if (!document.ok) continue;
+      const html = await document.text();
+      const asset = html.match(/src="(\/assets\/[a-zA-Z0-9_.-]+\.js)"/);
+      if (!html.includes('id="root"') || !asset) continue;
+      const javascript = await fetch(`https://shopfast.tuanpq.com${asset[1]}`, {
+        signal: AbortSignal.timeout(5000),
+      });
+      if (
+        !javascript.ok ||
+        !javascript.headers.get("content-type")?.includes("javascript")
+      )
+        continue;
       after = candidate;
       break;
     } catch {
@@ -78,6 +93,7 @@ try {
     countsMatched: true,
     commit: after.commit,
     httpsReady: true,
+    frontendAndJavascriptReady: true,
   };
   console.log(
     "Host reboot: boot changed, named volumes/data/release preserved, HTTPS ready",

@@ -22,7 +22,10 @@ export default defineConfig({
         "node node_modules/vite/bin/vite.js apps/web --host 127.0.0.1 --port 4173",
       url: "http://127.0.0.1:4173",
       reuseExistingServer: !process.env.CI,
-      env: { VITE_API_BASE: "http://127.0.0.1:4300/api/v1" },
+      env: {
+        VITE_API_BASE: "/api/v1",
+        DEV_API_PROXY_TARGET: "http://127.0.0.1:4300",
+      },
     },
     ...(database
       ? [

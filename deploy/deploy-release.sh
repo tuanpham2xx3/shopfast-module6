@@ -5,8 +5,17 @@ exec 9>release.lock
 flock -n 9 || { echo 'Another release is active'; exit 1; }
 sha=${1:?Commit SHA required}
 [[ "$sha" =~ ^[0-9a-f]{40}$ ]] || exit 1
+frontend_ready(){
+  local html asset
+  html=$(curl --fail --silent --max-time 15 https://shopfast.tuanpq.com/) || return 1
+  grep -q 'id="root"' <<< "$html" || return 1
+  asset=$(sed -n 's/.*src="\([^"]*\.js\)".*/\1/p' <<< "$html" | head -n1)
+  [[ "$asset" =~ ^/assets/[a-zA-Z0-9_.-]+\.js$ ]] || return 1
+  curl --fail --silent --head --max-time 15 "https://shopfast.tuanpq.com$asset" | grep -qi 'content-type:.*javascript'
+}
 if [ "${HARNESS_FORCE_ROLLBACK:-0}" != 1 ] && [ -f release.json ] && [ "$(jq -r .commit release.json)" = "$sha" ] && [ "$(readlink releases/current)" = "$sha" ]; then
   curl --fail --silent --max-time 15 https://shopfast.tuanpq.com/api/v1/health/ready | jq -e '.data.status == "ok"' >/dev/null
+  frontend_ready
   echo 'Exact release already active and healthy'; exit 0
 fi
 app="ghcr.io/tuanpham2xx3/shopfast-module6-app:$sha"
@@ -16,10 +25,14 @@ docker pull "$app"
 docker pull "$web"
 app=$(docker image inspect -f '{{index .RepoDigests 0}}' "$app")
 web=$(docker image inspect -f '{{index .RepoDigests 0}}' "$web")
-install -d -m 0750 "releases/$sha/web" nginx
+install -d -m 0755 "releases/$sha/web"
+install -d -m 0750 nginx
 container=$(docker create "$web")
 docker cp "$container:/usr/share/nginx/html/." "releases/$sha/web/"
 docker rm "$container" >/dev/null
+# Nginx worker UID must traverse/read public assets; these contain no runtime secrets.
+find "releases/$sha/web" -type d -exec chmod 0755 {} +
+find "releases/$sha/web" -type f -exec chmod 0644 {} +
 api="shopfast-api-$sha"
 if [ "${HARNESS_FORCE_ROLLBACK:-0}" = 1 ]; then api="${api}-rehearsal"; fi
 docker inspect "$api" >/dev/null 2>&1 || docker run -d --name "$api" --network shopfast_default --env-file app.env --restart unless-stopped --memory 768m "$app"
@@ -48,7 +61,7 @@ rollback(){
 }
 if ! docker compose -f compose.infra.yml -f compose.app.yml exec -T web nginx -t; then rollback; exit 1; fi
 docker compose -f compose.infra.yml -f compose.app.yml exec -T web nginx -s reload
-if [ "${HARNESS_FORCE_ROLLBACK:-0}" = 1 ] || ! curl --fail --silent --max-time 15 https://shopfast.tuanpq.com/api/v1/health/ready | jq -e '.data.status == "ok"' >/dev/null; then rollback; exit 1; fi
+if [ "${HARNESS_FORCE_ROLLBACK:-0}" = 1 ] || ! curl --fail --silent --max-time 15 https://shopfast.tuanpq.com/api/v1/health/ready | jq -e '.data.status == "ok"' >/dev/null || ! frontend_ready; then rollback; exit 1; fi
 # Worker switchover after API is healthy. Preserve old worker for rollback.
 worker="shopfast-worker-$sha"
 old_worker=$(docker ps --format '{{.Names}}' | grep '^shopfast-worker-' | head -n1 || true)

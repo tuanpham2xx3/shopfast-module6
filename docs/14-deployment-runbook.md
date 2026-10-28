@@ -27,6 +27,10 @@ sudo bash deploy-release.sh <commit40hex>
 
 Script pull tag SHA rồi resolve digest; dựng API candidate, kiểm tra dependency readiness, chạy migration one-shot, chuẩn bị frontend release, validate Nginx, promote và HTTPS smoke; chuyển worker có drain/lease. Giữ previous configuration để khôi phục khi health fail. Không rollback DB xuống schema cũ; migration phải expand/contract tương thích cả bản trước. Zero downtime/rollback<2min chỉ đạt khi harness đã đo, không từ thiết kế này.
 
+Web release directories0755/files0644 để Nginx worker đọc public assets qua bind mount. Không dùng0750/root-owned cho web root. Deploy và reboot smoke phải kiểm tra cả HTML200/root element và JavaScript asset content-type; API healthy không chứng minh frontend healthy. Staging Playwright phải render form, login thật và mở đơn đã giao; kiểm tra no-overflow của trang lỗi không được tính UI PASS.
+
+E2E local/CI dùng `/api/v1` tương đối qua Vite dev proxy giống production; không chỉ test URL API tuyệt đối. URL WebSocket resolve theo origin trang khi API base tương đối. Staging có browser login/workspace riêng cho Customer/Warehouse/Support/Admin; screenshots và role report nằm trong ignored `harness/reports/`.
+
 ## Backup và restore
 
 Daily systemd timer chạy19:00UTC (02:00Asia/Bangkok ngày sau), persistent catch-up, jitter5phút. Backup upload pg_dump custom archive + checksum ra S3 private/encrypted/versioned `backups/`; loại schema fixture `harness_*`/`test_*`, giữ local3ngày, S3 lifecycle30ngày. IAM role lấy credentials tạm từ EC2.
@@ -38,7 +42,7 @@ sudo journalctl -u shopfast-backup.service --since today
 sudo bash /opt/shopfast/restore-rehearsal.sh
 ```
 
-Restore tải lại từ S3, checksum và restore vào database `harness_restore_<timestamp>`, so sánh counts/invariant tồn, đo thời gian rồi cleanup. Count comparison với DB live có thể fail nếu người dùng ghi đồng thời; phải đối chiếu snapshot/manifest trước khi kết luận corruption. Không restore đè DB live. Nếu backup/restore FAIL, không ghi nghiệm thu đạt và kiểm tra quyền/storage/timer. Theo dõi last-success và credit; lịch daily là RPO tới24h, không phải zero loss.
+Restore tải lại từ S3, checksum và restore vào database `harness_restore_<timestamp>`, so sánh counts/invariant tồn và PDF/checksum hóa đơn. Dựng API riêng không public port, trỏ database clone và Redis DB13, dùng credential seed thật để login và đọc snapshot đơn qua HTTP rồi cleanup. Cần chạy staging tạo ít nhất một đơn/hóa đơn trước rehearsal. Không khởi động worker/provider trong clone. Count comparison với DB live có thể fail nếu người dùng ghi đồng thời; phải đối chiếu snapshot/manifest trước khi kết luận corruption. Không restore đè DB live. Nếu backup/restore FAIL, không ghi nghiệm thu đạt và kiểm tra quyền/storage/timer. Theo dõi last-success và credit; lịch daily là RPO tới24h, không phải zero loss.
 
 `harness:backup-restore` thêm HOST-RESTART gate: cần `HARNESS_REBOOT_HOST=true` trong cửa sổ đã cho phép, tạo backup mới trước reboot. Kiểm tra boot ID đổi, named volumes, counts users/products/orders/inventories và release được giữ, HTTPS ready trong180giây. Website gián đoạn ngắn. Count comparison có cùng giới hạn concurrent writes; không kết luận mất dữ liệu chỉ từ count mismatch. SSH tunnel local cần mở lại sau reboot nếu còn chạy integration tests.
 
