@@ -1,0 +1,32 @@
+import { checkReadiness } from "../../libs/platform/src/health/readiness";
+
+describe("readiness", () => {
+  it("reports unavailable when PostgreSQL is unavailable", async () => {
+    expect(
+      await checkReadiness(
+        async () => {
+          throw new Error("private database URL");
+        },
+        async () => true,
+      ),
+    ).toBe("unavailable");
+  });
+  it("reports degraded when only Redis is unavailable", async () => {
+    expect(
+      await checkReadiness(
+        async () => true,
+        async () => {
+          throw new Error("private Redis URL");
+        },
+      ),
+    ).toBe("degraded");
+  });
+  it("reports ok when both probes succeed", async () => {
+    expect(
+      await checkReadiness(
+        async () => true,
+        async () => true,
+      ),
+    ).toBe("ok");
+  });
+});

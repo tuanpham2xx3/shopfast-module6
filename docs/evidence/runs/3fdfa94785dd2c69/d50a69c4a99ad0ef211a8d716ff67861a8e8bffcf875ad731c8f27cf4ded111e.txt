@@ -1,0 +1,47 @@
+PASS tests/integration/orders.integration.spec.ts (16.549 s)
+PASS tests/integration/realtime.integration.spec.ts (5.644 s)
+PASS tests/integration/auth-http.integration.spec.ts
+PASS tests/integration/catalog-http.integration.spec.ts
+PASS tests/integration/tickets-ai.integration.spec.ts
+PASS tests/integration/auth.integration.spec.ts
+PASS tests/runtime/catalog.integration.spec.ts
+PASS tests/integration/retention.integration.spec.ts
+PASS tests/integration/jobs.integration.spec.ts
+PASS tests/integration/catalog.integration.spec.ts
+PASS tests/contract/api.contract.spec.ts
+PASS tests/runtime/limiter.integration.spec.ts
+PASS tests/integration/resend.integration.spec.ts
+PASS tests/integration/database.integration.spec.ts
+PASS tests/integration/outbox.integration.spec.ts
+PASS tests/unit/auth-service.spec.ts
+PASS tests/unit/retention-worker.spec.ts
+PASS tests/unit/auth-guards.spec.ts
+PASS tests/integration/redis.integration.spec.ts
+PASS tests/runtime/http.spec.ts
+PASS tests/integration/cache-redis.integration.spec.ts
+PASS tests/unit/jobs.spec.ts
+PASS tests/unit/database.spec.ts
+PASS tests/unit/catalog-service.spec.ts
+PASS tests/runtime/cache.spec.ts
+PASS tests/runtime/runtime.spec.ts
+PASS tests/unit/gemini-provider.spec.ts
+PASS tests/unit/tickets-service.spec.ts
+PASS tests/unit/ai-service.spec.ts
+PASS tests/unit/environment.spec.ts
+PASS tests/unit/ai-deadline.spec.ts
+PASS tests/unit/email-templates.spec.ts
+PASS tests/unit/readiness.spec.ts
+
+=============================== Coverage summary ===============================
+Statements   : 85.12% ( 1751/2057 )
+Branches     : 70.52% ( 639/906 )
+Functions    : 77.08% ( 296/384 )
+Lines        : 86.68% ( 1615/1863 )
+================================================================================
+
+Test Suites: 33 passed, 33 total
+Tests:       136 passed, 136 total
+Snapshots:   0 total
+Time:        49.052 s
+Ran all test suites.
+Test results written to: harness\reports\4ed5b56b-3e53-47e3-9a79-e17cc8b48816-jest-raw.json

@@ -1,0 +1,16 @@
+[2m[WebServer] [22m(node:39688) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+[2m[WebServer] [22m(node:38376) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:31836) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:31836) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 tests\e2e\auth-web.e2e.spec.ts:11:5 › preserves password input and theme preference on mobile (1.2s)
+  ok 2 tests\e2e\auth-web.e2e.spec.ts:71:5 › registers, verifies and shows the current account (623ms)
+  ok 3 tests\e2e\catalog-live.e2e.spec.ts:4:5 › UI-01 RT-04 real browser purchase, role operations and offline socket recovery (1.2m)
+
+  3 passed (1.4m)

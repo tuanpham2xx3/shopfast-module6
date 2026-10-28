@@ -1,0 +1,1023 @@
+{
+  "runId": "4ed5b56b-3e53-47e3-9a79-e17cc8b48816",
+  "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+  "dirty": false,
+  "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+  "executedAt": "2026-10-28T11:09:14.286Z",
+  "suites": [
+    {
+      "file": "C:/PROJECT/rikkeilearning/fjs_be_module3/defent_prj/tests/integration/orders.integration.spec.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "title": "allows exactly one of twenty buyers to reserve the last unit",
+          "fullName": "order transaction invariants allows exactly one of twenty buyers to reserve the last unit",
+          "status": "passed",
+          "duration": 190
+        },
+        {
+          "title": "replays checkout and follows mock payment through delivery exactly once",
+          "fullName": "order transaction invariants replays checkout and follows mock payment through delivery exactly once",
+          "status": "passed",
+          "duration": 123
+        },
+        {
+          "title": "rejects changed prices and rolls back an entire multi-product request",
+          "fullName": "order transaction invariants rejects changed prices and rolls back an entire multi-product request",
+          "status": "passed",
+          "duration": 13
+        },
+        {
+          "title": "releases reservations and refunds mock payment on cancellation",
+          "fullName": "order transaction invariants releases reservations and refunds mock payment on cancellation",
+          "status": "passed",
+          "duration": 56
+        },
+        {
+          "title": "consumes the final promotion quota once under concurrent checkout",
+          "fullName": "order transaction invariants consumes the final promotion quota once under concurrent checkout",
+          "status": "passed",
+          "duration": 44
+        },
+        {
+          "title": "expires unpaid orders once and leaves paid orders reserved",
+          "fullName": "order transaction invariants expires unpaid orders once and leaves paid orders reserved",
+          "status": "passed",
+          "duration": 129
+        },
+        {
+          "title": "handles crossed taxonomy carts concurrently without deadlocking",
+          "fullName": "order transaction invariants handles crossed taxonomy carts concurrently without deadlocking",
+          "status": "passed",
+          "duration": 179
+        },
+        {
+          "title": "CART-01 adds, changes and removes a SKU without reserving stock and rejects boundary quantities",
+          "fullName": "order transaction invariants CART-01 adds, changes and removes a SKU without reserving stock and rejects boundary quantities",
+          "status": "passed",
+          "duration": 26
+        },
+        {
+          "title": "ORD-03 rolls back reservations, cart, order and outbox when the second real SKU is out of stock",
+          "fullName": "order transaction invariants ORD-03 rolls back reservations, cart, order and outbox when the second real SKU is out of stock",
+          "status": "passed",
+          "duration": 22
+        },
+        {
+          "title": "ORD-04 concurrent identical keys create one order and replay after service restart",
+          "fullName": "order transaction invariants ORD-04 concurrent identical keys create one order and replay after service restart",
+          "status": "passed",
+          "duration": 36
+        },
+        {
+          "title": "ORD-06 serializes payment, cancellation and expiry with one history transition and valid reservations",
+          "fullName": "order transaction invariants ORD-06 serializes payment, cancellation and expiry with one history transition and valid reservations",
+          "status": "passed",
+          "duration": 118
+        },
+        {
+          "title": "ORD-10 rejects reducing on-hand below reserved without changing stock or movements",
+          "fullName": "order transaction invariants ORD-10 rejects reducing on-hand below reserved without changing stock or movements",
+          "status": "passed",
+          "duration": 49
+        },
+        {
+          "title": "ORD-08 rejects stale and skipped transitions without changing order, stock or outbox",
+          "fullName": "order transaction invariants ORD-08 rejects stale and skipped transitions without changing order, stock or outbox",
+          "status": "passed",
+          "duration": 51
+        },
+        {
+          "title": "JOB-01 checkout commits outbox while an email provider is still delayed for five seconds",
+          "fullName": "order transaction invariants JOB-01 checkout commits outbox while an email provider is still delayed for five seconds",
+          "status": "passed",
+          "duration": 5017
+        },
+        {
+          "title": "JOB-07 creates one invoice only after payment and none for cancelled unpaid orders",
+          "fullName": "order transaction invariants JOB-07 creates one invoice only after payment and none for cancelled unpaid orders",
+          "status": "passed",
+          "duration": 204
+        }
+      ]
+    },
+    {
+      "file": "C:/PROJECT/rikkeilearning/fjs_be_module3/defent_prj/tests/integration/realtime.integration.spec.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "title": "rejects anonymous/unverified and denies another customer's subscription",
+          "fullName": "realtime authorization and post-commit delivery rejects anonymous/unverified and denies another customer's subscription",
+          "status": "passed",
+          "duration": 492
+        }
+      ]
+    },
+    {
+      "file": "C:/PROJECT/rikkeilearning/fjs_be_module3/defent_prj/tests/integration/auth-http.integration.spec.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "title": "registers, verifies, reads current user, refreshes and logs out",
+          "fullName": "auth HTTP vertical slice registers, verifies, reads current user, refreshes and logs out",
+          "status": "passed",
+          "duration": 300
+        }
+      ]
+    },
+    {
+      "file": "C:/PROJECT/rikkeilearning/fjs_be_module3/defent_prj/tests/integration/catalog-http.integration.spec.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "title": "guards admin mutations and carries product stock into public catalog",
+          "fullName": "catalog HTTP roles and vertical flow guards admin mutations and carries product stock into public catalog",
+          "status": "passed",
+          "duration": 450
+        }
+      ]
+    },
+    {
+      "file": "C:/PROJECT/rikkeilearning/fjs_be_module3/defent_prj/tests/integration/tickets-ai.integration.spec.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "title": "grounds both real DB tools, hides other customer orders, and requires explicit approval",
+          "fullName": "tickets and AI ownership/confirmation integration grounds both real DB tools, hides other customer orders, and requires explicit approval",
+          "status": "passed",
+          "duration": 157
+        },
+        {
+          "title": "hides customer ownership and serializes competing claims",
+          "fullName": "tickets and AI ownership/confirmation integration hides customer ownership and serializes competing claims",
+          "status": "passed",
+          "duration": 44
+        },
+        {
+          "title": "enforces transition, closed messages and seven day reopen window",
+          "fullName": "tickets and AI ownership/confirmation integration enforces transition, closed messages and seven day reopen window",
+          "status": "passed",
+          "duration": 35
+        },
+        {
+          "title": "deduplicates turns, confirms once atomically and marks human classification",
+          "fullName": "tickets and AI ownership/confirmation integration deduplicates turns, confirms once atomically and marks human classification",
+          "status": "passed",
+          "duration": 90
+        },
+        {
+          "title": "rejects stale, expired and rejected proposals without changing label",
+          "fullName": "tickets and AI ownership/confirmation integration rejects stale, expired and rejected proposals without changing label",
+          "status": "passed",
+          "duration": 24
+        },
+        {
+          "title": "blocks ungrounded output, role injection and infinite tool calls",
+          "fullName": "tickets and AI ownership/confirmation integration blocks ungrounded output, role injection and infinite tool calls",
+          "status": "passed",
+          "duration": 47
+        },
+        {
+          "title": "does not disclose orders of another customer, and revokes session after reassignment",
+          "fullName": "tickets and AI ownership/confirmation integration does not disclose orders of another customer, and revokes session after reassignment",
+          "status": "passed",
+          "duration": 19
+        },
+        {
+          "title": "classifies structured results and fails malformed output into review",
+          "fullName": "tickets and AI ownership/confirmation integration classifies structured results and fails malformed output into review",
+          "status": "passed",
+          "duration": 9
+        },
+        {
+          "title": "caps classification at two provider calls during quota failure",
+          "fullName": "tickets and AI ownership/confirmation integration caps classification at two provider calls during quota failure",
+          "status": "passed",
+          "duration": 5
+        }
+      ]
+    },
+    {
+      "file": "C:/PROJECT/rikkeilearning/fjs_be_module3/defent_prj/tests/integration/auth.integration.spec.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "title": "registers a normalized unverified customer without exposing OTP or hashes",
+          "fullName": "auth service integration registers a normalized unverified customer without exposing OTP or hashes",
+          "status": "passed",
+          "duration": 99
+        },
+        {
+          "title": "verifies the newest OTP once and then allows login",
+          "fullName": "auth service integration verifies the newest OTP once and then allows login",
+          "status": "passed",
+          "duration": 180
+        },
+        {
+          "title": "uses the same invalid-credentials error for unknown email and wrong password",
+          "fullName": "auth service integration uses the same invalid-credentials error for unknown email and wrong password",
+          "status": "passed",
+          "duration": 144
+        },
+        {
+          "title": "rotates refresh tokens and revokes the family when an old token is reused",
+          "fullName": "auth service integration rotates refresh tokens and revokes the family when an old token is reused",
+          "status": "passed",
+          "duration": 86
+        },
+        {
+          "title": "keeps verification resend generic, throttled and invalidates the old code",
+          "fullName": "auth service integration keeps verification resend generic, throttled and invalidates the old code",
+          "status": "passed",
+          "duration": 92
+        },
+        {
+          "title": "limits verification sends by target account across repeated requests",
+          "fullName": "auth service integration limits verification sends by target account across repeated requests",
+          "status": "passed",
+          "duration": 77
+        },
+        {
+          "title": "atomically limits concurrent sends and expires the rolling window",
+          "fullName": "auth service integration atomically limits concurrent sends and expires the rolling window",
+          "status": "passed",
+          "duration": 66
+        },
+        {
+          "title": "limits an IP even when each request targets a different email",
+          "fullName": "auth service integration limits an IP even when each request targets a different email",
+          "status": "passed",
+          "duration": 42
+        },
+        {
+          "title": "rejects verification after its session is revoked",
+          "fullName": "auth service integration rejects verification after its session is revoked",
+          "status": "passed",
+          "duration": 109
+        },
+        {
+          "title": "rejects expired OTPs and locks a code after five wrong attempts",
+          "fullName": "auth service integration rejects expired OTPs and locks a code after five wrong attempts",
+          "status": "passed",
+          "duration": 104
+        }
+      ]
+    },
+    {
+      "file": "C:/PROJECT/rikkeilearning/fjs_be_module3/defent_prj/tests/runtime/catalog.integration.spec.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "title": "invalidates old/new membership, empty lists, and prices while retaining unrelated lists",
+          "fullName": "catalog cache domain integration (native PostgreSQL, Redis protocol double) invalidates old/new membership, empty lists, and prices while retaining unrelated lists",
+          "status": "passed",
+          "duration": 33
+        },
+        {
+          "title": "writes durable invalidation only inside successful mutation transactions",
+          "fullName": "catalog cache domain integration (native PostgreSQL, Redis protocol double) writes durable invalidation only inside successful mutation transactions",
+          "status": "passed",
+          "duration": 119
+        },
+        {
+          "title": "invalidates inventory after checkout, cancellation, and expiry",
+          "fullName": "catalog cache domain integration (native PostgreSQL, Redis protocol double) invalidates inventory after checkout, cancellation, and expiry",
+          "status": "passed",
+          "duration": 90
+        }
+      ]
+    },
+    {
+      "file": "C:/PROJECT/rikkeilearning/fjs_be_module3/defent_prj/tests/integration/retention.integration.spec.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "title": "bounds each batch, retains unexpired replay records and skips a concurrent cleaner",
+          "fullName": "bounded retention preserves audit and replay protection bounds each batch, retains unexpired replay records and skips a concurrent cleaner",
+          "status": "passed",
+          "duration": 110
+        },
+        {
+          "title": "removes old unapproved AI content, redacts approved turns and preserves customer reply",
+          "fullName": "bounded retention preserves audit and replay protection removes old unapproved AI content, redacts approved turns and preserves customer reply",
+          "status": "passed",
+          "duration": 31
+        },
+        {
+          "title": "keeps successful job tombstones, failed/pending payloads and active security counters",
+          "fullName": "bounded retention preserves audit and replay protection keeps successful job tombstones, failed/pending payloads and active security counters",
+          "status": "passed",
+          "duration": 15
+        },
+        {
+          "title": "allows an already validated human approval to finish while cleanup runs",
+          "fullName": "bounded retention preserves audit and replay protection allows an already validated human approval to finish while cleanup runs",
+          "status": "passed",
+          "duration": 149
+        }
+      ]
+    },
+    {
+      "file": "C:/PROJECT/rikkeilearning/fjs_be_module3/defent_prj/tests/integration/jobs.integration.spec.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "title": "deduplicates paid invoices and enforces ownership, signature, expiry and refunds",
+          "fullName": "durable jobs, invoice authorization and crash recovery deduplicates paid invoices and enforces ownership, signature, expiry and refunds",
+          "status": "passed",
+          "duration": 115
+        },
+        {
+          "title": "recovers expired leases without duplicate email and skips reminders after payment",
+          "fullName": "durable jobs, invoice authorization and crash recovery recovers expired leases without duplicate email and skips reminders after payment",
+          "status": "passed",
+          "duration": 17
+        },
+        {
+          "title": "archives terminal failures and keeps audit history on admin retry",
+          "fullName": "durable jobs, invoice authorization and crash recovery archives terminal failures and keeps audit history on admin retry",
+          "status": "passed",
+          "duration": 24
+        },
+        {
+          "title": "JOB-02 persists retry backoff before retrying and dead-letters exhausted jobs with a reason",
+          "fullName": "durable jobs, invoice authorization and crash recovery JOB-02 persists retry backoff before retrying and dead-letters exhausted jobs with a reason",
+          "status": "passed",
+          "duration": 36
+        },
+        {
+          "title": "JOB-05 schedules reminders at thirty minutes and skips an order paid before execution",
+          "fullName": "durable jobs, invoice authorization and crash recovery JOB-05 schedules reminders at thirty minutes and skips an order paid before execution",
+          "status": "passed",
+          "duration": 22
+        },
+        {
+          "title": "catches up Bangkok daily reports and expires through the domain service",
+          "fullName": "durable jobs, invoice authorization and crash recovery catches up Bangkok daily reports and expires through the domain service",
+          "status": "passed",
+          "duration": 40
+        },
+        {
+          "title": "never overwrites a newer partner inventory snapshot with older data",
+          "fullName": "durable jobs, invoice authorization and crash recovery never overwrites a newer partner inventory snapshot with older data",
+          "status": "passed",
+          "duration": 30
+        }
+      ]
+    },
+    {
+      "file": "C:/PROJECT/rikkeilearning/fjs_be_module3/defent_prj/tests/integration/catalog.integration.spec.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "title": "creates zero stock and combines all public filters",
+          "fullName": "catalog and inventory integration creates zero stock and combines all public filters",
+          "status": "passed",
+          "duration": 7
+        },
+        {
+          "title": "serializes concurrent stock adjustments and replays a matching key",
+          "fullName": "catalog and inventory integration serializes concurrent stock adjustments and replays a matching key",
+          "status": "passed",
+          "duration": 73
+        },
+        {
+          "title": "hides products whose category is inactive and enforces versions",
+          "fullName": "catalog and inventory integration hides products whose category is inactive and enforces versions",
+          "status": "passed",
+          "duration": 14
+        }
+      ]
+    },
+    {
+      "file": "C:/PROJECT/rikkeilearning/fjs_be_module3/defent_prj/tests/contract/api.contract.spec.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "title": "rejects malformed JSON safely as a bad request",
+          "fullName": "API HTTP contract rejects malformed JSON safely as a bad request",
+          "status": "passed",
+          "duration": 104
+        },
+        {
+          "title": "enforces the 64 KB JSON body limit",
+          "fullName": "API HTTP contract enforces the 64 KB JSON body limit",
+          "status": "passed",
+          "duration": 49
+        },
+        {
+          "title": "replaces an unsafe caller request ID",
+          "fullName": "API HTTP contract replaces an unsafe caller request ID",
+          "status": "passed",
+          "duration": 46
+        },
+        {
+          "title": "reports unavailable readiness when no database is configured",
+          "fullName": "API HTTP contract reports unavailable readiness when no database is configured",
+          "status": "passed",
+          "duration": 40
+        },
+        {
+          "title": "reports liveness with the standard success envelope and request ID",
+          "fullName": "API HTTP contract reports liveness with the standard success envelope and request ID",
+          "status": "passed",
+          "duration": 41
+        },
+        {
+          "title": "returns unknown routes in the standard safe error envelope",
+          "fullName": "API HTTP contract returns unknown routes in the standard safe error envelope",
+          "status": "passed",
+          "duration": 48
+        }
+      ]
+    },
+    {
+      "file": "C:/PROJECT/rikkeilearning/fjs_be_module3/defent_prj/tests/runtime/limiter.integration.spec.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "title": "serializes concurrent sensitive requests across service instances",
+          "fullName": "authoritative runtime limiting serializes concurrent sensitive requests across service instances",
+          "status": "passed",
+          "duration": 84
+        },
+        {
+          "title": "protects normalized target accounts and clears failures after success",
+          "fullName": "authoritative runtime limiting protects normalized target accounts and clears failures after success",
+          "status": "passed",
+          "duration": 18
+        },
+        {
+          "title": "uses a rolling window and escalates target lock duration",
+          "fullName": "authoritative runtime limiting uses a rolling window and escalates target lock duration",
+          "status": "passed",
+          "duration": 37
+        }
+      ]
+    },
+    {
+      "file": "C:/PROJECT/rikkeilearning/fjs_be_module3/defent_prj/tests/integration/resend.integration.spec.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "title": "replays the same request after ambiguous timeout, persists provider ID and skips duplicate",
+          "fullName": "Resend durable idempotency replays the same request after ambiguous timeout, persists provider ID and skips duplicate",
+          "status": "passed",
+          "duration": 20
+        },
+        {
+          "title": "refuses late retry outside the safe window even for a manually requeued job",
+          "fullName": "Resend durable idempotency refuses late retry outside the safe window even for a manually requeued job",
+          "status": "passed",
+          "duration": 7
+        }
+      ]
+    },
+    {
+      "file": "C:/PROJECT/rikkeilearning/fjs_be_module3/defent_prj/tests/integration/database.integration.spec.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "title": "migrates an empty isolated schema and safely reruns",
+          "fullName": "PostgreSQL migration contract migrates an empty isolated schema and safely reruns",
+          "status": "passed",
+          "duration": 756
+        }
+      ]
+    },
+    {
+      "file": "C:/PROJECT/rikkeilearning/fjs_be_module3/defent_prj/tests/integration/outbox.integration.spec.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "title": "publishes committed events and applies a duplicate delivery once",
+          "fullName": "outbox delivery contract publishes committed events and applies a duplicate delivery once",
+          "status": "passed",
+          "duration": 25
+        },
+        {
+          "title": "does not publish an event rolled back with the business transaction",
+          "fullName": "outbox delivery contract does not publish an event rolled back with the business transaction",
+          "status": "passed",
+          "duration": 22
+        },
+        {
+          "title": "releases a failed publish for retry without marking it published",
+          "fullName": "outbox delivery contract releases a failed publish for retry without marking it published",
+          "status": "passed",
+          "duration": 5
+        }
+      ]
+    },
+    {
+      "file": "C:/PROJECT/rikkeilearning/fjs_be_module3/defent_prj/tests/unit/auth-service.spec.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "title": "resends verification only within email/IP quotas and respects cooldown without enumeration",
+          "fullName": "auth domain decisions independent of PostgreSQL resends verification only within email/IP quotas and respects cooldown without enumeration",
+          "status": "passed",
+          "duration": 34
+        },
+        {
+          "title": "registers normalized identity with hashed password and an opaque refresh token",
+          "fullName": "auth domain decisions independent of PostgreSQL registers normalized identity with hashed password and an opaque refresh token",
+          "status": "passed",
+          "duration": 128
+        },
+        {
+          "title": "maps duplicate registration while propagating infrastructure failures",
+          "fullName": "auth domain decisions independent of PostgreSQL maps duplicate registration while propagating infrastructure failures",
+          "status": "passed",
+          "duration": 108
+        },
+        {
+          "title": "checks passwords, account status and signs the correct subject",
+          "fullName": "auth domain decisions independent of PostgreSQL checks passwords, account status and signs the correct subject",
+          "status": "passed",
+          "duration": 225
+        },
+        {
+          "title": "rotates refresh tokens without making the session ID the user subject",
+          "fullName": "auth domain decisions independent of PostgreSQL rotates refresh tokens without making the session ID the user subject",
+          "status": "passed",
+          "duration": 3
+        },
+        {
+          "title": "requires both signed claims and a live database session",
+          "fullName": "auth domain decisions independent of PostgreSQL requires both signed claims and a live database session",
+          "status": "passed",
+          "duration": 6
+        },
+        {
+          "title": "only verifies a current unexpired code with attempts remaining",
+          "fullName": "auth domain decisions independent of PostgreSQL only verifies a current unexpired code with attempts remaining",
+          "status": "passed",
+          "duration": 11
+        }
+      ]
+    },
+    {
+      "file": "C:/PROJECT/rikkeilearning/fjs_be_module3/defent_prj/tests/unit/retention-worker.spec.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "title": "does not block business scheduling on retention and prevents overlap",
+          "fullName": "does not block business scheduling on retention and prevents overlap",
+          "status": "passed",
+          "duration": 4
+        }
+      ]
+    },
+    {
+      "file": "C:/PROJECT/rikkeilearning/fjs_be_module3/defent_prj/tests/unit/auth-guards.spec.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "title": "hydrates the request from a valid bearer token",
+          "fullName": "auth guards hydrates the request from a valid bearer token",
+          "status": "passed",
+          "duration": 6
+        },
+        {
+          "title": "rejects unverified users",
+          "fullName": "auth guards rejects unverified users",
+          "status": "passed",
+          "duration": 10
+        },
+        {
+          "title": "rejects roles not declared on the route",
+          "fullName": "auth guards rejects roles not declared on the route",
+          "status": "passed",
+          "duration": 1
+        }
+      ]
+    },
+    {
+      "file": "C:/PROJECT/rikkeilearning/fjs_be_module3/defent_prj/tests/integration/redis.integration.spec.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "title": "supports expiring counters, Lua and Pub/Sub",
+          "fullName": "Redis/BullMQ native compatibility supports expiring counters, Lua and Pub/Sub",
+          "status": "passed",
+          "duration": 7
+        },
+        {
+          "title": "processes delayed jobs and retries a failed attempt",
+          "fullName": "Redis/BullMQ native compatibility processes delayed jobs and retries a failed attempt",
+          "status": "passed",
+          "duration": 373
+        }
+      ]
+    },
+    {
+      "file": "C:/PROJECT/rikkeilearning/fjs_be_module3/defent_prj/tests/runtime/http.spec.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "title": "uses a conservative process fallback and fails closed for sensitive scopes",
+          "fullName": "HTTP runtime limiter adapter uses a conservative process fallback and fails closed for sensitive scopes",
+          "status": "passed",
+          "duration": 14
+        },
+        {
+          "title": "propagates Retry-After from downstream controller failures",
+          "fullName": "HTTP runtime limiter adapter propagates Retry-After from downstream controller failures",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "title": "does not initialize database-backed runtime for liveness",
+          "fullName": "HTTP runtime limiter adapter does not initialize database-backed runtime for liveness",
+          "status": "passed",
+          "duration": 0
+        }
+      ]
+    },
+    {
+      "file": "C:/PROJECT/rikkeilearning/fjs_be_module3/defent_prj/tests/integration/cache-redis.integration.spec.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "title": "CACHE-04 coalesces a hot-key burst and expires missing-key entries with a bounded TTL",
+          "fullName": "real Redis catalog Lua, stampede and negative-cache acceptance CACHE-04 coalesces a hot-key burst and expires missing-key entries with a bounded TTL",
+          "status": "passed",
+          "duration": 36
+        },
+        {
+          "title": "CACHE-03 Lua generation fencing prevents an old loader from repopulating invalidated data",
+          "fullName": "real Redis catalog Lua, stampede and negative-cache acceptance CACHE-03 Lua generation fencing prevents an old loader from repopulating invalidated data",
+          "status": "passed",
+          "duration": 3
+        },
+        {
+          "title": "CACHE-02 invalidates all related real Redis indices and preserves unrelated lists",
+          "fullName": "real Redis catalog Lua, stampede and negative-cache acceptance CACHE-02 invalidates all related real Redis indices and preserves unrelated lists",
+          "status": "passed",
+          "duration": 3
+        }
+      ]
+    },
+    {
+      "file": "C:/PROJECT/rikkeilearning/fjs_be_module3/defent_prj/tests/unit/jobs.spec.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "title": "uses Bangkok business dates across UTC midnight",
+          "fullName": "jobs contracts uses Bangkok business dates across UTC midnight",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "title": "caps retry delay",
+          "fullName": "jobs contracts caps retry delay",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "title": "creates an actual PDF",
+          "fullName": "jobs contracts creates an actual PDF",
+          "status": "passed",
+          "duration": 83
+        },
+        {
+          "title": "sends the same email idempotency key through the production HTTP adapter",
+          "fullName": "jobs contracts sends the same email idempotency key through the production HTTP adapter",
+          "status": "passed",
+          "duration": 21
+        }
+      ]
+    },
+    {
+      "file": "C:/PROJECT/rikkeilearning/fjs_be_module3/defent_prj/tests/unit/database.spec.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "title": "never enables schema synchronization or query logging",
+          "fullName": "database configuration never enables schema synchronization or query logging",
+          "status": "passed",
+          "duration": 13
+        },
+        {
+          "title": "rejects an unsafe migration schema identifier",
+          "fullName": "database configuration rejects an unsafe migration schema identifier",
+          "status": "passed",
+          "duration": 7
+        }
+      ]
+    },
+    {
+      "file": "C:/PROJECT/rikkeilearning/fjs_be_module3/defent_prj/tests/unit/catalog-service.spec.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "title": "creates taxonomy and products while reporting pending cache invalidation",
+          "fullName": "catalog and inventory domain contracts creates taxonomy and products while reporting pending cache invalidation",
+          "status": "passed",
+          "duration": 3
+        },
+        {
+          "title": "invalidates both old/new taxonomy on product changes and refuses stale writes",
+          "fullName": "catalog and inventory domain contracts invalidates both old/new taxonomy on product changes and refuses stale writes",
+          "status": "passed",
+          "duration": 20
+        },
+        {
+          "title": "returns filtered pages, safe integer offsets and known sort modes",
+          "fullName": "catalog and inventory domain contracts returns filtered pages, safe integer offsets and known sort modes",
+          "status": "passed",
+          "duration": 3
+        },
+        {
+          "title": "exposes paginated inventory and movements without changing stock",
+          "fullName": "catalog and inventory domain contracts exposes paginated inventory and movements without changing stock",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "title": "adjusts stock once and rejects malformed, conflicting or unsafe reductions",
+          "fullName": "catalog and inventory domain contracts adjusts stock once and rejects malformed, conflicting or unsafe reductions",
+          "status": "passed",
+          "duration": 2
+        }
+      ]
+    },
+    {
+      "file": "C:/PROJECT/rikkeilearning/fjs_be_module3/defent_prj/tests/runtime/cache.spec.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "title": "coalesces a hot miss instead of sending every waiter to the database",
+          "fullName": "catalog cache race and outage behavior coalesces a hot miss instead of sending every waiter to the database",
+          "status": "passed",
+          "duration": 4
+        },
+        {
+          "title": "does not repopulate stale values after concurrent mutation invalidation",
+          "fullName": "catalog cache race and outage behavior does not repopulate stale values after concurrent mutation invalidation",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "title": "invalidates empty list membership but retains unrelated category caches",
+          "fullName": "catalog cache race and outage behavior invalidates empty list membership but retains unrelated category caches",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "title": "bypasses stale data after an invalidation outage until a successful retry",
+          "fullName": "catalog cache race and outage behavior bypasses stale data after an invalidation outage until a successful retry",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "title": "revalidates a raced DB version and does not hide database errors",
+          "fullName": "catalog cache race and outage behavior revalidates a raced DB version and does not hide database errors",
+          "status": "passed",
+          "duration": 17
+        },
+        {
+          "title": "limits DB fallback concurrency",
+          "fullName": "catalog cache race and outage behavior limits DB fallback concurrency",
+          "status": "passed",
+          "duration": 1
+        }
+      ]
+    },
+    {
+      "file": "C:/PROJECT/rikkeilearning/fjs_be_module3/defent_prj/tests/runtime/runtime.spec.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "title": "enforces rolling limits and expires precisely",
+          "fullName": "runtime protections enforces rolling limits and expires precisely",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "title": "canonicalizes defaults and rejects unbounded or unrecognized filters",
+          "fullName": "runtime protections canonicalizes defaults and rejects unbounded or unrecognized filters",
+          "status": "passed",
+          "duration": 23
+        },
+        {
+          "title": "bypasses unavailable Redis without hiding loader failures",
+          "fullName": "runtime protections bypasses unavailable Redis without hiding loader failures",
+          "status": "passed",
+          "duration": 2
+        }
+      ]
+    },
+    {
+      "file": "C:/PROJECT/rikkeilearning/fjs_be_module3/defent_prj/tests/unit/gemini-provider.spec.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "title": "declares numeric confidence in the provider classification schema",
+          "fullName": "Gemini provider boundaries declares numeric confidence in the provider classification schema",
+          "status": "passed",
+          "duration": 6
+        },
+        {
+          "title": "fails explicitly without backend configuration",
+          "fullName": "Gemini provider boundaries fails explicitly without backend configuration",
+          "status": "passed",
+          "duration": 16
+        },
+        {
+          "title": "times out even a provider that ignores abort",
+          "fullName": "Gemini provider boundaries times out even a provider that ignores abort",
+          "status": "passed",
+          "duration": 3
+        },
+        {
+          "title": "opens after five failures, then permits one successful half-open probe",
+          "fullName": "Gemini provider boundaries opens after five failures, then permits one successful half-open probe",
+          "status": "passed",
+          "duration": 3
+        },
+        {
+          "title": "retries a transient error only once",
+          "fullName": "Gemini provider boundaries retries a transient error only once",
+          "status": "passed",
+          "duration": 1
+        }
+      ]
+    },
+    {
+      "file": "C:/PROJECT/rikkeilearning/fjs_be_module3/defent_prj/tests/unit/tickets-service.spec.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "title": "conceals customer ownership and limits support assignment",
+          "fullName": "ticket domain permission and state rules conceals customer ownership and limits support assignment",
+          "status": "passed",
+          "duration": 28
+        },
+        {
+          "title": "creates a customer request and refuses unauthorized or invalid linked orders",
+          "fullName": "ticket domain permission and state rules creates a customer request and refuses unauthorized or invalid linked orders",
+          "status": "passed",
+          "duration": 2
+        },
+        {
+          "title": "claims only with valid version and an active support identity",
+          "fullName": "ticket domain permission and state rules claims only with valid version and an active support identity",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "title": "advances legal states and rejects skipping, invalid category or expired reopen",
+          "fullName": "ticket domain permission and state rules advances legal states and rejects skipping, invalid category or expired reopen",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "title": "requires approval of the exact grounded draft, rejects customer approvals and closed replies",
+          "fullName": "ticket domain permission and state rules requires approval of the exact grounded draft, rejects customer approvals and closed replies",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "title": "paginates private lists and enforces order scope before returning facts",
+          "fullName": "ticket domain permission and state rules paginates private lists and enforces order scope before returning facts",
+          "status": "passed",
+          "duration": 1
+        }
+      ]
+    },
+    {
+      "file": "C:/PROJECT/rikkeilearning/fjs_be_module3/defent_prj/tests/unit/ai-service.spec.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "title": "renders current tool facts instead of trusting model prose and replays a stored turn",
+          "fullName": "AI policy, grounding and human approval decisions renders current tool facts instead of trusting model prose and replays a stored turn",
+          "status": "passed",
+          "duration": 22
+        },
+        {
+          "title": "refuses unsupported scope and falls back for malformed or ungrounded output",
+          "fullName": "AI policy, grounding and human approval decisions refuses unsupported scope and falls back for malformed or ungrounded output",
+          "status": "passed",
+          "duration": 2
+        },
+        {
+          "title": "creates a proposal without changing the ticket, confirms once and rejects wrong actor/version/expiry",
+          "fullName": "AI policy, grounding and human approval decisions creates a proposal without changing the ticket, confirms once and rejects wrong actor/version/expiry",
+          "status": "passed",
+          "duration": 2
+        },
+        {
+          "title": "rejects expired sessions, foreign actors and malformed turns before model calls",
+          "fullName": "AI policy, grounding and human approval decisions rejects expired sessions, foreign actors and malformed turns before model calls",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "title": "bounds tool rounds and blocks tools not allowlisted",
+          "fullName": "AI policy, grounding and human approval decisions bounds tool rounds and blocks tools not allowlisted",
+          "status": "passed",
+          "duration": 2
+        },
+        {
+          "title": "classifies valid schema and bounds failed schema retries",
+          "fullName": "AI policy, grounding and human approval decisions classifies valid schema and bounds failed schema retries",
+          "status": "passed",
+          "duration": 0
+        }
+      ]
+    },
+    {
+      "file": "C:/PROJECT/rikkeilearning/fjs_be_module3/defent_prj/tests/unit/environment.spec.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "title": "accepts complete production settings and rejects plaintext origin or missing email provider",
+          "fullName": "parseEnvironment accepts complete production settings and rejects plaintext origin or missing email provider",
+          "status": "passed",
+          "duration": 12
+        },
+        {
+          "title": "fails closed for incomplete production credentials without exposing values",
+          "fullName": "parseEnvironment fails closed for incomplete production credentials without exposing values",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "title": "rejects an invalid HTTP port with an actionable field path",
+          "fullName": "parseEnvironment rejects an invalid HTTP port with an actionable field path",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "title": "applies safe local defaults outside production",
+          "fullName": "parseEnvironment applies safe local defaults outside production",
+          "status": "passed",
+          "duration": 0
+        }
+      ]
+    },
+    {
+      "file": "C:/PROJECT/rikkeilearning/fjs_be_module3/defent_prj/tests/unit/ai-deadline.spec.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "title": "bounds the entire AI request when the initial database lookup stalls",
+          "fullName": "bounds the entire AI request when the initial database lookup stalls",
+          "status": "passed",
+          "duration": 33
+        }
+      ]
+    },
+    {
+      "file": "C:/PROJECT/rikkeilearning/fjs_be_module3/defent_prj/tests/unit/email-templates.spec.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "title": "renders OTP with plain text and no secret in the URL",
+          "fullName": "branded emails renders OTP with plain text and no secret in the URL",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "title": "escapes untrusted item and order data and formats VND",
+          "fullName": "branded emails escapes untrusted item and order data and formats VND",
+          "status": "passed",
+          "duration": 4
+        },
+        {
+          "title": "rejects unknown templates, non-HTTPS origin and malformed OTP",
+          "fullName": "branded emails rejects unknown templates, non-HTTPS origin and malformed OTP",
+          "status": "passed",
+          "duration": 8
+        }
+      ]
+    },
+    {
+      "file": "C:/PROJECT/rikkeilearning/fjs_be_module3/defent_prj/tests/unit/readiness.spec.ts",
+      "status": "passed",
+      "tests": [
+        {
+          "title": "reports unavailable when PostgreSQL is unavailable",
+          "fullName": "readiness reports unavailable when PostgreSQL is unavailable",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "title": "reports degraded when only Redis is unavailable",
+          "fullName": "readiness reports degraded when only Redis is unavailable",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "title": "reports ok when both probes succeed",
+          "fullName": "readiness reports ok when both probes succeed",
+          "status": "passed",
+          "duration": 1
+        }
+      ]
+    }
+  ]
+}

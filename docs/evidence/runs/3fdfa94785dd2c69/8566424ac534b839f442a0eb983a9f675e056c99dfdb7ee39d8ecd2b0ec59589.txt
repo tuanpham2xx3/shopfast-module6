@@ -1,0 +1,70 @@
+import { randomUUID } from "node:crypto";
+import { DataSource } from "typeorm";
+import { createDataSource } from "../../libs/platform/src/database/data-source";
+import {
+  RuntimeLimiter,
+  RateLimitError,
+} from "../../libs/modules/runtime/limiter";
+describe("authoritative runtime limiting", () => {
+  let source: DataSource;
+  let limiter: RuntimeLimiter;
+  const schema = `test_${randomUUID().replace(/-/g, "")}`;
+  beforeAll(async () => {
+    if (!process.env.TEST_DATABASE_URL)
+      throw Error("TEST_DATABASE_URL required");
+    source = await createDataSource(
+      process.env.TEST_DATABASE_URL,
+      schema,
+    ).initialize();
+    await source.query(`CREATE SCHEMA "${schema}"`);
+    await source.runMigrations();
+    limiter = new RuntimeLimiter(source, undefined, schema);
+  });
+  afterAll(async () => {
+    if (source?.isInitialized) {
+      await source.query(`DROP SCHEMA "${schema}" CASCADE`);
+      await source.destroy();
+    }
+  });
+  it("serializes concurrent sensitive requests across service instances", async () => {
+    const other = new RuntimeLimiter(source, undefined, schema);
+    const outcomes = await Promise.allSettled(
+      Array.from({ length: 12 }, (_, i) =>
+        (i % 2 ? other : limiter).consume("promo", "u", 3, 60000, true),
+      ),
+    );
+    expect(outcomes.filter((o) => o.status === "fulfilled")).toHaveLength(3);
+    for (const result of outcomes)
+      if (result.status === "rejected")
+        expect(result.reason).toBeInstanceOf(RateLimitError);
+  });
+  it("protects normalized target accounts and clears failures after success", async () => {
+    for (let i = 0; i < 5; i++)
+      await limiter.loginTarget("Victim@Example.com", "failure");
+    await expect(
+      limiter.loginTarget(" victim@example.COM ", "check"),
+    ).rejects.toMatchObject({ retryAfter: expect.any(Number) });
+    await limiter.loginTarget("victim@example.com", "reset");
+    await expect(
+      limiter.loginTarget("victim@example.com", "check"),
+    ).resolves.toBeUndefined();
+  });
+  it("uses a rolling window and escalates target lock duration", async () => {
+    for (let i = 0; i < 10; i++)
+      await limiter.loginTarget("escalate@example.com", "failure");
+    await expect(
+      limiter.loginTarget("escalate@example.com", "check"),
+    ).rejects.toMatchObject({ retryAfter: 300 });
+    for (let i = 0; i < 5; i++)
+      await limiter.loginTarget("escalate@example.com", "failure");
+    await expect(
+      limiter.loginTarget("escalate@example.com", "check"),
+    ).rejects.toMatchObject({ retryAfter: 1800 });
+    await source.query(
+      `UPDATE "${schema}".security_counters SET window_start=window_start-interval '31 minutes' WHERE scope='login-target'`,
+    );
+    await expect(
+      limiter.loginTarget("escalate@example.com", "check"),
+    ).resolves.toBeUndefined();
+  });
+});

@@ -1,0 +1,158 @@
+{
+  "sourceReceipt": "harness\\reports\\receipts\\b12757a6-2893-49b7-ad6d-36703bce6955-browser.json",
+  "receipts": [
+    {
+      "runId": "b12757a6-2893-49b7-ad6d-36703bce6955",
+      "caseId": "RT-04",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:10:06.109Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test"
+      ],
+      "assertions": [
+        {
+          "name": "UI-01 RT-04 real browser purchase, role operations and offline socket recovery",
+          "expected": "actual browser purchase, warehouse/support/admin actions and offline recovery pass",
+          "actual": {
+            "title": "UI-01 RT-04 real browser purchase, role operations and offline socket recovery",
+            "ok": true,
+            "results": [
+              {
+                "status": "passed",
+                "duration": 70633
+              }
+            ],
+            "file": "catalog-live.e2e.spec.ts"
+          },
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/146812d2-24b6-43fa-b34f-ff806ace3460.log",
+          "sha256": "28fbed831fb029891a86b0cedd8cadd734b1cc387e94ce384d7bdaf14812ca47",
+          "bytes": 1143
+        },
+        {
+          "path": "harness/reports/artifacts/b12757a6-2893-49b7-ad6d-36703bce6955-browser.json",
+          "bytes": 1034,
+          "sha256": "35fc5abc7ff9d9d6afd514d36248786d1a1bf6910a00a3d48b339e90711a403c"
+        },
+        {
+          "path": "tests/e2e/catalog-live.e2e.spec.ts",
+          "bytes": 14883,
+          "sha256": "7b6004bea61fca2df248d541a3169a8b2665e0f23d33b4f51a0a0003f27bc191"
+        },
+        {
+          "path": "harness/reports/reconnect-recovered.png",
+          "bytes": 107354,
+          "sha256": "7da24bc0ec711a3c6a6d66eb5a0634e0de06f1d9b80dd38da5f22bdc1da6690b"
+        },
+        {
+          "path": "harness/reports/ui-refresh-admin-mobile.png",
+          "bytes": 141078,
+          "sha256": "7e4e2628a9d0938d567f1eb9dd40071dffafc6dc988488fcc9a2da4aa2a3d0e3"
+        }
+      ]
+    },
+    {
+      "runId": "b12757a6-2893-49b7-ad6d-36703bce6955",
+      "caseId": "UI-01",
+      "commit": "ebcfe5bc1462bd10d728b7a80d3355f2729e500f",
+      "dirty": false,
+      "configHash": "47f1c767b21ba5e88dabfff91fc76736fc21827047a8fa808b30f8782566539b",
+      "executedAt": "2026-10-28T11:10:06.109Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test"
+      ],
+      "assertions": [
+        {
+          "name": "UI-01 RT-04 real browser purchase, role operations and offline socket recovery",
+          "expected": "actual browser purchase, warehouse/support/admin actions and offline recovery pass",
+          "actual": {
+            "title": "UI-01 RT-04 real browser purchase, role operations and offline socket recovery",
+            "ok": true,
+            "results": [
+              {
+                "status": "passed",
+                "duration": 70633
+              }
+            ],
+            "file": "catalog-live.e2e.spec.ts"
+          },
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/146812d2-24b6-43fa-b34f-ff806ace3460.log",
+          "sha256": "28fbed831fb029891a86b0cedd8cadd734b1cc387e94ce384d7bdaf14812ca47",
+          "bytes": 1143
+        },
+        {
+          "path": "harness/reports/artifacts/b12757a6-2893-49b7-ad6d-36703bce6955-browser.json",
+          "bytes": 1034,
+          "sha256": "35fc5abc7ff9d9d6afd514d36248786d1a1bf6910a00a3d48b339e90711a403c"
+        },
+        {
+          "path": "tests/e2e/catalog-live.e2e.spec.ts",
+          "bytes": 14883,
+          "sha256": "7b6004bea61fca2df248d541a3169a8b2665e0f23d33b4f51a0a0003f27bc191"
+        },
+        {
+          "path": "harness/reports/reconnect-recovered.png",
+          "bytes": 107354,
+          "sha256": "7da24bc0ec711a3c6a6d66eb5a0634e0de06f1d9b80dd38da5f22bdc1da6690b"
+        },
+        {
+          "path": "harness/reports/ui-refresh-admin-mobile.png",
+          "bytes": 141078,
+          "sha256": "7e4e2628a9d0938d567f1eb9dd40071dffafc6dc988488fcc9a2da4aa2a3d0e3"
+        }
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "harness/reports/artifacts/146812d2-24b6-43fa-b34f-ff806ace3460.log",
+      "sha256": "28fbed831fb029891a86b0cedd8cadd734b1cc387e94ce384d7bdaf14812ca47",
+      "bytes": 1143,
+      "exportedPath": "docs/evidence/runs/4fc4eb85bf7b5b17/28fbed831fb029891a86b0cedd8cadd734b1cc387e94ce384d7bdaf14812ca47.txt"
+    },
+    {
+      "path": "harness/reports/artifacts/b12757a6-2893-49b7-ad6d-36703bce6955-browser.json",
+      "bytes": 1034,
+      "sha256": "35fc5abc7ff9d9d6afd514d36248786d1a1bf6910a00a3d48b339e90711a403c",
+      "exportedPath": "docs/evidence/runs/4fc4eb85bf7b5b17/35fc5abc7ff9d9d6afd514d36248786d1a1bf6910a00a3d48b339e90711a403c.txt"
+    },
+    {
+      "path": "tests/e2e/catalog-live.e2e.spec.ts",
+      "bytes": 14883,
+      "sha256": "7b6004bea61fca2df248d541a3169a8b2665e0f23d33b4f51a0a0003f27bc191",
+      "exportedPath": "docs/evidence/runs/4fc4eb85bf7b5b17/7b6004bea61fca2df248d541a3169a8b2665e0f23d33b4f51a0a0003f27bc191.txt"
+    },
+    {
+      "path": "harness/reports/reconnect-recovered.png",
+      "bytes": 107354,
+      "sha256": "7da24bc0ec711a3c6a6d66eb5a0634e0de06f1d9b80dd38da5f22bdc1da6690b",
+      "exportedPath": "docs/evidence/runs/4fc4eb85bf7b5b17/7da24bc0ec711a3c6a6d66eb5a0634e0de06f1d9b80dd38da5f22bdc1da6690b.png"
+    },
+    {
+      "path": "harness/reports/ui-refresh-admin-mobile.png",
+      "bytes": 141078,
+      "sha256": "7e4e2628a9d0938d567f1eb9dd40071dffafc6dc988488fcc9a2da4aa2a3d0e3",
+      "exportedPath": "docs/evidence/runs/4fc4eb85bf7b5b17/7e4e2628a9d0938d567f1eb9dd40071dffafc6dc988488fcc9a2da4aa2a3d0e3.png"
+    }
+  ],
+  "note": "PNG reviewed separately before commit/publication; hash integrity does not prove assertion coverage."
+}
