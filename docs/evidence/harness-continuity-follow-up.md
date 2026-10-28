@@ -15,3 +15,9 @@ A separate rehearsal on the old observer recorded57HTTPreads with zero failures,
 - Browser collector rejects a stale Playwright JSON file, and CI discovers all harness `.test.mjs` files automatically.
 
 No backend contract/data model changed. Final acceptance must retain original failed runs and collect fresh receipts for the committed harness; this document does not announce all SRS PASS.
+
+## Clean-source execution
+
+Fresh receipt on clean source `d208339b498c1faa0b7c3406b8c1f48efdc9abd1` completed at `2026-10-28T12:54:49.662Z`: [manifest and original report](runs/71439da4c76d69db/manifest.json). Both start and final source checks were clean. Target release was `9b7b96f3503b022e924a26a96f9abcf1d9403ea2`; fixture candidate was `edd1fe6f814925636be5c561de8809ea7f0f68be`.
+
+Result PASS:57authenticated HTTP reads,3successful private socket subscriptions, zero recorded errors, healthy promotion followed by injected post-promotion health rejection and rollback in5seconds. Finally restored the original9b7b96frelease; an independent SSH read of `release.json` confirmed it. Artifact content was reviewed and exported with its SHA256. The earlier dirty-source runs remain development evidence and are not relabeled. This closes the scoped active-session rehearsal, not host HA or all SRS requirements.

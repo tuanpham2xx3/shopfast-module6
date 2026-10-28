@@ -9,3 +9,9 @@ Các bundle dưới đây được xuất từ execution receipts trên clean so
 Platform OPS-02 riêng đã chạy cả Memurai4.0.1/API7.0.11 và Redis7.4.8Linux,5test mỗi nền PASS; config fingerprint khác Jest/browser do endpoint Redis khác, không tự gộp thành final release PASS. Performance CACHE-01 cần run đúng release/config, không dùng dữ liệu load cũ để gán PASS cho source mới.
 
 Báo cáo yêu cầu tổng hiện BLOCKED. Các bundle này chỉ chứng minh phạm vi được nêu, không chứng minh toàn bộ SRS, partner thật hoặc hồ sơ bảo vệ hoàn tất.
+
+## Evidence bổ sung theo release
+
+- [Hiệu năng và restore trên f8d1696](verified-performance-restore.md): bundle nguyên byte, timestamp và giới hạn phép đo.
+- [CI từ chối test lỗi](ci-rejection-proof.md): PR9 đã đóng, application-checks FAILURE và merge BLOCKED; fixture không vào main.
+- [Continuity trên source sạch d208339](harness-continuity-follow-up.md): target9b7b96f,57HTTPreads/3socket subscriptions/0errors, rollback5giây và restore release ban đầu. Không gộp thành report111mục PASS vì khác SHA/config với lần full run.
