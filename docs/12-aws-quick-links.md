@@ -49,6 +49,8 @@ Chỉ đánh dấu phần đã có xác nhận. Yêu cầu quyền qua nhóm, le
 
 ## EC2 đã tạo — thông tin mở lại khi setup/demo
 
+Domain ứng dụng: `shopfast.tuanpq.com`. Ngày 28/10/2026 agent tạo bản ghi Cloudflare A → `3.27.169.177`, TTL300, DNS only (không proxy), record ID `46993d1b5ccf9b089f7b7e996276f37f`. Chỉ thêm subdomain này; không sửa apex hoặc DNS khác. DNS chưa đồng nghĩa ứng dụng/HTTPS đã deploy.
+
 Nguồn: ảnh EC2 Console do người dùng cung cấp ngày 28/10/2026, chưa kiểm tra qua SSH hoặc AWS API.
 
 | Mục | Giá trị |
