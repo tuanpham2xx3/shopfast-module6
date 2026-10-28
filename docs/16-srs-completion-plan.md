@@ -90,6 +90,17 @@ Gate P3: đủ7deliverables mở được, dry-run có thời lượng và check
 
 ## 4. Điều kiện được tuyên bố hoàn tất
 
+### Giao thức chứng minh bắt buộc
+
+Người dùng nhấn mạnh: phải có demo chạy thật, test PASS và minh chứng đầy đủ; không chấp nhận khẳng định do agent tự suy diễn.
+
+- Mỗi REQ-ID có test/demo tái hiện được: điều kiện trước, dữ liệu synthetic, lệnh hoặc bước thao tác, expected/actual, timestamp, SHA/image/config và exit code. Lưu stdout/stderr đã sanitize cùng report tự sinh; không viết tay PASS thay cho output thực thi.
+- Luồng UI có screenshots theo bước và Playwright trace hoặc video khi phù hợp. Gắn chúng với API/DB/job/event assertion: một ảnh trang hiển thị không chứng minh transaction, gửi email, ownership hay realtime đã đúng.
+- Provider thật có request/message/job correlation ID an toàn, kết quả trả về và assertion ứng dụng; provider accepted không đồng nghĩa inbox delivered. Không công khai OTP, token, password, nội dung khách thật hoặc signed URL.
+- Test âm/fault injection phải chứng minh lỗi thực sự đã xảy ra rồi mới chứng minh recovery; có before/after và elapsed. Không coi test chưa inject được lỗi là recovery PASS.
+- Evidence manifest liệt kê REQ-ID → run → artifact, SHA256 artifact và lệnh chạy lại. Kiểm tra artifact tồn tại/mở được, không dùng link máy local làm bằng chứng bàn giao duy nhất. Người dùng nhận checklist tự chạy lại các demo chính.
+- Harness exit nonzero khi case bắt buộc thiếu evidence/FAIL/BLOCKED/NOT_RUN. Review report đối chiếu SRS độc lập với kết luận tổng của runner; giữ cả lần fail và lần rerun pass, không chọn bỏ kết quả bất lợi.
+
 - Tất cả REQ bắt buộc trong ma trận PASS có evidence; không còn FAIL/BLOCKED/NOT_RUN bị giấu. Chấp thuận demo không được tự diễn giải thành đã có provider thật.
 - Tất cả7deliverables hoàn chỉnh; CI required checks xanh, release traceable, không còn thay đổi task bỏ sót.
 - Report ghi rõ giới hạn: một EC2 không phải HA, backup daily RPO tới24h, performance phụ thuộc network scope, partner demo nếu còn và quota Gemini.
