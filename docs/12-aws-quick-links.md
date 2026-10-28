@@ -1,6 +1,6 @@
 # AWS — Link mở nhanh khi setup và demo
 
-Cập nhật: 28/10/2026. File chỉ lưu đường dẫn, không chứa mật khẩu, key hay mã MFA.
+Cập nhật: 28/10/2026. File lưu đường dẫn và thông tin vận hành không bí mật, không chứa mật khẩu, nội dung key hay mã MFA.
 
 ## Dùng ngay: bật MFA cho AWS Builder ID
 
@@ -40,9 +40,67 @@ Chỉ mở để tra cứu; chưa xác nhận các tính năng này đều khả
 
 ## Ghi nhận tiến độ
 
-- [ ] Đăng ký MFA Builder ID thành công.
+- [x] Đăng ký MFA Builder ID thành công — người dùng xác nhận và cung cấp ảnh thiết bị TOTP ngày 28/10/2026.
 - [ ] Đăng nhập lại và kiểm tra MFA; thiết bị được tin cậy có thể không hỏi lại mã.
 - [ ] Xác định dịch vụ/quyền cần advanced features trước khi quyết định nâng cấp.
 - [ ] Cấu hình quyền quản trị qua nhóm và các role khi tài khoản hỗ trợ.
 
-Chưa đánh dấu hoàn tất vì chưa có xác nhận thao tác thực tế. Yêu cầu quyền qua nhóm, least privilege và MFA của SRS vẫn phải được đối chiếu ở bước cấu hình quyền.
+Chỉ đánh dấu phần đã có xác nhận. Yêu cầu quyền qua nhóm, least privilege và MFA của SRS vẫn phải được đối chiếu ở bước cấu hình quyền. Trạng thái advanced features chưa được xác minh lại sau khi tạo EC2.
+
+## EC2 đã tạo — thông tin mở lại khi setup/demo
+
+Nguồn: ảnh EC2 Console do người dùng cung cấp ngày 28/10/2026, chưa kiểm tra qua SSH hoặc AWS API.
+
+| Mục | Giá trị |
+| --- | --- |
+| Name | `rikkei_df` |
+| Instance ID | `i-05647e511e0e1780b` |
+| Region | Sydney — `ap-southeast-2` |
+| Instance type | `m7i-flex.large` |
+| State trong ảnh | Running; chưa xác nhận status checks |
+| Public IPv4 | `3.27.169.177` |
+| Private IPv4 | `172.31.15.211` |
+| Public DNS | `ec2-3-27-169-177.ap-southeast-2.compute.amazonaws.com` |
+| VPC | `vpc-080d91f9117007ce0` |
+| Subnet | `subnet-0dcf7fbfed7481fbf` |
+| AMI đã chọn | Canonical Ubuntu 24.04 amd64 — `ami-0c4c0d31978150116` |
+| Storage trước Launch | 40 GiB gp3, 3000 IOPS, throughput 125 MiB/s; đã chọn Encrypted trong ảnh |
+| KMS key / encryption sau Launch | Chưa xác minh |
+| IAM role | Chưa gắn, theo ảnh instance summary |
+| IMDSv2 | Required |
+| Elastic IP | Chưa gắn |
+| Private key local | `.secrets/shopfast-ec2.pem` — tên đường dẫn dự kiến; thay đúng tên file đã tải |
+
+- [Mở instance ở Sydney](https://ap-southeast-2.console.aws.amazon.com/ec2/home?region=ap-southeast-2#InstanceDetails:instanceId=i-05647e511e0e1780b).
+- [Security Groups ở Sydney](https://ap-southeast-2.console.aws.amazon.com/ec2/home?region=ap-southeast-2#SecurityGroups:).
+- [EBS Volumes ở Sydney](https://ap-southeast-2.console.aws.amazon.com/ec2/home?region=ap-southeast-2#Volumes:).
+
+IP hiện tại được tự cấp, cần kiểm tra lại sau stop/start; không mặc định IP này cố định lâu dài.
+
+### Kết nối từ PowerShell trong thư mục dự án
+
+```powershell
+ssh -i ".\.secrets\shopfast-ec2.pem" ubuntu@3.27.169.177
+```
+
+Lần đầu kết nối, đối chiếu host fingerprint với thông tin từ EC2 trước khi chấp nhận. Không đưa nội dung `.pem` lên chat, docs hoặc demo; `.secrets/`, `*.pem`, `*.ppk` đã được Git ignore.
+
+Sau khi SSH thành công, kiểm tra máy:
+
+```bash
+cat /etc/os-release
+free -h
+df -h /
+```
+
+### Việc tiếp theo
+
+- [ ] Xác nhận EC2 status checks passed.
+- [ ] Kiểm tra SSH 22 chỉ cho IP quản trị `/32`. Ảnh trước Launch còn là Anywhere; chưa có evidence đã sửa.
+- [ ] Kiểm tra HTTP 80 và HTTPS 443 public; không public 3000/5432/6379.
+- [ ] Kiểm tra EBS encryption và KMS key thực tế.
+- [ ] SSH và xác nhận OS/RAM/dung lượng thực tế.
+- [ ] Cài Docker/Compose trên EC2; không cài Docker Desktop/WSL trên workstation.
+- [ ] Cấu hình S3 backup và IAM role, rồi domain/HTTPS, CI/CD và restore theo từng bước.
+
+Việc triển khai VPS đang được người dùng hướng dẫn thực hiện từng bước; chưa có bằng chứng ứng dụng đã deploy hoặc nghiệm thu cloud.
