@@ -1,24 +1,24 @@
 # 11 — Công cụ phát triển và MCP
 
-Thiết lập ngày 18/10/2026. Đây là tooling phục vụ phát triển, không phải triển khai cloud hoặc scaffold ứng dụng.
+Thiết lập ngày18/10/2026; trạng thái native cập nhật28/10/2026. Đây là tooling phát triển, không phải thành phần runtime sản phẩm.
 
 ## 1. Công cụ được chọn
 
-| Công cụ                              | Công dụng                                                          | Vị trí/trạng thái                                      |
-| ------------------------------------ | ------------------------------------------------------------------ | ------------------------------------------------------ |
-| Context7 MCP 4.4.2                   | Tra cứu tài liệu thư viện, ưu tiên NestJS 10/TypeORM/BullMQ/Gemini | Cài trong tools, config MCP theo dự án                 |
-| Playwright MCP / Chrome DevTools MCP | Kiểm tra và debug UI                                               | Đã có trong cấu hình Codex của máy, không cài trùng    |
-| GitNexus MCP                         | Khám phá quan hệ source khi đã có code                             | Đã có trong cấu hình máy; chưa index dự án chỉ có docs |
-| Playwright Test 1.64.1 + Chromium    | Kiểm thử UI có thể lặp lại, browser smoke                          | tools/node_modules; browser cache của user             |
-| MCP SDK 1.32.1                       | Kiểm tra handshake và tools của MCP                                | tools/node_modules                                     |
-| Prettier 3.9.10                      | Format/check tài liệu và cấu hình                                  | tools/node_modules                                     |
-| Autocannon 8.0.0                     | Load test HTTP                                                     | tools/node_modules                                     |
-| pg / ioredis                         | Client để kiểm tra DB/Redis khi local services sẵn sàng            | tools/node_modules; chưa phải kết nối DB đang chạy     |
-| smol-toml / yaml                     | Đọc và kiểm tra cấu hình                                           | tools/node_modules                                     |
-| Git                                  | Source control                                                     | Có sẵn                                                 |
-| Docker CLI / Compose                 | Chỉ dành cho VPS/CI ở M8                                           | Có sẵn nhưng không khởi động Docker Desktop/WSL local  |
-| PostgreSQL 16 native                 | Database dev/test local                                            | Chưa cài hoặc chưa phát hiện service                   |
-| Memurai native                       | Redis API v7 cho cache/BullMQ dev local                            | Chưa cài hoặc chưa phát hiện service                   |
+| Công cụ                              | Công dụng                                                          | Vị trí/trạng thái                                                                                   |
+| ------------------------------------ | ------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------- |
+| Context7 MCP 4.4.2                   | Tra cứu tài liệu thư viện, ưu tiên NestJS 10/TypeORM/BullMQ/Gemini | Cài trong tools, config MCP theo dự án                                                              |
+| Playwright MCP / Chrome DevTools MCP | Kiểm tra và debug UI                                               | Đã có trong cấu hình Codex của máy, không cài trùng                                                 |
+| GitNexus MCP                         | Khám phá quan hệ source khi đã có code                             | Cấu hình máy trước đó; phiên hiện tại không expose tool, dùng TypeScript AST để kiểm import         |
+| Playwright Test 1.64.1 + Chromium    | Kiểm thử UI có thể lặp lại, browser smoke                          | tools/node_modules; browser cache của user                                                          |
+| MCP SDK 1.32.1                       | Kiểm tra handshake và tools của MCP                                | tools/node_modules                                                                                  |
+| Prettier 3.9.10                      | Format/check tài liệu và cấu hình                                  | tools/node_modules                                                                                  |
+| Autocannon 8.0.0                     | Load test HTTP                                                     | tools/node_modules                                                                                  |
+| pg / ioredis                         | Client kiểm tra DB/Redis và hợp đồng runtime                       | Đã chạy integration trên PostgreSQL native, Memurai và Redis Linux                                  |
+| smol-toml / yaml                     | Đọc và kiểm tra cấu hình                                           | tools/node_modules                                                                                  |
+| Git                                  | Source control                                                     | Có sẵn                                                                                              |
+| Docker CLI / Compose                 | Chỉ dành cho VPS/CI ở M8                                           | Có sẵn nhưng không khởi động Docker Desktop/WSL local                                               |
+| PostgreSQL 16 native                 | Database dev/test local                                            | Instance dự án ở127.0.0.1:5432, dev-doctor PASS; helper đọc port từ cấu hình                        |
+| Memurai native                       | Redis API v7 cho cache/BullMQ dev local                            | Memurai4.0.1/API7.0.11 ở127.0.0.1:16380; helper start/status và persistence đã test trên port riêng |
 
 Version đầy đủ được pin trong `../tools/package.json` và lockfile. Override `hyperid → uuid 11.1.1` khắc phục advisory của dependency Autocannon; cần smoke load test sau nâng cấp dependency. Không dùng `npm audit fix --force` để hạ major tùy tiện.
 

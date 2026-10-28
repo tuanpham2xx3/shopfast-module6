@@ -1,0 +1,312 @@
+{
+  "runId": "30bb04d0-6f16-43d1-82f8-dabd931f7b30",
+  "commit": "d4fe2524d32fcd8c2cbe624e011b97279162d97a",
+  "dirty": false,
+  "configHash": "1b50d400effaa908ea4899186a13d4f617d724e4d23efbbf6ebc58dec7621950",
+  "executedAt": "2026-10-28T14:04:24.798Z",
+  "technical": [
+    {
+      "name": "AWS-account",
+      "expected": "321323528839",
+      "actual": "321323528839",
+      "passed": true
+    },
+    {
+      "name": "IMDSv2",
+      "expected": "required",
+      "actual": "required",
+      "passed": true
+    },
+    {
+      "name": "EBS-encrypted",
+      "expected": true,
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "SG-only-web-and-admin-SSH",
+      "expected": "80/443;22 only /32 or /128",
+      "actual": [],
+      "passed": true
+    },
+    {
+      "name": "SG-public-80",
+      "expected": true,
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "SG-public-443",
+      "expected": true,
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "S3-block-public",
+      "expected": true,
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "S3-encryption",
+      "expected": true,
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "S3-versioning",
+      "expected": "Enabled",
+      "actual": "Enabled",
+      "passed": true
+    },
+    {
+      "name": "S3-retention",
+      "expected": 30,
+      "actual": 30,
+      "passed": true
+    },
+    {
+      "name": "OIDC-restricted-subject",
+      "expected": "repo:tuanpham2xx3@134152079/shopfast-module6@1424291781:environment:production",
+      "actual": [
+        "repo:tuanpham2xx3@134152079/shopfast-module6@1424291781:environment:production"
+      ],
+      "passed": true
+    },
+    {
+      "name": "Deploy-role-actions",
+      "expected": "SendCommand/GetCommandInvocation only",
+      "actual": [
+        "ssm:SendCommand",
+        [
+          "ssm:GetCommandInvocation"
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "name": "Backup-role-scope",
+      "expected": "bucket and backups/* only",
+      "actual": [
+        "arn:aws:s3:::shopfast-backups-321323528839-ap-southeast-2",
+        "arn:aws:s3:::shopfast-backups-321323528839-ap-southeast-2/backups/*"
+      ],
+      "passed": true
+    },
+    {
+      "name": "No-human-AWS-access-keys",
+      "expected": "no root access keys or IAM users",
+      "actual": {
+        "rootAccessKeys": 0,
+        "users": 0
+      },
+      "passed": true
+    },
+    {
+      "name": "IdentityCenter-group-membership",
+      "expected": "ShopFast account group has at least one member",
+      "actual": 1,
+      "passed": true
+    }
+  ],
+  "gateAssertions": {
+    "cloud-operations": [
+      {
+        "name": "AWS-account",
+        "expected": "321323528839",
+        "actual": "321323528839",
+        "passed": true
+      },
+      {
+        "name": "IMDSv2",
+        "expected": "required",
+        "actual": "required",
+        "passed": true
+      },
+      {
+        "name": "EBS-encrypted",
+        "expected": true,
+        "actual": true,
+        "passed": true
+      },
+      {
+        "name": "SG-only-web-and-admin-SSH",
+        "expected": "80/443;22 only /32 or /128",
+        "actual": [],
+        "passed": true
+      },
+      {
+        "name": "SG-public-80",
+        "expected": true,
+        "actual": true,
+        "passed": true
+      },
+      {
+        "name": "SG-public-443",
+        "expected": true,
+        "actual": true,
+        "passed": true
+      },
+      {
+        "name": "S3-block-public",
+        "expected": true,
+        "actual": true,
+        "passed": true
+      },
+      {
+        "name": "S3-encryption",
+        "expected": true,
+        "actual": true,
+        "passed": true
+      },
+      {
+        "name": "S3-versioning",
+        "expected": "Enabled",
+        "actual": "Enabled",
+        "passed": true
+      },
+      {
+        "name": "S3-retention",
+        "expected": 30,
+        "actual": 30,
+        "passed": true
+      },
+      {
+        "name": "OIDC-restricted-subject",
+        "expected": "repo:tuanpham2xx3@134152079/shopfast-module6@1424291781:environment:production",
+        "actual": [
+          "repo:tuanpham2xx3@134152079/shopfast-module6@1424291781:environment:production"
+        ],
+        "passed": true
+      },
+      {
+        "name": "Deploy-role-actions",
+        "expected": "SendCommand/GetCommandInvocation only",
+        "actual": [
+          "ssm:SendCommand",
+          [
+            "ssm:GetCommandInvocation"
+          ]
+        ],
+        "passed": true
+      },
+      {
+        "name": "Backup-role-scope",
+        "expected": "bucket and backups/* only",
+        "actual": [
+          "arn:aws:s3:::shopfast-backups-321323528839-ap-southeast-2",
+          "arn:aws:s3:::shopfast-backups-321323528839-ap-southeast-2/backups/*"
+        ],
+        "passed": true
+      },
+      {
+        "name": "No-human-AWS-access-keys",
+        "expected": "no root access keys or IAM users",
+        "actual": {
+          "rootAccessKeys": 0,
+          "users": 0
+        },
+        "passed": true
+      },
+      {
+        "name": "IdentityCenter-group-membership",
+        "expected": "ShopFast account group has at least one member",
+        "actual": 1,
+        "passed": true
+      }
+    ],
+    "temporary-credentials": [
+      {
+        "name": "OIDC-restricted-subject",
+        "expected": "repo:tuanpham2xx3@134152079/shopfast-module6@1424291781:environment:production",
+        "actual": [
+          "repo:tuanpham2xx3@134152079/shopfast-module6@1424291781:environment:production"
+        ],
+        "passed": true
+      },
+      {
+        "name": "Deploy-role-actions",
+        "expected": "SendCommand/GetCommandInvocation only",
+        "actual": [
+          "ssm:SendCommand",
+          [
+            "ssm:GetCommandInvocation"
+          ]
+        ],
+        "passed": true
+      },
+      {
+        "name": "Backup-role-scope",
+        "expected": "bucket and backups/* only",
+        "actual": [
+          "arn:aws:s3:::shopfast-backups-321323528839-ap-southeast-2",
+          "arn:aws:s3:::shopfast-backups-321323528839-ap-southeast-2/backups/*"
+        ],
+        "passed": true
+      },
+      {
+        "name": "No-human-AWS-access-keys",
+        "expected": "no root access keys or IAM users",
+        "actual": {
+          "rootAccessKeys": 0,
+          "users": 0
+        },
+        "passed": true
+      }
+    ],
+    "cloud-and-host-network": [
+      {
+        "name": "IMDSv2",
+        "expected": "required",
+        "actual": "required",
+        "passed": true
+      },
+      {
+        "name": "EBS-encrypted",
+        "expected": true,
+        "actual": true,
+        "passed": true
+      },
+      {
+        "name": "SG-only-web-and-admin-SSH",
+        "expected": "80/443;22 only /32 or /128",
+        "actual": [],
+        "passed": true
+      },
+      {
+        "name": "fresh host network snapshot",
+        "expected": "same source/config within five minutes",
+        "actual": {
+          "commit": "d4fe2524d32fcd8c2cbe624e011b97279162d97a",
+          "executedAt": "2026-10-28T14:03:14.471Z"
+        },
+        "passed": true
+      },
+      {
+        "name": "postgresPort",
+        "expected": "loopback only",
+        "actual": "127.0.0.1:5432",
+        "passed": true
+      },
+      {
+        "name": "redisPort",
+        "expected": "loopback only",
+        "actual": "127.0.0.1:6379",
+        "passed": true
+      }
+    ]
+  },
+  "identityEvidence": {
+    "rootMfaEnabled": false,
+    "iamUsers": 0,
+    "iamGroups": 0,
+    "identityCenterHomeRegion": "us-east-1",
+    "identityCenterInstanceFound": true,
+    "shopfastGroupMemberCount": 1,
+    "humanRolePolicies": [
+      "AdministratorAccess"
+    ],
+    "builderIdMfa": "Operator confirms TOTP and fresh-login MFA challenge on 28/10/2026; user attestation, not API proof of enforced policy",
+    "emailVerification": "User reports verified 28/10/2026; not independently attested by this API"
+  }
+}

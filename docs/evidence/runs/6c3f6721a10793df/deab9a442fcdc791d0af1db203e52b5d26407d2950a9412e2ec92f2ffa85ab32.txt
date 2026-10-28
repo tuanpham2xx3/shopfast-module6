@@ -1,0 +1,9 @@
+{
+  "startedAt": "2026-10-28T14:08:13.678Z",
+  "finishedAt": "2026-10-28T14:08:16.843Z",
+  "status": "PASS",
+  "exitCode": 0,
+  "timedOut": false,
+  "durationMs": 3164,
+  "output": "{\"mtime\": 1793196488.385116, \"report\": {\"status\": \"PASS\", \"executedAt\": \"2026-10-28T14:08:08.385Z\", \"checks\": [\"real worker process SIGKILL after accepted side effect\", \"expired lease reclaimed by restarted process\", \"one delivery despite two attempts\", \"durable execution succeeded\"], \"provider\": \"deterministic PostgreSQL-backed test sink, not Resend live\"}}\n"
+}

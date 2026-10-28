@@ -1,0 +1,9 @@
+{
+  "startedAt": "2026-10-28T14:44:39.911Z",
+  "finishedAt": "2026-10-28T14:45:27.872Z",
+  "status": "FAIL",
+  "exitCode": 1,
+  "timedOut": false,
+  "durationMs": 47960,
+  "output": "Gemini agent smoke failed; inspect safe evidence. Credentials were not logged.\n"
+}

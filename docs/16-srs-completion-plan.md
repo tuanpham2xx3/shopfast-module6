@@ -2,6 +2,8 @@
 
 Ngày lập: 28/10/2026, Asia/Bangkok. Trạng thái: PLAN; không phải biên bản nghiệm thu. Nguồn chuẩn là SRS gốc, ưu tiên hơn checklist harness. Plan này thay phần tiến độ/baseline cũ của [plan13](13-end-to-end-delivery-plan.md); giữ docs13 làm thiết kế triển khai và lịch sử.
 
+Cập nhật thực thi: xem [bàn giao source d4fe252](20-delivery-status.md). Registry62REQ+49cases, module layout, CI, browser, runtime, fault injection, S3 restore, tải và bộ slide đã có evidence. Lượt mới chưa all-PASS vì Gemini503, quyền human còn chờ Identity Center và chưa diễn tập/Q&A. Các baseline/nghĩa vụ bên dưới giữ để đối chiếu, không phải khẳng định chưa từng triển khai.
+
 ## 1. Đích bàn giao và baseline
 
 Đạt toàn bộ chức năng F01–F07, công nghệ, hiệu năng, bảo mật, phục hồi, chất lượng và đủ bảy sản phẩm bàn giao trong SRS. UI tối thiểu phải demo được mọi vai trò trên desktop/mobile; landing page marketing, thanh toán thật và đa nhà bán hàng không phải điều kiện SRS. Cải thiện thẩm mỹ là công việc riêng, không dùng để thay thế thiếu sót backend.

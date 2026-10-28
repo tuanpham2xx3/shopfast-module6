@@ -1,0 +1,202 @@
+import {
+  TicketsService,
+  Ticket,
+  Actor,
+} from "../../libs/modules/tickets/src/tickets.service";
+import { DataSource } from "typeorm";
+const customer: Actor = { id: "customer", role: "CUSTOMER" },
+  support: Actor = { id: "support", role: "SUPPORT" },
+  admin: Actor = { id: "admin", role: "ADMIN" };
+const ticket: Ticket = {
+  id: "ticket",
+  customerId: customer.id,
+  orderId: null,
+  subject: "Support request",
+  body: "Please assist",
+  status: "OPEN",
+  assignedTo: support.id,
+  category: "OTHER",
+  version: 1,
+  resolvedAt: null,
+  classificationVersion: 1,
+  classificationSource: "AI",
+};
+function fixture(results: unknown[] = []) {
+  const query = jest.fn();
+  for (const value of results) query.mockResolvedValueOnce(value);
+  query.mockResolvedValue([]);
+  const manager = { query };
+  const source = {
+    query,
+    manager,
+    transaction: async (fn: (m: typeof manager) => Promise<unknown>) =>
+      fn(manager),
+  } as unknown as DataSource;
+  return new TicketsService(source);
+}
+describe("ticket domain permission and state rules", () => {
+  it("conceals customer ownership and limits support assignment", () => {
+    const s = fixture();
+    expect(() => s.authorize(ticket, customer)).not.toThrow();
+    expect(() =>
+      s.authorize(ticket, { id: "other", role: "CUSTOMER" }),
+    ).toThrow("NOT_FOUND");
+    expect(() => s.authorize(ticket, support, true)).not.toThrow();
+    expect(() => s.authorize(ticket, admin, true)).not.toThrow();
+    expect(() =>
+      s.authorize(ticket, { id: "other", role: "SUPPORT" }, true),
+    ).toThrow("FORBIDDEN");
+    expect(() =>
+      s.authorize(ticket, { id: "warehouse", role: "WAREHOUSE" }),
+    ).toThrow("FORBIDDEN");
+    expect(() => s.version(ticket, 2)).toThrow("VERSION_CONFLICT");
+    expect(() => new TicketsService({} as DataSource, "bad;schema")).toThrow();
+  });
+  it("creates a customer request and refuses unauthorized or invalid linked orders", async () => {
+    expect(
+      await fixture([[], [], [ticket]]).create(customer, {
+        subject: "Support request",
+        body: "Please assist",
+      }),
+    ).toEqual(ticket);
+    await expect(
+      fixture().create(support, {
+        subject: "Support request",
+        body: "Please assist",
+      }),
+    ).rejects.toThrow("FORBIDDEN");
+    await expect(
+      fixture().create(customer, { subject: "X", body: "body" }),
+    ).rejects.toThrow("BAD_REQUEST");
+    await expect(
+      fixture([[]]).create(customer, {
+        subject: "Order request",
+        body: "body",
+        orderId: "other-order",
+      }),
+    ).rejects.toThrow("ORDER_NOT_ACCESSIBLE");
+  });
+  it("claims only with valid version and an active support identity", async () => {
+    const next = { ...ticket, version: 2 };
+    expect(
+      await fixture([[ticket], [{ id: support.id }], [], [next], []]).claim(
+        support,
+        ticket.id,
+        1,
+      ),
+    ).toEqual(next);
+    await expect(fixture().claim(customer, ticket.id, 1)).rejects.toThrow(
+      "FORBIDDEN",
+    );
+    await expect(
+      fixture().claim(support, ticket.id, 1, "someone"),
+    ).rejects.toThrow("FORBIDDEN");
+    await expect(
+      fixture([[{ ...ticket, assignedTo: "someone" }]]).claim(
+        support,
+        ticket.id,
+        1,
+      ),
+    ).rejects.toThrow("ALREADY_CLAIMED");
+    await expect(
+      fixture([[ticket], []]).claim(admin, ticket.id, 1, "disabled-agent"),
+    ).rejects.toThrow("BAD_REQUEST");
+  });
+  it("advances legal states and rejects skipping, invalid category or expired reopen", async () => {
+    const next = { ...ticket, status: "IN_PROGRESS", version: 2 };
+    expect(
+      await fixture([[ticket], [], [next], []]).update(support, ticket.id, {
+        expectedVersion: 1,
+        status: "IN_PROGRESS",
+      }),
+    ).toEqual(next);
+    await expect(
+      fixture([[ticket]]).update(support, ticket.id, {
+        expectedVersion: 1,
+        status: "CLOSED",
+      }),
+    ).rejects.toThrow("INVALID_TRANSITION");
+    await expect(
+      fixture([[ticket]]).update(support, ticket.id, {
+        expectedVersion: 1,
+        category: "INVALID",
+      }),
+    ).rejects.toThrow("BAD_REQUEST");
+    await expect(
+      fixture([[ticket]]).update(customer, ticket.id, { expectedVersion: 1 }),
+    ).rejects.toThrow("FORBIDDEN");
+    await expect(
+      fixture([
+        [
+          {
+            ...ticket,
+            status: "RESOLVED",
+            resolvedAt: new Date(Date.now() - 8 * 86400000),
+          },
+        ],
+      ]).update(customer, ticket.id, { expectedVersion: 1 }, true),
+    ).rejects.toThrow("INVALID_TRANSITION");
+    const resolved = { ...ticket, status: "RESOLVED", resolvedAt: new Date() };
+    expect(
+      await fixture([[resolved], [], [ticket], []]).update(
+        customer,
+        ticket.id,
+        { expectedVersion: 1 },
+        true,
+      ),
+    ).toEqual(ticket);
+  });
+  it("requires approval of the exact grounded draft, rejects customer approvals and closed replies", async () => {
+    const message = { id: "message", body: "Approved answer" };
+    expect(
+      await fixture([
+        [ticket],
+        [{ response: { status: "OK", answer: message.body } }],
+        [message],
+        [],
+      ]).message(support, ticket.id, message.body, "turn"),
+    ).toEqual(message);
+    await expect(
+      fixture([
+        [ticket],
+        [{ response: { status: "OK", answer: "different" } }],
+      ]).message(support, ticket.id, "tampered", "turn"),
+    ).rejects.toThrow("AI_MESSAGE_NOT_APPROVABLE");
+    await expect(
+      fixture([[ticket]]).message(customer, ticket.id, "answer", "turn"),
+    ).rejects.toThrow("FORBIDDEN");
+    await expect(
+      fixture([[{ ...ticket, status: "CLOSED" }]]).message(
+        customer,
+        ticket.id,
+        "answer",
+      ),
+    ).rejects.toThrow("TICKET_CLOSED");
+    await expect(fixture().message(customer, ticket.id, " ")).rejects.toThrow(
+      "BAD_REQUEST",
+    );
+  });
+  it("paginates private lists and enforces order scope before returning facts", async () => {
+    expect(
+      await fixture([[{ total: 1 }], [ticket]]).list(customer, {
+        status: "OPEN",
+        category: "OTHER",
+        page: 1,
+        pageSize: 10,
+      }),
+    ).toMatchObject({ total: 1, items: [ticket] });
+    await expect(fixture().list(customer, { page: 0 })).rejects.toThrow(
+      "BAD_REQUEST",
+    );
+    expect(
+      await fixture([[ticket], [], [{ total: 0 }]]).detail(customer, ticket.id),
+    ).toMatchObject({ messages: { items: [], total: 0 } });
+    const order = { orderCode: "OWN", status: "CONFIRMED" };
+    expect(
+      await fixture([[ticket], [order]]).order(support, ticket.id, "OWN"),
+    ).toEqual(order);
+    await expect(
+      fixture([[ticket], []]).order(support, ticket.id, "OTHER"),
+    ).rejects.toThrow("ORDER_NOT_ACCESSIBLE");
+  });
+});

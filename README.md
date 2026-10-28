@@ -12,6 +12,7 @@ ShopFast là bài Defense Case Study Module 6: backend thương mại điện t�
 - [Acceptance checklist](docs/08-acceptance.md)
 - [Cấu trúc repository và ranh giới phụ thuộc](docs/19-repository-structure.md)
 - [Slide HTML/PDF và ghi chú bảo vệ](docs/defense/README.md)
+- [Bàn giao và kết quả kiểm chứng mới nhất](docs/20-delivery-status.md)
 
 ## Môi trường phát triển
 
@@ -50,6 +51,8 @@ npm run dev:api
 npm run dev:worker
 npm run dev:web
 ```
+
+Với runtime portable của dự án, chạy `powershell -File scripts/local-postgres.ps1 start` và `powershell -File scripts/local-memurai.ps1 start` trước. Helpers dùng port trong `.env`, chỉ bind loopback; Memurai lưu data riêng theo port. Nếu dùng service native đã cài riêng, cấu hình URL tương ứng và không cần helpers portable. `SHOPFAST_RUNTIME_DIR` cho phép worktree trỏ tới runtime native đã có, không commit binary/data/credential.
 
 - API: `http://127.0.0.1:3000/api/v1/health/live`
 - Readiness: `http://127.0.0.1:3000/api/v1/health/ready` (503 nếu DB lỗi; Redis lỗi trả degraded).

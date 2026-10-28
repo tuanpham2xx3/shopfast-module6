@@ -8,6 +8,8 @@ Không Docker Desktop/WSL. Dev dùng PostgreSQL16 native; Memurai API7 bind loop
 
 ## Lệnh và kết quả
 
+Scheduler collector xác minh worker entrypoint/compiled hooks và JOB-05/JOB-06 trên cùng source/config; clock điều khiển chỉ ở DB test. Staging component collector có thể chứng minh email đã hoàn tất trước một lỗi AI sau đó, vẫn giữ full staging FAIL. Protected continuity fixture được lưu sau order/invoice checks, độc lập với Gemini. `published-artifacts.mjs` kiểm public Git commit, byte/hashes của bundle coverage/restore và Git compatibility; luôn giữ execution SHA/trạng thái gốc. Xem [bàn giao](20-delivery-status.md).
+
 `node harness/secret-audit.mjs` quét toàn bộ Git object còn reachable và Docker archive của app/web trên VPS, kể cả layer gzip và nội dung đã xóa ở layer sau. So với các secret cấu hình hiện có và định dạng credential; không in giá trị tìm thấy. Sáu self-test kiểm credential thật, sai đường dẫn/fingerprint và trường hợp trộn khóa public/unknown. Khóa self-test GnuTLS công khai chỉ được miễn theo fingerprint PEM chính xác và đường dẫn library đã review trong `harness/public-test-key-allowlist.json`; secret cấu hình không bao giờ được miễn. Layer zstd chưa hỗ trợ làm scanner dừng, không tự ghi PASS cho phép quét thiếu. Đây không phải cam kết nhận ra mọi định dạng secret hoặc dữ liệu nén tùy ý trong Git.
 
 `node harness/delivery-audit.mjs` kiểm required checks/history bằng GitHub API, workflow elapsed, coverage từ CI cùng SHA/config và nội dung tài liệu bàn giao. Nếu thiếu CI sạch tương ứng thì coverage BLOCKED, không lấy summary cũ làm PASS. Gate history giữ SHA của run lịch sử. Kiểm nội dung tài liệu không thay cho diễn tập/Q&A của người dùng.

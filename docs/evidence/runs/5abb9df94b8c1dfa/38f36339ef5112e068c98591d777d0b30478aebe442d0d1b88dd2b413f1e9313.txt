@@ -1,0 +1,8 @@
+{
+  "verifiedAt": "2026-10-28T14:11:08.130Z",
+  "originalFixtureAt": "2026-10-28T12:06:48.800Z",
+  "loginStatus": 200,
+  "orderReadStatus": 200,
+  "orderState": "DELIVERED",
+  "fullStagingPassed": false
+}

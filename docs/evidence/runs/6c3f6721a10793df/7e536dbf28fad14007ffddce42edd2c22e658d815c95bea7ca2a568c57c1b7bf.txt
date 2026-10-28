@@ -1,0 +1,45 @@
+{
+  "runId": "3ebb94c6-6f7d-4bcc-8c74-f043075dfd5e",
+  "commit": "d4fe2524d32fcd8c2cbe624e011b97279162d97a",
+  "dirty": false,
+  "configHash": "1b50d400effaa908ea4899186a13d4f617d724e4d23efbbf6ebc58dec7621950",
+  "executedAt": "2026-10-28T14:00:46.661Z",
+  "tests": [
+    {
+      "title": "preserves password input and theme preference on mobile",
+      "ok": true,
+      "results": [
+        {
+          "status": "passed",
+          "duration": 1345,
+          "queueCounts": null
+        }
+      ],
+      "file": "auth-web.e2e.spec.ts"
+    },
+    {
+      "title": "registers, verifies and shows the current account",
+      "ok": true,
+      "results": [
+        {
+          "status": "passed",
+          "duration": 663,
+          "queueCounts": null
+        }
+      ],
+      "file": "auth-web.e2e.spec.ts"
+    },
+    {
+      "title": "UI-01 RT-04 real browser purchase, role operations and offline socket recovery",
+      "ok": true,
+      "results": [
+        {
+          "status": "passed",
+          "duration": 73640,
+          "queueCounts": "eyJzdGF0dXMiOiJvayIsImNvdW50cyI6eyJ3YWl0aW5nIjowLCJhY3RpdmUiOjAsImNvbXBsZXRlZCI6MCwiZmFpbGVkIjowLCJkZWxheWVkIjowLCJwYXVzZWQiOjB9LCJjaGVja2VkQXQiOiIyMDI2LTEwLTI4VDE0OjAyOjEyLjM2MFoifQ=="
+        }
+      ],
+      "file": "catalog-live.e2e.spec.ts"
+    }
+  ]
+}

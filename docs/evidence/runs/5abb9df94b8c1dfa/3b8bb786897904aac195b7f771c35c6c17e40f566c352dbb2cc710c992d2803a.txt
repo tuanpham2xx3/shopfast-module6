@@ -1,0 +1,9 @@
+{
+  "startedAt": "2026-10-28T14:08:16.847Z",
+  "finishedAt": "2026-10-28T14:08:20.100Z",
+  "status": "PASS",
+  "exitCode": 0,
+  "timedOut": false,
+  "durationMs": 3253,
+  "output": "{\"mtime\": 1793196493.4911232, \"report\": {\"status\": \"PASS\", \"executedAt\": \"2026-10-28T14:08:13.491Z\", \"checks\": [\"warm real Redis cache\", \"price mutation while Redis process stopped\", \"DB fallback serves new price\", \"restart and targeted invalidation before cache resumes\"]}}\n"
+}
