@@ -149,6 +149,18 @@ export class CatalogCache {
       locked = (await redis.set(lockKey, owner, "PX", 3000, "NX")) === "OK";
       if (!locked) {
         this.metrics.contention++;
+        // Give the lock holder a bounded opportunity to populate the cache.
+        // Poll Redis rather than sharing an old loader result across invalidation.
+        for (let attempt = 0; attempt < 10; attempt++) {
+          await new Promise((resolve) => setTimeout(resolve, 10));
+          const filled = await redis.get(dataKey);
+          if (filled !== null) {
+            this.metrics.miss--;
+            this.metrics.hit++;
+            return JSON.parse(filled) as T;
+          }
+          if (tags.some((t) => this.bypass.has(t))) break;
+        }
         return read();
       }
       const generations = await redis.mget(

@@ -41,56 +41,60 @@ function exists(fn) {
   }
 }
 async function main() {
-  const plan = call("freetier", "get-account-plan-state");
-  if (
-    plan.accountPlanType !== "FREE" ||
-    plan.accountPlanStatus !== "ACTIVE" ||
-    Number(plan.accountPlanRemainingCredits?.amount) < 10
-  )
-    throw new Error(
-      "Credit-only guard: active FREE plan with >=10 USD required",
-    );
-  if (!exists(() => call("s3api", "head-bucket", { Bucket: bucket })))
-    call("s3api", "create-bucket", {
+  const iamOnly = process.argv.includes("--iam-only");
+  let plan;
+  if (!iamOnly) {
+    plan = call("freetier", "get-account-plan-state");
+    if (
+      !["FREE", "PAID"].includes(plan.accountPlanType) ||
+      plan.accountPlanStatus !== "ACTIVE" ||
+      Number(plan.accountPlanRemainingCredits?.amount) < 10
+    )
+      throw new Error(
+        "Credit-only guard: active plan with >=10 USD credit required",
+      );
+    if (!exists(() => call("s3api", "head-bucket", { Bucket: bucket })))
+      call("s3api", "create-bucket", {
+        Bucket: bucket,
+        CreateBucketConfiguration: { LocationConstraint: region },
+      });
+    call("s3api", "put-public-access-block", {
       Bucket: bucket,
-      CreateBucketConfiguration: { LocationConstraint: region },
+      PublicAccessBlockConfiguration: {
+        BlockPublicAcls: true,
+        IgnorePublicAcls: true,
+        BlockPublicPolicy: true,
+        RestrictPublicBuckets: true,
+      },
     });
-  call("s3api", "put-public-access-block", {
-    Bucket: bucket,
-    PublicAccessBlockConfiguration: {
-      BlockPublicAcls: true,
-      IgnorePublicAcls: true,
-      BlockPublicPolicy: true,
-      RestrictPublicBuckets: true,
-    },
-  });
-  call("s3api", "put-bucket-encryption", {
-    Bucket: bucket,
-    ServerSideEncryptionConfiguration: {
-      Rules: [
-        { ApplyServerSideEncryptionByDefault: { SSEAlgorithm: "AES256" } },
-      ],
-    },
-  });
-  call("s3api", "put-bucket-versioning", {
-    Bucket: bucket,
-    VersioningConfiguration: { Status: "Enabled" },
-  });
-  call("s3api", "put-bucket-lifecycle-configuration", {
-    Bucket: bucket,
-    LifecycleConfiguration: {
-      Rules: [
-        {
-          ID: "shopfast-backup-retention",
-          Filter: { Prefix: "backups/" },
-          Status: "Enabled",
-          Expiration: { Days: 30 },
-          NoncurrentVersionExpiration: { NoncurrentDays: 30 },
-          AbortIncompleteMultipartUpload: { DaysAfterInitiation: 1 },
-        },
-      ],
-    },
-  });
+    call("s3api", "put-bucket-encryption", {
+      Bucket: bucket,
+      ServerSideEncryptionConfiguration: {
+        Rules: [
+          { ApplyServerSideEncryptionByDefault: { SSEAlgorithm: "AES256" } },
+        ],
+      },
+    });
+    call("s3api", "put-bucket-versioning", {
+      Bucket: bucket,
+      VersioningConfiguration: { Status: "Enabled" },
+    });
+    call("s3api", "put-bucket-lifecycle-configuration", {
+      Bucket: bucket,
+      LifecycleConfiguration: {
+        Rules: [
+          {
+            ID: "shopfast-backup-retention",
+            Filter: { Prefix: "backups/" },
+            Status: "Enabled",
+            Expiration: { Days: 30 },
+            NoncurrentVersionExpiration: { NoncurrentDays: 30 },
+            AbortIncompleteMultipartUpload: { DaysAfterInitiation: 1 },
+          },
+        ],
+      },
+    });
+  }
   const ec2Role = "ShopFastInstanceRole";
   if (!exists(() => call("iam", "get-role", { RoleName: ec2Role })))
     call("iam", "create-role", {
@@ -154,6 +158,38 @@ async function main() {
       IamInstanceProfile: { Name: ec2Role },
     });
   }
+  const document = {
+    schemaVersion: "2.2",
+    description: "ShopFast fixed-host release by verified commit",
+    parameters: {
+      Commit: {
+        type: "String",
+        allowedPattern: "^[0-9a-f]{40}$",
+        description: "Approved GitHub commit SHA",
+      },
+    },
+    mainSteps: [
+      {
+        action: "aws:runShellScript",
+        name: "release",
+        inputs: {
+          timeoutSeconds: "600",
+          runCommand: [
+            '/bin/bash /opt/shopfast/deploy-release.sh "{{Commit}}"',
+          ],
+        },
+      },
+    ],
+  };
+  if (
+    !exists(() => call("ssm", "describe-document", { Name: "ShopFastDeploy" }))
+  )
+    call("ssm", "create-document", {
+      Name: "ShopFastDeploy",
+      DocumentType: "Command",
+      DocumentFormat: "JSON",
+      Content: JSON.stringify(document),
+    });
   const providers = call("iam", "list-open-id-connect-providers");
   let oidc = providers.OpenIDConnectProviderList.find((x) =>
     x.Arn.endsWith("/token.actions.githubusercontent.com"),
@@ -210,8 +246,10 @@ async function main() {
   });
   console.log(
     JSON.stringify({
-      freePlan: true,
-      creditRemaining: plan.accountPlanRemainingCredits.amount,
+      accountPlan:
+        plan?.accountPlanType ??
+        "not queried (IAM-only, no new storage/compute)",
+      creditRemaining: plan?.accountPlanRemainingCredits?.amount ?? null,
       bucket,
       instanceRole: ec2Role,
       deployRole: `arn:aws:iam::${account}:role/${ghRole}`,

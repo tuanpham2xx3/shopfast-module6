@@ -8,6 +8,27 @@ function setup() {
   return { redis, cache };
 }
 describe("catalog cache race and outage behavior", () => {
+  it("coalesces a hot miss instead of sending every waiter to the database", async () => {
+    jest.useFakeTimers();
+    try {
+      const { cache } = setup();
+      const load = jest.fn(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 25));
+        return { price: 100 };
+      });
+      const reads = Array.from({ length: 10 }, () =>
+        cache.remember("product:hot", ["product:hot"], load),
+      );
+      await jest.advanceTimersByTimeAsync(150);
+      expect(await Promise.all(reads)).toEqual(
+        Array.from({ length: 10 }, () => ({ price: 100 })),
+      );
+      expect(load).toHaveBeenCalledTimes(1);
+      expect(cache.metrics).toMatchObject({ hit: 9, miss: 1 });
+    } finally {
+      jest.useRealTimers();
+    }
+  });
   it("does not repopulate stale values after concurrent mutation invalidation", async () => {
     const { cache, redis } = setup();
     let release!: (value: { price: number }) => void;

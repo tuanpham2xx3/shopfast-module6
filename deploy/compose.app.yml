@@ -24,6 +24,8 @@ services:
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt:ro
       - /var/www/certbot:/var/www/certbot:ro
+      - /opt/shopfast/releases:/srv/releases:ro
+      - /opt/shopfast/nginx:/etc/nginx/conf.d:ro
     depends_on:
       api:
         condition: service_healthy

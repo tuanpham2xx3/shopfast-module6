@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "executedAt": "2026-10-28T04:40:15.061Z",
+  "checks": [
+    "real worker process SIGKILL after accepted side effect",
+    "expired lease reclaimed by restarted process",
+    "one delivery despite two attempts",
+    "durable execution succeeded"
+  ],
+  "provider": "deterministic PostgreSQL-backed test sink, not Resend live"
+}

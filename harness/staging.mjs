@@ -7,6 +7,7 @@ import dotenv from "dotenv";
 import { io } from "socket.io-client";
 const base = "https://shopfast.tuanpq.com",
   checks = [];
+await mkdir("harness/reports", { recursive: true });
 const seed = dotenv.parse(await readFile(".secrets/deployment-seed.env"));
 const tokens = {};
 function sql(query) {
@@ -259,7 +260,7 @@ try {
     });
     await page.goto(base);
     await page.screenshot({
-      path: "docs/evidence/staging-mobile.png",
+      path: "harness/reports/staging-mobile.png",
       fullPage: true,
     });
     assert(

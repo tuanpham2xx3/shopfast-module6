@@ -43,7 +43,8 @@ async function main() {
     replay = await send();
   if (first.id !== replay.id) throw new Error("Provider idempotency failed");
   await writeFile(
-    "docs/evidence/resend-template-live.json",
+    process.env.RESEND_SMOKE_REPORT_PATH ??
+      "docs/evidence/resend-template-live.json",
     JSON.stringify(
       {
         executedAt: new Date().toISOString(),

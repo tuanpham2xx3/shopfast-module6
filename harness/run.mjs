@@ -2,6 +2,7 @@ import "dotenv/config";
 import { readFile, mkdir, writeFile, readdir } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
 import { lookup } from "node:dns/promises";
+import { createHash } from "node:crypto";
 import { runCommand, aggregate } from "./core.mjs";
 const profile = process.argv[2] ?? "preflight";
 const directory = "harness/reports";
@@ -10,12 +11,27 @@ const commit = execFileSync("git", ["rev-parse", "HEAD"], {
   encoding: "utf8",
 }).trim();
 const cases = [];
+const dirty = !!execFileSync("git", ["status", "--porcelain"], {
+  encoding: "utf8",
+}).trim();
+const configHash = createHash("sha256")
+  .update(
+    JSON.stringify({
+      target: "https://shopfast.tuanpq.com",
+      model: process.env.GEMINI_MODEL,
+      live: process.env.HARNESS_LIVE_PROVIDERS === "true",
+      databaseConfigured: !!process.env.TEST_DATABASE_URL,
+      redisConfigured: !!process.env.TEST_REDIS_URL,
+    }),
+  )
+  .digest("hex");
 const add = (id, status, details = {}) => {
   cases.push({ id, status, ...details });
   console.log(`${id}: ${status}`);
 };
 const command = async (id, args, env = process.env) => {
-  add(id, (await runCommand(process.execPath, args, { env })).status);
+  const result = await runCommand(process.execPath, args, { env });
+  add(id, result.status, { ...result, command: ["node", ...args] });
 };
 const blocked = (id, reason) => add(id, "BLOCKED", { reason });
 const required = (keys, id) => {
@@ -54,6 +70,7 @@ async function staging() {
 }
 switch (profile) {
   case "preflight": {
+    await command("SECRETS-SCAN", ["harness/secrets.mjs"]);
     for (const p of ["deploy/compose.infra.yml", ".secrets/shopfast-ec2.pem"]) {
       try {
         await readFile(p);
@@ -87,12 +104,43 @@ switch (profile) {
     ]);
     await command("TYPECHECK", ["node_modules/typescript/bin/tsc", "--noEmit"]);
     await command("UNIT", ["node_modules/jest/bin/jest.js", "--runInBand"]);
+    await command("UNIT-BUSINESS-COVERAGE", [
+      "node_modules/jest/bin/jest.js",
+      "--config",
+      "jest.unit-business.config.js",
+      "--runInBand",
+    ]);
+    await command("BUILD-API", [
+      "node_modules/@nestjs/cli/bin/nest.js",
+      "build",
+      "api",
+    ]);
+    await command("BUILD-WORKER", [
+      "node_modules/@nestjs/cli/bin/nest.js",
+      "build",
+      "worker",
+    ]);
+    await command("TYPECHECK-WEB", [
+      "node_modules/typescript/bin/tsc",
+      "--build",
+      "apps/web/tsconfig.json",
+    ]);
+    await command("BUILD-WEB", [
+      "node_modules/vite/bin/vite.js",
+      "build",
+      "apps/web",
+    ]);
     if (required(["TEST_DATABASE_URL", "TEST_REDIS_URL"], "INTEGRATION"))
       await command("INTEGRATION-COVERAGE", [
         "node_modules/jest/bin/jest.js",
         "--config",
         "jest.business.config.js",
         "--runInBand",
+      ]);
+    if (required(["TEST_DATABASE_URL"], "BROWSER-E2E"))
+      await command("BROWSER-E2E", [
+        "node_modules/@playwright/test/cli.js",
+        "test",
       ]);
     break;
   case "staging":
@@ -113,15 +161,23 @@ switch (profile) {
           "AI-01",
         )
       )
-        await command("AI-01", [
-          "node_modules/ts-node/dist/bin.js",
-          "scripts/gemini-agent-smoke.ts",
-        ]);
+        await command(
+          "AI-01",
+          ["node_modules/ts-node/dist/bin.js", "scripts/gemini-agent-smoke.ts"],
+          {
+            ...process.env,
+            GEMINI_AGENT_REPORT_PATH: `${directory}/gemini-agent.json`,
+          },
+        );
       if (required(["RESEND_API_KEY", "EMAIL_TEST_TO"], "JOB-EMAIL"))
-        await command("JOB-EMAIL", [
-          "node_modules/ts-node/dist/bin.js",
-          "scripts/resend-smoke.ts",
-        ]);
+        await command(
+          "JOB-EMAIL",
+          ["node_modules/ts-node/dist/bin.js", "scripts/resend-smoke.ts"],
+          {
+            ...process.env,
+            RESEND_SMOKE_REPORT_PATH: `${directory}/resend.json`,
+          },
+        );
     }
     break;
   case "resilience":
@@ -132,15 +188,37 @@ switch (profile) {
         "jest.integration.config.js",
         "--runInBand",
       ]);
-    blocked(
-      "HOST-FAILURE",
-      "Live isolated crash/restart rehearsal not implemented yet; integration tests alone cannot pass host acceptance",
+    add(
+      "WORKER-PROCESS-CRASH",
+      (
+        await runCommand("ssh", [
+          "-o",
+          "BatchMode=yes",
+          "-i",
+          ".secrets/shopfast-ec2.pem",
+          "ubuntu@3.27.169.177",
+          "sudo bash /opt/shopfast/resilience.sh",
+        ])
+      ).status,
     );
     break;
   case "performance":
-    blocked(
+    add(
       "PERFORMANCE",
-      "Full docs08 dataset/load profile not implemented yet; no latency/capacity acceptance",
+      (
+        await runCommand(
+          "ssh",
+          [
+            "-o",
+            "BatchMode=yes",
+            "-i",
+            ".secrets/shopfast-ec2.pem",
+            "ubuntu@3.27.169.177",
+            "sudo bash /opt/shopfast/performance.sh",
+          ],
+          { timeoutMs: 1500000 },
+        )
+      ).status,
     );
     break;
   case "backup-restore":
@@ -159,17 +237,60 @@ switch (profile) {
     );
     break;
   case "deploy-rollback":
-    blocked(
-      "DEPLOY-ROLLBACK",
-      "Release/rollback automation not configured yet",
-    );
+    if (!/^[0-9a-f]{40}$/.test(process.env.HARNESS_CANDIDATE_SHA ?? ""))
+      blocked(
+        "DEPLOY-ROLLBACK",
+        "Set HARNESS_CANDIDATE_SHA to a built image commit different from active release",
+      );
+    else
+      add(
+        "DEPLOY-ROLLBACK",
+        (
+          await runCommand("ssh", [
+            "-o",
+            "BatchMode=yes",
+            "-i",
+            ".secrets/shopfast-ec2.pem",
+            "ubuntu@3.27.169.177",
+            `sudo bash /opt/shopfast/rollback-rehearsal.sh ${process.env.HARNESS_CANDIDATE_SHA}`,
+          ])
+        ).status,
+      );
     break;
   case "report": {
+    if (dirty)
+      blocked(
+        "WORKTREE",
+        "Uncommitted changes; commit the tested source before final acceptance",
+      );
+    const latest = new Map();
     for (const file of await readdir(directory)) {
       if (!file.endsWith(".json")) continue;
       const report = JSON.parse(await readFile(`${directory}/${file}`, "utf8"));
-      if (report.commit === commit && report.profile !== "report")
-        add(report.profile, report.status, { source: file });
+      if (
+        report.commit === commit &&
+        !report.dirty &&
+        report.configHash === configHash &&
+        report.profile !== "report"
+      ) {
+        const old = latest.get(report.profile);
+        if (!old || report.executedAt > old.executedAt)
+          latest.set(report.profile, { ...report, file });
+      }
+    }
+    for (const required of [
+      "preflight",
+      "ci",
+      "staging",
+      "providers",
+      "resilience",
+      "performance",
+      "backup-restore",
+      "deploy-rollback",
+    ]) {
+      const report = latest.get(required);
+      if (report) add(required, report.status, { source: report.file });
+      else blocked(required, "No matching commit/config run");
     }
     break;
   }
@@ -180,6 +301,8 @@ const result = {
   runId: `${Date.now()}-${profile}`,
   profile,
   commit,
+  dirty,
+  configHash,
   executedAt: new Date().toISOString(),
   status: aggregate(cases),
   cases,

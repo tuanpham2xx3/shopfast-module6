@@ -30,3 +30,17 @@ test("runner reports actual exit codes and timeout", async () => {
     "PASS",
   );
 });
+test("runner redacts configured secrets and database URLs before writing evidence", async () => {
+  const result = await runCommand(
+    process.execPath,
+    [
+      "-e",
+      "console.error(process.env.TEST_SECRET);console.error('postgresql://user:synthetic@host/database')",
+    ],
+    { env: { ...process.env, TEST_SECRET: "synthetic-value-must-not-leak" } },
+  );
+  assert.equal(result.status, "PASS");
+  assert(!result.output.includes("synthetic-value-must-not-leak"));
+  assert(!result.output.includes("user:synthetic"));
+  assert(result.output.includes("[REDACTED]"));
+});

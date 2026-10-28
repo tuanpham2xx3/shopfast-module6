@@ -7,7 +7,7 @@ exec 9>backups/.lock
 flock -n 9 || exit 0
 stamp=$(date -u +%Y%m%dT%H%M%SZ)
 file="backups/shopfast-${stamp}.dump"
-docker compose -f compose.infra.yml exec -T postgres pg_dump -U shopfast -d shopfast -Fc > "$file"
+docker compose -f compose.infra.yml exec -T postgres pg_dump -U shopfast -d shopfast -Fc --exclude-schema='harness_*' --exclude-schema='test_*' > "$file"
 test -s "$file"
 sha256sum "$file" > "${file}.sha256"
 /opt/shopfast/aws-venv/bin/aws s3 cp "$file" "s3://shopfast-backups-321323528839-ap-southeast-2/backups/${file##*/}" --region ap-southeast-2 --only-show-errors

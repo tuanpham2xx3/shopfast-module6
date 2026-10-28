@@ -158,7 +158,8 @@ async function main() {
       await source.destroy();
     }
     await writeFile(
-      "docs/evidence/gemini-agent-live.json",
+      process.env.GEMINI_AGENT_REPORT_PATH ??
+        "docs/evidence/gemini-agent-live.json",
       JSON.stringify(
         {
           executedAt: new Date().toISOString(),
