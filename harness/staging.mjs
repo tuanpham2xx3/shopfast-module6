@@ -301,13 +301,49 @@ try {
   checks.push("AI-production-Gemini-two-tools-replay-no-auto-reply");
   await request("/admin/health", { role: "customer", expected: 403 });
   checks.push("RBAC-customer-denied-admin");
-  const { chromium } = await import("@playwright/test");
+  const { chromium, expect } = await import("@playwright/test");
   const browser = await chromium.launch();
+  let browserPage;
   try {
     const page = await browser.newPage({
       viewport: { width: 390, height: 844 },
     });
-    await page.goto(base);
+    browserPage = page;
+    const browserErrors = [];
+    page.on("pageerror", () => browserErrors.push("UI exception"));
+    page.on("response", (r) => {
+      if (r.status() >= 400 && /\/assets\//.test(r.url()))
+        browserErrors.push("Frontend asset HTTP error");
+    });
+    const document = await page.goto(base);
+    assert(document?.ok(), "Frontend document must return success");
+    await expect(
+      page.getByRole("heading", { name: "Tạo tài khoản", exact: true }),
+    ).toBeVisible();
+    await page
+      .getByRole("button", { name: "Đã có tài khoản? Đăng nhập", exact: true })
+      .click();
+    await page.getByLabel("Email", { exact: true }).fill(email);
+    await page.getByLabel("Mật khẩu", { exact: true }).fill(password);
+    await page.getByRole("button", { name: "Đăng nhập", exact: true }).click();
+    await expect(
+      page.getByRole("button", { name: "Đăng xuất", exact: true }),
+    ).toBeVisible();
+    await page
+      .getByRole("button", { name: "Khám phá sản phẩm", exact: true })
+      .click();
+    await page.getByRole("button").filter({ hasText: order.code }).click();
+    await expect(
+      page.getByRole("heading", { name: `Đơn ${order.code}`, exact: true }),
+    ).toBeVisible();
+    await expect(
+      page
+        .getByLabel("Chi tiết đơn hàng")
+        .getByText("DELIVERED", { exact: true })
+        .first(),
+    ).toBeVisible();
+    assert.deepEqual(browserErrors, []);
+    checks.push("UI-real-customer-login-delivered-order-and-assets");
     await page.screenshot({
       path: "harness/reports/staging-mobile.png",
       fullPage: true,
@@ -318,6 +354,17 @@ try {
       ),
     );
     checks.push("UI-HTTPS-mobile-no-overflow");
+  } catch (error) {
+    await browserPage?.screenshot({
+      path: "harness/reports/staging-failure.png",
+      fullPage: true,
+    });
+    if (browserPage)
+      console.error(
+        "Browser alerts:",
+        await browserPage.getByRole("alert").allTextContents(),
+      );
+    throw error;
   } finally {
     await browser.close();
   }

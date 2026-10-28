@@ -27,6 +27,10 @@ sudo bash deploy-release.sh <commit40hex>
 
 Script pull tag SHA rồi resolve digest; dựng API candidate, kiểm tra dependency readiness, chạy migration one-shot, chuẩn bị frontend release, validate Nginx, promote và HTTPS smoke; chuyển worker có drain/lease. Giữ previous configuration để khôi phục khi health fail. Không rollback DB xuống schema cũ; migration phải expand/contract tương thích cả bản trước. Zero downtime/rollback<2min chỉ đạt khi harness đã đo, không từ thiết kế này.
 
+Web release directories0755/files0644 để Nginx worker đọc public assets qua bind mount. Không dùng0750/root-owned cho web root. Deploy và reboot smoke phải kiểm tra cả HTML200/root element và JavaScript asset content-type; API healthy không chứng minh frontend healthy. Staging Playwright phải render form, login thật và mở đơn đã giao; kiểm tra no-overflow của trang lỗi không được tính UI PASS.
+
+E2E local/CI dùng `/api/v1` tương đối qua Vite dev proxy giống production; không chỉ test URL API tuyệt đối. URL WebSocket resolve theo origin trang khi API base tương đối. Staging có browser login/workspace riêng cho Customer/Warehouse/Support/Admin; screenshots và role report nằm trong ignored `harness/reports/`.
+
 ## Backup và restore
 
 Daily systemd timer chạy19:00UTC (02:00Asia/Bangkok ngày sau), persistent catch-up, jitter5phút. Backup upload pg_dump custom archive + checksum ra S3 private/encrypted/versioned `backups/`; loại schema fixture `harness_*`/`test_*`, giữ local3ngày, S3 lifecycle30ngày. IAM role lấy credentials tạm từ EC2.

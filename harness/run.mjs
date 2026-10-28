@@ -159,6 +159,7 @@ switch (profile) {
     await staging();
     if (required(["EMAIL_TEST_TO", "RESEND_API_KEY"], "STAGING-FULL"))
       await command("STAGING-FULL", ["harness/staging.mjs"]);
+    await command("STAGING-BROWSER-ROLES", ["harness/browser-roles.cjs"]);
     break;
   case "providers":
     if (process.env.HARNESS_LIVE_PROVIDERS !== "true")

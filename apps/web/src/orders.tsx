@@ -126,7 +126,7 @@ export function Orders({
         clearInterval(timer);
       };
     }
-    const socket = io(`${new URL(API).origin}/orders`, {
+    const socket = io(`${new URL(API, window.location.origin).origin}/orders`, {
       auth: { token: getAccessToken() || token },
       reconnection: true,
       reconnectionDelay: 1000,
