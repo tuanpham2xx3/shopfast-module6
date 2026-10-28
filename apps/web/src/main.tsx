@@ -9,6 +9,7 @@ import { Catalog } from "./catalog";
 import { Tickets } from "./tickets";
 import { Admin } from "./admin";
 import { Orders } from "./orders";
+import { CartDropdown } from "./cart-dropdown";
 import { api, restoreSession, User } from "./client";
 
 function App() {
@@ -234,54 +235,25 @@ function App() {
           {user ? "Tài khoản" : "Đăng nhập / Đăng ký"}
         </button>
         {(!user || user.role === "CUSTOMER") && (
-          <button
-            type="button"
-            className="cart-link"
-            aria-label={
-              cartCount === null
-                ? "Giỏ hàng"
-                : `Giỏ hàng, ${cartCount} sản phẩm`
-            }
-            aria-current={screen === "cart" ? "page" : undefined}
-            onClick={() => {
-              if (canShop) {
-                setScreen("cart");
-                window.scrollTo(0, 0);
-              } else {
-                setCartRequested(true);
-                setScreen("auth");
-                setMode(user ? "verify" : "login");
-                setMessageError(false);
-                setMessage(
-                  user
-                    ? "Xác minh email để sử dụng giỏ hàng."
-                    : "Đăng nhập để sử dụng giỏ hàng.",
-                );
-              }
+          <CartDropdown
+            token={accessToken}
+            canShop={canShop}
+            count={cartCount}
+            revision={cartRevision}
+            onChange={() => setCartRevision((value) => value + 1)}
+            onCheckout={() => setScreen("cart")}
+            onLogin={() => {
+              setCartRequested(true);
+              setScreen("auth");
+              setMode(user ? "verify" : "login");
+              setMessageError(false);
+              setMessage(
+                user
+                  ? "Xác minh email để sử dụng giỏ hàng."
+                  : "Đăng nhập để sử dụng giỏ hàng.",
+              );
             }}
-          >
-            <svg
-              aria-hidden="true"
-              width="22"
-              height="22"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M3 3h2l2.5 12h10l3-9H6" />
-              <circle cx="9" cy="20" r="1" />
-              <circle cx="18" cy="20" r="1" />
-            </svg>
-            <span className="cart-text">Giỏ hàng</span>
-            {cartCount !== null && cartCount > 0 && (
-              <span className="cart-count" aria-hidden="true">
-                {cartCount > 99 ? "99+" : cartCount}
-              </span>
-            )}
-          </button>
+          />
         )}
       </div>
       <button

@@ -102,6 +102,38 @@ for (const width of [1280, 390]) {
     });
     await expect(cart).toBeVisible();
     await cart.click();
+    const quickCart = page.getByRole("region", { name: "Giỏ hàng nhanh" });
+    await expect(quickCart).toBeVisible();
+    await expect(page.getByLabel("Người nhận")).toHaveCount(0);
+    await expect(
+      quickCart.getByText("Micro USB", { exact: true }),
+    ).toBeVisible();
+    await quickCart
+      .getByRole("button", { name: "Tăng số lượng Micro USB" })
+      .click();
+    await expect(
+      page.getByRole("button", { name: "Giỏ hàng, 2 sản phẩm", exact: true }),
+    ).toBeVisible();
+    await expect(
+      quickCart.getByText("500.000 ₫", { exact: true }).last(),
+    ).toBeVisible();
+    await quickCart
+      .getByRole("button", { name: "Giảm số lượng Micro USB" })
+      .click();
+    await expect(cart).toBeVisible();
+    await page.screenshot({
+      path: testInfo.outputPath(`cart-dropdown-${width}.png`),
+    });
+    await page.keyboard.press("Escape");
+    await expect(quickCart).toHaveCount(0);
+    await expect(cart).toBeFocused();
+    await cart.click();
+    await page.locator(".brand").click();
+    await expect(quickCart).toHaveCount(0);
+    await cart.click();
+    await quickCart
+      .getByRole("button", { name: "Tiến hành thanh toán" })
+      .click();
     await expect(page.getByLabel("Người nhận")).toBeVisible();
     await expect(page.getByLabel("Số lượng Micro USB")).toHaveValue("1");
     await page.getByLabel("Số lượng Micro USB").fill("2");
