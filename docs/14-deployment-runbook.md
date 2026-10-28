@@ -42,7 +42,7 @@ sudo journalctl -u shopfast-backup.service --since today
 sudo bash /opt/shopfast/restore-rehearsal.sh
 ```
 
-Restore tải lại từ S3, checksum và restore vào database `harness_restore_<timestamp>`, so sánh counts/invariant tồn, đo thời gian rồi cleanup. Count comparison với DB live có thể fail nếu người dùng ghi đồng thời; phải đối chiếu snapshot/manifest trước khi kết luận corruption. Không restore đè DB live. Nếu backup/restore FAIL, không ghi nghiệm thu đạt và kiểm tra quyền/storage/timer. Theo dõi last-success và credit; lịch daily là RPO tới24h, không phải zero loss.
+Restore tải lại từ S3, checksum và restore vào database `harness_restore_<timestamp>`, so sánh counts/invariant tồn và PDF/checksum hóa đơn. Dựng API riêng không public port, trỏ database clone và Redis DB13, dùng credential seed thật để login và đọc snapshot đơn qua HTTP rồi cleanup. Cần chạy staging tạo ít nhất một đơn/hóa đơn trước rehearsal. Không khởi động worker/provider trong clone. Count comparison với DB live có thể fail nếu người dùng ghi đồng thời; phải đối chiếu snapshot/manifest trước khi kết luận corruption. Không restore đè DB live. Nếu backup/restore FAIL, không ghi nghiệm thu đạt và kiểm tra quyền/storage/timer. Theo dõi last-success và credit; lịch daily là RPO tới24h, không phải zero loss.
 
 `harness:backup-restore` thêm HOST-RESTART gate: cần `HARNESS_REBOOT_HOST=true` trong cửa sổ đã cho phép, tạo backup mới trước reboot. Kiểm tra boot ID đổi, named volumes, counts users/products/orders/inventories và release được giữ, HTTPS ready trong180giây. Website gián đoạn ngắn. Count comparison có cùng giới hạn concurrent writes; không kết luận mất dữ liệu chỉ từ count mismatch. SSH tunnel local cần mở lại sau reboot nếu còn chạy integration tests.
 
