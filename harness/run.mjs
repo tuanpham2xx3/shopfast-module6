@@ -5,6 +5,7 @@ import { lookup } from "node:dns/promises";
 import { harnessContext } from "./context.mjs";
 import { runCommand, aggregate } from "./core.mjs";
 import { assessRequirements, verifyArtifact } from "./evidence.mjs";
+import { deriveRequirements } from "./derive.mjs";
 const profile = process.argv[2] ?? "preflight";
 const directory = "harness/reports";
 await mkdir(directory, { recursive: true });
@@ -272,6 +273,7 @@ switch (profile) {
       );
     break;
   case "report": {
+    await deriveRequirements({ commit, dirty, configHash });
     if (dirty)
       blocked(
         "WORKTREE",

@@ -53,7 +53,7 @@ try {
     body: JSON.stringify({ email: fixture.email, password: fixture.password }),
     signal: AbortSignal.timeout(15000),
   });
-  assert(login.ok(), "Continuity API login failed");
+  assert(login.ok, "Continuity API login failed");
   const token = (await login.json()).data.accessToken;
   const headers = { Authorization: `Bearer ${token}` };
   await page.goto(base);
@@ -94,7 +94,7 @@ try {
     base + `/api/v1/orders/${fixture.orderId}`,
     { headers },
   );
-  assert(orderResponse.ok());
+  assert(orderResponse.ok);
   const before = (await orderResponse.json()).data;
   pollTask = (async () => {
     while (polling) {
@@ -189,6 +189,10 @@ try {
       "Authenticated browser order session, HTTP reads and private socket across healthy promotion and injected unhealthy candidate rollback. No host failure/HA claim.",
   };
   await mkdir("harness/reports", { recursive: true });
+  await writeFile(
+    `harness/reports/continuity-${started}.json`,
+    JSON.stringify(result, null, 2),
+  );
   await writeFile(
     "harness/reports/deploy-continuity.json",
     JSON.stringify(result, null, 2),
