@@ -3,6 +3,7 @@ import { readFile, writeFile, mkdir, readdir, stat } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
 import { harnessContext } from "./context.mjs";
 import { digest } from "./evidence.mjs";
+import { assertRegisteredGates } from "./gate-registry.mjs";
 const context = harnessContext(),
   runId = randomUUID(),
   executedAt = new Date().toISOString();
@@ -112,7 +113,7 @@ gates["branch-protection-history"] = [
     positive.state === "MERGED" && positiveChecks,
   ),
 ];
-gates["ci-failure-blocks-merge"] = [
+gates["ci-fail-block"] = [
   assertion(
     "failed required application check retained without merge",
     "PR9 CLOSED, not merged, application-checks FAILURE under enforced required policy",
@@ -152,7 +153,7 @@ gates.pipeline = [
 ];
 gates["pipeline-success-fail-links"] = [
   ...gates.pipeline,
-  ...gates["ci-failure-blocks-merge"],
+  ...gates["ci-fail-block"],
 ];
 const elapsed =
   (Date.parse(release.updatedAt) - Date.parse(release.createdAt)) / 1000;
@@ -242,7 +243,7 @@ gates["aws-diagram-dataflow-components"] = [
       dataflow.includes("## 2. Module contracts"),
   ),
 ];
-gates["business-coverage-report"] = [
+gates["coverage"] = [
   assertion(
     "fresh executed unit and combined coverage",
     "matching clean CI execution, unit and combined line coverage >=60%",
@@ -253,6 +254,7 @@ gates["business-coverage-report"] = [
       ),
   ),
 ];
+await assertRegisteredGates(Object.keys(gates));
 const report = {
   runId,
   ...context,
@@ -278,7 +280,7 @@ for (const [gate, assertions] of Object.entries(gates)) {
         caseId: `GATE-${gate}`,
         status: passed
           ? "PASS"
-          : gate === "business-coverage-report" && !coverageSnapshot
+          : gate === "coverage" && !coverageSnapshot
             ? "BLOCKED"
             : "FAIL",
         exitCode: passed ? 0 : 1,

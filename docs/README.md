@@ -1,6 +1,6 @@
 # ShopFast — Bộ tài liệu triển khai
 
-Ngày lập: 18/10/2026. Cập nhật28/10/2026: đã có các module ứng dụng và bản deploy HTTPS đầu trên EC2; Gemini/Resend đã có smoke thật, đang hoàn thiện harness, CI/CD, hiệu năng và nghiệm thu. Chưa hoàn tất toàn bộ SRS. Xem [execution ledger](evidence/aws-delivery-progress.md) và kết quả có phạm vi cụ thể trong `docs/evidence/`.
+Ngày lập: 18/10/2026. Cập nhật28/10/2026: ứng dụng đã deploy HTTPS, chuẩn hóa module và có evidence kiểm thử/vận hành. Lượt mới gặp Gemini503; quyền quản trị và diễn tập còn chưa nghiệm thu. Xem [bàn giao hiện tại](20-delivery-status.md); không coi baseline cũ là all-SRS PASS.
 
 Nguồn yêu cầu: `../Module 06 – Software Requirement Specification (SRS).docx.txt`.
 
@@ -34,10 +34,12 @@ Nguồn yêu cầu: `../Module 06 – Software Requirement Specification (SRS).d
 - [x] UI flows, kế hoạch và bộ tiêu chí nghiệm thu.
 - [x] Review vòng 1 ngày 18/10/2026: thống nhất cache theo phạm vi, auth verification, checkout/promo, invoice, AI order lookup, P0/P1/P2 và branch workflow.
 - [ ] Các DEC chưa được review trong decision log phải được xác nhận khi tới phần triển khai liên quan.
-- [ ] Chọn cấu hình hạ tầng và hoàn thiện kế hoạch vận hành ở giai đoạn sau.
-- [ ] Ghi bằng chứng kiểm thử thực tế sau mỗi mốc.
+- [x] Chọn EC2/S3/SSM/OIDC và có runbook; quyền quản trị còn gate riêng.
+- [x] Xuất bản receipts/artifacts kiểm thử theo SHA, bao gồm FAIL và BLOCKED.
 
 ## Đối chiếu gần nhất
+
+- [Bàn giao và trạng thái nghiệm thu hiện tại](20-delivery-status.md).
 
 - [Cấu trúc repository và ranh giới phụ thuộc](19-repository-structure.md).
 - [Bộ slide HTML/PDF và cách trình chiếu](defense/README.md).

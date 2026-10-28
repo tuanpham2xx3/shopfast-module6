@@ -1,0 +1,9 @@
+{
+  "startedAt": "2026-10-28T14:05:28.163Z",
+  "finishedAt": "2026-10-28T14:06:10.276Z",
+  "status": "FAIL",
+  "exitCode": 1,
+  "timedOut": false,
+  "durationMs": 42110,
+  "output": "Gemini UNAVAILABLE retained in evidence; retrying a new read-only turn after 6s\nProduction Gemini turn must succeed\n+ actual - expected\n\n+ 'UNAVAILABLE'\n- 'OK'\n\n"
+}

@@ -231,6 +231,22 @@ try {
     "%PDF-",
   );
   checks.push("JOB-worker-invoice-PDF");
+  // This fixture depends on authenticated order/invoice checks, independently of
+  // external Gemini availability. Full staging still fails if later AI checks fail.
+  await writeFile(
+    ".secrets/harness-staging-context.json",
+    JSON.stringify({
+      email,
+      password,
+      orderId: order.id,
+      orderCode: order.code,
+      productId: product.id,
+      executedAt: new Date().toISOString(),
+      validation:
+        "Authenticated checkout, delivered order and invoice verified before AI checks",
+    }),
+    { mode: 0o600 },
+  );
   const ticket = (
     await request("/tickets", {
       method: "POST",
@@ -380,20 +396,6 @@ try {
     await browser.close();
   }
   console.log(`Staging: ${checks.length} end-to-end checks passed`);
-  // Protected local hand-off for the active-session deployment rehearsal.
-  // Never include credentials/tokens in reports or public CI artifacts.
-  await writeFile(
-    ".secrets/harness-staging-context.json",
-    JSON.stringify({
-      email,
-      password,
-      orderId: order.id,
-      orderCode: order.code,
-      productId: product.id,
-      executedAt: new Date().toISOString(),
-    }),
-    { mode: 0o600 },
-  );
 } catch (e) {
   console.error(e.message);
   process.exitCode = 1;

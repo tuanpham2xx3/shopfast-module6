@@ -1,0 +1,22 @@
+{
+  "executedAt": "2026-10-28T14:45:27.811Z",
+  "model": "gemini-3.1-flash-lite",
+  "intervalMs": 5000,
+  "requests": 2,
+  "trace": [
+    {
+      "request": 1,
+      "durationMs": 4359,
+      "errorType": "Error",
+      "httpStatus": 503
+    },
+    {
+      "request": 2,
+      "durationMs": 1566,
+      "errorType": "Error",
+      "httpStatus": 503
+    }
+  ],
+  "checks": [],
+  "acceptance": "FAIL"
+}

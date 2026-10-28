@@ -1,0 +1,9 @@
+{
+  "startedAt": "2026-10-28T14:02:29.875Z",
+  "finishedAt": "2026-10-28T14:03:13.903Z",
+  "status": "PASS",
+  "exitCode": 0,
+  "timedOut": false,
+  "durationMs": 44028,
+  "output": "PASS tests/integration/cache-redis.integration.spec.ts (28.23 s)\nPASS tests/integration/redis.integration.spec.ts (12.809 s)\n\nTest Suites: 2 passed, 2 total\nTests:       5 passed, 5 total\nSnapshots:   0 total\nTime:        41.434 s\nRan all test suites within paths \"tests/integration/redis.integration.spec.ts\", \"tests/integration/cache-redis.integration.spec.ts\".\n"
+}

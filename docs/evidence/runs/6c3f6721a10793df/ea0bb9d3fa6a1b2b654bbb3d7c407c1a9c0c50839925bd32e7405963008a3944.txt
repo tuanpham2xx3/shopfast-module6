@@ -1,0 +1,58 @@
+{
+  "runId": "df861a0a-4ee2-4ca6-8004-da0d497efe4a",
+  "commit": "d4fe2524d32fcd8c2cbe624e011b97279162d97a",
+  "dirty": false,
+  "configHash": "1b50d400effaa908ea4899186a13d4f617d724e4d23efbbf6ebc58dec7621950",
+  "executedAt": "2026-10-28T14:36:26.493Z",
+  "scope": "Only the completed worker-email/OTP component is assessed. A later Gemini failure leaves the full staging profile FAIL and is not waived.",
+  "assertions": [
+    {
+      "name": "scoped evidence from actual staging execution",
+      "expected": "matching clean profile, intact command artifact and fresh component report",
+      "actual": {
+        "profile": "1793196395940-staging",
+        "fullStagingStatus": "FAIL",
+        "commandExit": 1,
+        "executedAt": "2026-10-28T14:06:09.961Z",
+        "fresh": true
+      },
+      "passed": true
+    },
+    {
+      "name": "live worker email and verification completed",
+      "expected": "register-cookie and worker email/OTP assertions both completed",
+      "actual": [
+        "AUTH-register-secure-cookie",
+        "AUTH-worker-live-email-OTP-confirmation",
+        "ORD-checkout-idempotency",
+        "ORD-delivery-and-private-socket-events",
+        "JOB-worker-invoice-PDF",
+        "TKT-customer-support-claim-reply"
+      ],
+      "passed": true
+    }
+  ],
+  "originalStagingReport": {
+    "executedAt": "2026-10-28T14:06:09.961Z",
+    "target": "https://shopfast.tuanpq.com",
+    "status": "FAIL",
+    "checks": [
+      "AUTH-register-secure-cookie",
+      "AUTH-worker-live-email-OTP-confirmation",
+      "ORD-checkout-idempotency",
+      "ORD-delivery-and-private-socket-events",
+      "JOB-worker-invoice-PDF",
+      "TKT-customer-support-claim-reply"
+    ],
+    "aiAttempts": [
+      {
+        "attempt": 1,
+        "status": "UNAVAILABLE"
+      },
+      {
+        "attempt": 2,
+        "status": "UNAVAILABLE"
+      }
+    ]
+  }
+}

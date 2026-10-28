@@ -1,0 +1,118 @@
+{
+  "runId": "0b0c94c9-987d-4c10-8a89-30945f618d48",
+  "commit": "d4fe2524d32fcd8c2cbe624e011b97279162d97a",
+  "dirty": false,
+  "configHash": "1b50d400effaa908ea4899186a13d4f617d724e4d23efbbf6ebc58dec7621950",
+  "executedAt": "2026-10-28T14:03:14.471Z",
+  "targetCommit": "d4fe2524d32fcd8c2cbe624e011b97279162d97a",
+  "status": "PASS",
+  "assertions": [
+    {
+      "name": "snapshot command exit",
+      "expected": 0,
+      "actual": 0,
+      "passed": true
+    },
+    {
+      "name": "Node runtime",
+      "expected": "v20.x",
+      "actual": "v20.20.2",
+      "passed": true
+    },
+    {
+      "name": "Nest runtime",
+      "expected": "10.x",
+      "actual": "10.4.22",
+      "passed": true
+    },
+    {
+      "name": "PostgreSQL runtime",
+      "expected": "16.x",
+      "actual": "postgres (PostgreSQL) 16.13 (Debian 16.13-1.pgdg12+1)",
+      "passed": true
+    },
+    {
+      "name": "Redis runtime",
+      "expected": "7.x",
+      "actual": "Redis server v=7.4.8 sha=00000000:0 malloc=jemalloc-5.3.0 bits=64 build=1257f8b21fc2f9b5",
+      "passed": true
+    },
+    {
+      "name": "postgresPort",
+      "expected": "loopback only",
+      "actual": "127.0.0.1:5432",
+      "passed": true
+    },
+    {
+      "name": "redisPort",
+      "expected": "loopback only",
+      "actual": "127.0.0.1:6379",
+      "passed": true
+    },
+    {
+      "name": "API nonroot user",
+      "expected": "node",
+      "actual": "node",
+      "passed": true
+    },
+    {
+      "name": "commit-pinned image",
+      "expected": "SHA-tagged image and running container match the immutable release image ID",
+      "actual": {
+        "image": "ghcr.io/tuanpham2xx3/shopfast-module6-app@sha256:7f4759f17d5a94c28460581d63bc8bb3fb26fcaf42163fac6162a45c712277bb",
+        "runningId": "sha256:7f4759f17d5a94c28460581d63bc8bb3fb26fcaf42163fac6162a45c712277bb",
+        "taggedId": "sha256:7f4759f17d5a94c28460581d63bc8bb3fb26fcaf42163fac6162a45c712277bb",
+        "releaseId": "sha256:7f4759f17d5a94c28460581d63bc8bb3fb26fcaf42163fac6162a45c712277bb"
+      },
+      "passed": true
+    },
+    {
+      "name": "daily backup timer",
+      "expected": "enabled/active/19:00UTC",
+      "actual": "enabled/active/OnCalendar=*-*-* 19:00:00 UTC",
+      "passed": true
+    },
+    {
+      "name": "backup freshness",
+      "expected": "last success within 27h",
+      "actual": 6845,
+      "passed": true
+    },
+    {
+      "name": "fresh S3 backup",
+      "expected": "nonempty off-host dump uploaded within 27h",
+      "actual": {
+        "ageSeconds": 6845.716085,
+        "bytes": 244255
+      },
+      "passed": true
+    },
+    {
+      "name": "Linux Compose release images",
+      "expected": "valid Compose, matching API/worker image IDs and web assets matching the SHA-tagged image",
+      "actual": {
+        "config": "valid",
+        "worker": "sha256:7f4759f17d5a94c28460581d63bc8bb3fb26fcaf42163fac6162a45c712277bb",
+        "webRelease": "d4fe2524d32fcd8c2cbe624e011b97279162d97a",
+        "webAssetsHash": "50afe588613e3ba92807d8dfd1e59c2558f7ee3db3a5b886bd3cdadeb497bf05",
+        "taggedWebAssetsHash": "50afe588613e3ba92807d8dfd1e59c2558f7ee3db3a5b886bd3cdadeb497bf05"
+      },
+      "passed": true
+    },
+    {
+      "name": "live HTTPS UI",
+      "expected": 200,
+      "actual": 200,
+      "passed": true
+    },
+    {
+      "name": "HTTPS redirect",
+      "expected": "301/308 to expected HTTPS origin",
+      "actual": {
+        "status": 301,
+        "location": "https://shopfast.tuanpq.com/"
+      },
+      "passed": true
+    }
+  ]
+}

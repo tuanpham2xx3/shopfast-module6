@@ -1,0 +1,32 @@
+import { readFile, readdir, mkdir, writeFile } from "node:fs/promises";
+import { resolve, relative } from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
+import { randomUUID } from "node:crypto";
+const { harnessContext } = await import(pathToFileURL(resolve("harness/context.mjs")).href);
+const { digest, verifyArtifact } = await import(pathToFileURL(resolve("harness/evidence.mjs")).href);
+const context=harnessContext(),runId=randomUUID(),executedAt=new Date().toISOString();
+const profiles=[];
+for(const name of await readdir("harness/reports")) {
+  if(!name.endsWith("-staging.json"))continue;
+  const profile=JSON.parse(await readFile("harness/reports/"+name,"utf8"));
+  if(profile.commit===context.commit&&profile.configHash===context.configHash&&!profile.dirty)profiles.push(profile);
+}
+const profile=profiles.sort((a,b)=>Date.parse(b.executedAt)-Date.parse(a.executedAt))[0];
+const command=profile?.cases?.find(c=>c.id==="STAGING-FULL");
+const stageBytes=await readFile("harness/reports/staging-live.json");
+const stage=JSON.parse(stageBytes);
+let wrapper;
+if(command?.artifact && await verifyArtifact(command.artifact))wrapper=JSON.parse(await readFile(command.artifact.path,"utf8"));
+const fresh=!!wrapper&&Date.parse(stage.executedAt)>=Date.parse(wrapper.startedAt)-5000&&Date.parse(stage.executedAt)<=Date.parse(wrapper.finishedAt)+5000;
+const assertions=[
+  {name:"scoped evidence from actual staging execution",expected:"matching clean profile, intact command artifact and fresh component report",actual:{profile:profile?.runId,fullStagingStatus:stage.status,commandExit:command?.exitCode,executedAt:stage.executedAt,fresh},passed:!!profile&&!!wrapper&&fresh&&!command.timedOut&&[0,1].includes(command.exitCode)&&command.command?.includes("harness/staging.mjs")},
+  {name:"live worker email and verification completed",expected:"register-cookie and worker email/OTP assertions both completed",actual:stage.checks,passed:["AUTH-register-secure-cookie","AUTH-worker-live-email-OTP-confirmation"].every(name=>stage.checks?.includes(name))},
+];
+const passed=assertions.every(a=>a.passed),scope="Only the completed worker-email/OTP component is assessed. A later Gemini failure leaves the full staging profile FAIL and is not waived.";
+const source=await readFile(fileURLToPath(import.meta.url));
+const path=`harness/reports/artifacts/${runId}-staging-components.json`,sourcePath=`harness/reports/artifacts/${runId}-staging-components-source.mjs`;
+const bytes=Buffer.from(JSON.stringify({runId,...context,executedAt,scope,assertions,originalStagingReport:stage},null,2));
+await mkdir("harness/reports/artifacts",{recursive:true});await mkdir("harness/reports/receipts",{recursive:true});await writeFile(path,bytes);await writeFile(sourcePath,source);
+const artifacts=[{path,bytes:bytes.length,sha256:digest(bytes)},{path:sourcePath,bytes:source.length,sha256:digest(source)},...(command?.artifact?[command.artifact]:[])];
+await writeFile(`harness/reports/receipts/${runId}-staging-components.json`,JSON.stringify({runId,...context,executedAt,scope,caseId:"GATE-live-worker-email",status:passed?"PASS":"FAIL",exitCode:passed?0:1,command:["node",relative(process.cwd(),fileURLToPath(import.meta.url))],assertions,artifacts},null,2));
+console.log(JSON.stringify({status:passed?"PASS":"FAIL",fullStagingStatus:stage.status,assertions}));if(!passed)process.exitCode=1;

@@ -1,0 +1,9 @@
+{
+  "startedAt": "2026-10-28T14:04:39.405Z",
+  "finishedAt": "2026-10-28T14:04:42.633Z",
+  "status": "PASS",
+  "exitCode": 0,
+  "timedOut": false,
+  "durationMs": 3228,
+  "output": "{\"mtime\": 1793196279.3542607, \"report\": {\"status\": \"PASS\", \"durationSeconds\": 6, \"previousFrontendRestored\": true, \"previousNginxRestored\": true, \"httpsReady\": true, \"injection\": \"forced post-promotion health rejection of otherwise healthy fixture candidate\"}}\n"
+}

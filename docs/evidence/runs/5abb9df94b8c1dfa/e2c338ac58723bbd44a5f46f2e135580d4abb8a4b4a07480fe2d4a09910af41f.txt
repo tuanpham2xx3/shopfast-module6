@@ -1,0 +1,1021 @@
+{
+  "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b",
+  "commit": "d4fe2524d32fcd8c2cbe624e011b97279162d97a",
+  "dirty": false,
+  "configHash": "1b50d400effaa908ea4899186a13d4f617d724e4d23efbbf6ebc58dec7621950",
+  "executedAt": "2026-10-28T14:36:29.225Z",
+  "results": [
+    {
+      "id": "REQ-GENERAL-01",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Khách hàng (Customer): tra cứu sản phẩm, đặt hàng, theo dõi trạng thái đơn theo thời gian thực và trao đổi với bộ phận chăm sóc khách hàng."
+    },
+    {
+      "id": "REQ-GENERAL-02",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Nhân viên chăm sóc khách hàng (Support Agent): tiếp nhận và xử lý ticket, sử dụng trợ lý AI để tra cứu nhanh thông tin đơn hàng và tồn kho."
+    },
+    {
+      "id": "REQ-GENERAL-03",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Nhân viên vận hành kho (Warehouse Staff): cập nhật trạng thái đơn hàng, quản lý tồn kho."
+    },
+    {
+      "id": "REQ-GENERAL-04",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Quản trị viên hệ thống (Admin/DevOps): theo dõi sức khoẻ hệ thống, quản lý hàng đợi công việc nền, vận hành pipeline triển khai."
+    },
+    {
+      "id": "REQ-F01-01",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Phân loại tự động ticket của khách vào đúng nhóm nghiệp vụ."
+    },
+    {
+      "id": "REQ-F01-02",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Cung cấp tối thiểu hai công cụ tra cứu để agent lấy dữ liệu thật: tra trạng thái đơn hàng và kiểm tra tồn kho theo mã sản phẩm."
+    },
+    {
+      "id": "REQ-F01-03",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Agent phải từ chối lịch sự các câu hỏi ngoài phạm vi ShopFast và không được bịa thông tin đơn hàng khi chưa tra cứu."
+    },
+    {
+      "id": "REQ-F01-04",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Mọi thao tác ghi dữ liệu do agent đề xuất đều phải qua bước xác nhận của con người."
+    },
+    {
+      "id": "REQ-F02-01",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Khách hàng mở màn hình theo dõi và nhận cập nhật trạng thái đơn ngay khi kho thay đổi, không cần tải lại trang."
+    },
+    {
+      "id": "REQ-F02-02",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Sự kiện cập nhật chỉ được gửi tới đúng những người đang theo dõi đơn hàng đó, không phát tán cho toàn bộ người dùng."
+    },
+    {
+      "id": "REQ-F02-03",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Kết nối realtime phải được xác thực tại thời điểm bắt tay; khách chỉ theo dõi được đơn hàng thuộc về mình."
+    },
+    {
+      "id": "REQ-F02-04",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Client tự kết nối lại và đăng ký lại kênh theo dõi sau khi mất mạng."
+    },
+    {
+      "id": "REQ-F03-01",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Áp dụng hạn mức tần suất cho toàn bộ API, với hạn mức riêng chặt hơn cho các endpoint nhạy cảm gồm đăng nhập, gửi mã xác thực và đặt đơn khuyến mãi."
+    },
+    {
+      "id": "REQ-F03-02",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Khoá định danh hạn mức tính theo tài khoản khi đã đăng nhập và theo địa chỉ IP khi chưa đăng nhập."
+    },
+    {
+      "id": "REQ-F03-03",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Phản hồi khi vượt hạn mức trả về mã 429 kèm thời gian chờ và thông điệp tiếng Việt thân thiện."
+    },
+    {
+      "id": "REQ-F03-04",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Cơ chế chặn leo thang cho hành vi dò mật khẩu, đếm theo từng tài khoản mục tiêu."
+    },
+    {
+      "id": "REQ-F04-01",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Trang chi tiết sản phẩm và trang danh mục có bộ lọc được lưu đệm, thời gian phản hồi lần thứ hai dưới 20 mili giây."
+    },
+    {
+      "id": "REQ-F04-02",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Khi giá hoặc tồn kho của một sản phẩm thay đổi, mọi bản ghi đệm liên quan phải được làm mới ngay, khách không được nhìn thấy giá cũ."
+    },
+    {
+      "id": "REQ-F04-03",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Có cơ chế chống dồn dập khi khoá nóng hết hạn và chống dò khoá không tồn tại."
+    },
+    {
+      "id": "REQ-F04-04",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Khi Redis không sẵn sàng, hệ thống vẫn phục vụ được, chỉ chậm hơn."
+    },
+    {
+      "id": "REQ-F05-01",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Việc gửi email xác nhận, xuất hoá đơn và đồng bộ tồn kho với đối tác được đẩy ra hàng đợi, không chặn phản hồi cho khách."
+    },
+    {
+      "id": "REQ-F05-02",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Mỗi tác vụ có cấu hình số lần thử và chiến lược giãn dần thời gian chờ; tác vụ hết lượt thử được chuyển sang nơi lưu trữ riêng kèm lý do thất bại."
+    },
+    {
+      "id": "REQ-F05-03",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Mọi tác vụ phải bất biến khi lặp: chạy lại không được gây tác dụng phụ nhân đôi, khách chỉ nhận đúng một email cho mỗi đơn."
+    },
+    {
+      "id": "REQ-F05-04",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Có tác vụ chạy theo lịch: nhắc thanh toán sau 30 phút và gửi báo cáo doanh thu hằng đêm."
+    },
+    {
+      "id": "REQ-F06-01",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Danh mục sản phẩm có bộ lọc theo danh mục, khoảng giá, thương hiệu và phân trang."
+    },
+    {
+      "id": "REQ-F06-02",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Giỏ hàng và đặt đơn, có kiểm tra tồn kho trước khi xác nhận, không cho phép bán vượt số lượng thực tế."
+    },
+    {
+      "id": "REQ-F06-03",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Tra cứu lịch sử đơn hàng của khách và cập nhật trạng thái đơn từ phía kho."
+    },
+    {
+      "id": "REQ-F06-04",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Xác thực và phân quyền bằng token, phân biệt rõ vai trò khách hàng, nhân viên và quản trị viên."
+    },
+    {
+      "id": "REQ-F07-01",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Endpoint kiểm tra sức khoẻ trả về trạng thái kết nối tới cả cơ sở dữ liệu và Redis."
+    },
+    {
+      "id": "REQ-F07-02",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Bảng theo dõi hàng đợi hiển thị số công việc đang chờ, đang chạy, đã hoàn tất và đã thất bại."
+    },
+    {
+      "id": "REQ-F07-03",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Tài liệu API sinh tự động và truy cập được trên môi trường thử nghiệm."
+    },
+    {
+      "id": "REQ-F07-04",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Sao lưu cơ sở dữ liệu tự động hằng ngày, lưu ở nơi tách biệt với máy chủ ứng dụng."
+    },
+    {
+      "id": "REQ-TECH-01",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Backend sử dụng NestJS 10 trên Node.js 20 LTS với TypeScript, cơ sở dữ liệu PostgreSQL 16 và Redis 7."
+    },
+    {
+      "id": "REQ-TECH-02",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Toàn bộ dịch vụ được đóng gói bằng Docker, dựng lên bằng Docker Compose."
+    },
+    {
+      "id": "REQ-TECH-03",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Mã nguồn được quản lý phiên bản trên GitHub; mọi thay đổi vào nhánh chính đều đi qua yêu cầu hợp nhất mã."
+    },
+    {
+      "id": "REQ-TECH-04",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Mã nguồn tổ chức theo Clean Code, tách bạch tầng controller, tầng nghiệp vụ và tầng truy cập dữ liệu."
+    },
+    {
+      "id": "REQ-SEC-01",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Toàn bộ lưu lượng từ Internet đi qua HTTPS; truy cập bằng giao thức không bảo mật được chuyển hướng tự động."
+    },
+    {
+      "id": "REQ-SEC-02",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Nhóm bảo mật của máy chủ chỉ mở cổng HTTP và HTTPS cho mọi nơi; cổng SSH giới hạn theo địa chỉ IP quản trị; cơ sở dữ liệu và Redis không phơi ra Internet."
+    },
+    {
+      "id": "REQ-SEC-03",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Không tồn tại khoá truy cập dài hạn nào cho ứng dụng và pipeline; sử dụng Role và thông tin xác thực tạm thời."
+    },
+    {
+      "id": "REQ-SEC-04",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Không có giá trị nhạy cảm nào nằm trong mã nguồn, trong Dockerfile hay trong tệp cấu hình pipeline."
+    },
+    {
+      "id": "REQ-SEC-05",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Phân quyền trên tài khoản cloud tuân thủ nguyên tắc đặc quyền tối thiểu, cấp qua nhóm và bật xác thực hai lớp."
+    },
+    {
+      "id": "REQ-REL-01",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Triển khai phiên bản mới không được gây gián đoạn dịch vụ cho người dùng đang thao tác."
+    },
+    {
+      "id": "REQ-REL-02",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Có kiểm tra sức khoẻ sau triển khai; thất bại thì tự động quay lui về phiên bản đã chạy tốt gần nhất trong dưới 2 phút."
+    },
+    {
+      "id": "REQ-REL-03",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Bản sao lưu cơ sở dữ liệu phải được diễn tập khôi phục thật, thời gian khôi phục dưới 30 phút."
+    },
+    {
+      "id": "REQ-REL-04",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Khi một thành phần phụ trợ không sẵn sàng, hệ thống suy giảm chức năng có kiểm soát thay vì ngừng phục vụ hoàn toàn."
+    },
+    {
+      "id": "REQ-QUALITY-01",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Độ phủ kiểm thử tầng nghiệp vụ đạt tối thiểu 60%."
+    },
+    {
+      "id": "REQ-QUALITY-02",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Pipeline chạy kiểm tra định dạng mã, kiểm thử đơn vị và kiểm thử tích hợp; thất bại thì khoá việc hợp nhất mã."
+    },
+    {
+      "id": "REQ-QUALITY-03",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Mọi image đều được gắn thẻ cố định theo mã commit để truy vết và quay lui."
+    },
+    {
+      "id": "REQ-DELIVERY-01",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Link truy cập hệ thống đang chạy thật bằng tên miền có HTTPS."
+    },
+    {
+      "id": "REQ-DELIVERY-02",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Link kho mã nguồn trên GitHub, có tệp README mô tả cách cài đặt và chạy cục bộ."
+    },
+    {
+      "id": "REQ-DELIVERY-03",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Link lịch sử chạy pipeline, thể hiện các lần chạy thành công và ít nhất một lần bị chặn do kiểm thử thất bại."
+    },
+    {
+      "id": "REQ-DELIVERY-04",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Tài liệu kiến trúc: sơ đồ tổng thể hệ thống trên AWS, sơ đồ luồng dữ liệu và bảng liệt kê thành phần kèm lý do lựa chọn."
+    },
+    {
+      "id": "REQ-DELIVERY-05",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Bản đặc tả ngắn nêu rõ đã tích hợp những chủ đề nào và giải quyết bài toán nghiệp vụ nào."
+    },
+    {
+      "id": "REQ-DELIVERY-06",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Báo cáo độ phủ kiểm thử và biên bản diễn tập khôi phục từ bản sao lưu."
+    },
+    {
+      "id": "REQ-DELIVERY-07",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Slide trình bày 10 phút kèm kịch bản demo."
+    },
+    {
+      "id": "REQ-UI-01",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Có triển khai UI web."
+    },
+    {
+      "id": "REQ-PERF-cached-read-p95",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Thời gian phản hồi API tra cứu (có bộ nhớ đệm): Dưới 50 ms ở phân vị 95"
+    },
+    {
+      "id": "REQ-PERF-checkout-p95",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Thời gian phản hồi endpoint đặt hàng: Dưới 300 ms ở phân vị 95"
+    },
+    {
+      "id": "REQ-PERF-realtime",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Độ trễ cập nhật trạng thái đơn qua kênh realtime: Dưới 1 giây"
+    },
+    {
+      "id": "REQ-PERF-cache-hit",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Tỉ lệ trúng bộ nhớ đệm cho dữ liệu sản phẩm: Tối thiểu 80%"
+    },
+    {
+      "id": "REQ-PERF-deploy",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Thời gian hoàn tất một lần triển khai tự động: Dưới 10 phút"
+    },
+    {
+      "id": "REQ-DEFENSE-explanation",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Học viên không giải thích được các quyết định kỹ thuật trong sản phẩm của mình sẽ không được công nhận kết quả, kể cả khi hệ thống chạy tốt."
+    },
+    {
+      "id": "GATE-cloud-operations",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Explicit external execution gate: cloud-operations",
+      "runId": "30bb04d0-6f16-43d1-82f8-dabd931f7b30"
+    },
+    {
+      "id": "GATE-pipeline",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Explicit external execution gate: pipeline",
+      "runId": "a7ff0a30-2fd2-4396-b643-2cab6783d5c9"
+    },
+    {
+      "id": "GATE-live-classification",
+      "status": "FAIL",
+      "reason": "Non-passing execution",
+      "source": "Explicit external execution gate: live-classification",
+      "runId": "20f5a5d5-9062-4421-b01e-c7f8d2c861ad"
+    },
+    {
+      "id": "GATE-live-ai-tools",
+      "status": "FAIL",
+      "reason": "Non-passing execution",
+      "source": "Explicit external execution gate: live-ai-tools",
+      "runId": "20f5a5d5-9062-4421-b01e-c7f8d2c861ad"
+    },
+    {
+      "id": "GATE-live-refusal",
+      "status": "FAIL",
+      "reason": "Non-passing execution",
+      "source": "Explicit external execution gate: live-refusal",
+      "runId": "20f5a5d5-9062-4421-b01e-c7f8d2c861ad"
+    },
+    {
+      "id": "GATE-live-human-confirmation",
+      "status": "FAIL",
+      "reason": "Non-passing execution",
+      "source": "Explicit external execution gate: live-human-confirmation",
+      "runId": "20f5a5d5-9062-4421-b01e-c7f8d2c861ad"
+    },
+    {
+      "id": "GATE-performance-realtime",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Explicit external execution gate: performance-realtime",
+      "runId": "8acaf635-4295-4843-95e1-1f9f57e3a3c8"
+    },
+    {
+      "id": "GATE-redis-process-outage",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Explicit external execution gate: redis-process-outage",
+      "runId": "140bd48e-8d73-4c3b-a394-f6bffc0b5aac"
+    },
+    {
+      "id": "GATE-partner-versioned-demo",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Explicit external execution gate: partner-versioned-demo",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "GATE-live-worker-email",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Explicit external execution gate: live-worker-email",
+      "runId": "df861a0a-4ee2-4ca6-8004-da0d497efe4a"
+    },
+    {
+      "id": "GATE-resend-crash-window",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Explicit external execution gate: resend-crash-window",
+      "runId": "4349813c-aacb-455e-a5bb-88a79043d1a1"
+    },
+    {
+      "id": "GATE-production-scheduler",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Explicit external execution gate: production-scheduler",
+      "runId": "64460273-e8f3-41b0-bab2-1c1ca4e7c462"
+    },
+    {
+      "id": "GATE-queue-dashboard-counts",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Explicit external execution gate: queue-dashboard-counts",
+      "runId": "3ebb94c6-6f7d-4bcc-8c74-f043075dfd5e"
+    },
+    {
+      "id": "GATE-swagger-generated-live",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Explicit external execution gate: swagger-generated-live",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "GATE-daily-offhost-backup",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Explicit external execution gate: daily-offhost-backup",
+      "runId": "0b0c94c9-987d-4c10-8a89-30945f618d48"
+    },
+    {
+      "id": "GATE-runtime-versions",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Explicit external execution gate: runtime-versions",
+      "runId": "0b0c94c9-987d-4c10-8a89-30945f618d48"
+    },
+    {
+      "id": "GATE-linux-compose-images",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Explicit external execution gate: linux-compose-images",
+      "runId": "0b0c94c9-987d-4c10-8a89-30945f618d48"
+    },
+    {
+      "id": "GATE-branch-protection-history",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Explicit external execution gate: branch-protection-history",
+      "runId": "a7ff0a30-2fd2-4396-b643-2cab6783d5c9"
+    },
+    {
+      "id": "GATE-architecture-review",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Explicit external execution gate: architecture-review",
+      "runId": "a7ff0a30-2fd2-4396-b643-2cab6783d5c9"
+    },
+    {
+      "id": "GATE-https-redirect",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Explicit external execution gate: https-redirect",
+      "runId": "0b0c94c9-987d-4c10-8a89-30945f618d48"
+    },
+    {
+      "id": "GATE-cloud-and-host-network",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Explicit external execution gate: cloud-and-host-network",
+      "runId": "30bb04d0-6f16-43d1-82f8-dabd931f7b30"
+    },
+    {
+      "id": "GATE-temporary-credentials",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Explicit external execution gate: temporary-credentials",
+      "runId": "30bb04d0-6f16-43d1-82f8-dabd931f7b30"
+    },
+    {
+      "id": "GATE-secret-history-image-bundle",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Explicit external execution gate: secret-history-image-bundle",
+      "runId": "1baad8da-8fc4-45f2-ae87-e847df63205e"
+    },
+    {
+      "id": "GATE-cloud-human-group-mfa-leastprivilege",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Explicit external execution gate: cloud-human-group-mfa-leastprivilege"
+    },
+    {
+      "id": "GATE-active-deploy-continuity",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Explicit external execution gate: active-deploy-continuity",
+      "runId": "b19a1da3-d858-4ef7-b4ce-27235def1f77"
+    },
+    {
+      "id": "GATE-rollback-injection",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Explicit external execution gate: rollback-injection",
+      "runId": "a38fbb9f-5ba9-4b0e-b373-a3c51ff50d18"
+    },
+    {
+      "id": "GATE-s3-restore",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Explicit external execution gate: s3-restore",
+      "runId": "52f3ec4b-db31-4b38-b0b0-76f4429426a8"
+    },
+    {
+      "id": "GATE-worker-process-crash",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Explicit external execution gate: worker-process-crash",
+      "runId": "a726a4b4-bc36-4af0-b7a0-dd8e31c06eda"
+    },
+    {
+      "id": "GATE-coverage",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Explicit external execution gate: coverage",
+      "runId": "a7ff0a30-2fd2-4396-b643-2cab6783d5c9"
+    },
+    {
+      "id": "GATE-ci-fail-block",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Explicit external execution gate: ci-fail-block",
+      "runId": "a7ff0a30-2fd2-4396-b643-2cab6783d5c9"
+    },
+    {
+      "id": "GATE-sha-digest-release",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Explicit external execution gate: sha-digest-release",
+      "runId": "0b0c94c9-987d-4c10-8a89-30945f618d48"
+    },
+    {
+      "id": "GATE-https-live-url",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Explicit external execution gate: https-live-url",
+      "runId": "0b0c94c9-987d-4c10-8a89-30945f618d48"
+    },
+    {
+      "id": "GATE-readme-local-github",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Explicit external execution gate: readme-local-github",
+      "runId": "a7ff0a30-2fd2-4396-b643-2cab6783d5c9"
+    },
+    {
+      "id": "GATE-pipeline-success-fail-links",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Explicit external execution gate: pipeline-success-fail-links",
+      "runId": "a7ff0a30-2fd2-4396-b643-2cab6783d5c9"
+    },
+    {
+      "id": "GATE-aws-diagram-dataflow-components",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Explicit external execution gate: aws-diagram-dataflow-components",
+      "runId": "a7ff0a30-2fd2-4396-b643-2cab6783d5c9"
+    },
+    {
+      "id": "GATE-integration-brief",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Explicit external execution gate: integration-brief",
+      "runId": "a7ff0a30-2fd2-4396-b643-2cab6783d5c9"
+    },
+    {
+      "id": "GATE-published-coverage-restore",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Explicit external execution gate: published-coverage-restore"
+    },
+    {
+      "id": "GATE-slides-and-timed-demo",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Explicit external execution gate: slides-and-timed-demo"
+    },
+    {
+      "id": "GATE-performance-read",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Explicit external execution gate: performance-read",
+      "runId": "8acaf635-4295-4843-95e1-1f9f57e3a3c8"
+    },
+    {
+      "id": "GATE-performance-checkout",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Explicit external execution gate: performance-checkout",
+      "runId": "8acaf635-4295-4843-95e1-1f9f57e3a3c8"
+    },
+    {
+      "id": "GATE-performance-hit",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Explicit external execution gate: performance-hit",
+      "runId": "8acaf635-4295-4843-95e1-1f9f57e3a3c8"
+    },
+    {
+      "id": "GATE-pipeline-total-duration",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Explicit external execution gate: pipeline-total-duration",
+      "runId": "a7ff0a30-2fd2-4396-b643-2cab6783d5c9"
+    },
+    {
+      "id": "GATE-human-q-and-a",
+      "status": "NOT_RUN",
+      "reason": "No receipt for this requirement and release/config",
+      "source": "Explicit external execution gate: human-q-and-a"
+    },
+    {
+      "id": "AUTH-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Đăng ký hợp lệ, đăng ký lại email khác hoa/thường",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "AUTH-01A",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Đăng ký thành công rồi mở màn hình xác minh",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "AUTH-02",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Chưa verify gọi checkout; OTP hết hạn/sai 5 lần",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "AUTH-03",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Refresh token đã rotate được dùng lại",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "AUTH-04",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Customer gọi API kho/admin; ID tài nguyên khách khác",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "CAT-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Kết hợp category/brand/price/sort/page",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "CAT-02",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Inactive product/category/brand",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "CART-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Add cùng SKU, sửa/xóa, quantity 0/100",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "ORD-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Checkout đủ hàng",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "ORD-02",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "20 request đồng thời mua hàng chỉ còn 1",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "ORD-03",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Hai sản phẩm, sản phẩm thứ hai thiếu hàng",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "ORD-04",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Cùng idempotency key gửi đồng thời/lặp sau restart",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "ORD-05",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Giá đổi sau khi mở checkout",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "ORD-06",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Payment/cancel/expiry chạy đồng thời",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "ORD-07",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Shipping gọi lại hoặc job release gọi lại",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "ORD-08",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Sai transition hoặc stale version",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "ORD-09",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Promo còn 1 quota, nhiều khách checkout",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "ORD-10",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Giảm onHand xuống thấp hơn reserved",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "RT-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Missing/expired JWT tại handshake",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "RT-02",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Hai customer theo dõi hai đơn, kho đổi một đơn",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "RT-03",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Subscribe đơn khách khác/room tự đặt",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "RT-04",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Mất mạng, bỏ lỡ event rồi reconnect",
+      "runId": "3ebb94c6-6f7d-4bcc-8c74-f043075dfd5e"
+    },
+    {
+      "id": "RATE-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Vượt global và sensitive thresholds",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "RATE-02",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Nhiều IP dò cùng tài khoản mục tiêu",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "RATE-03",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Redis down",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "CACHE-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Đọc product/list lần hai với dữ liệu ổn định",
+      "runId": "8acaf635-4295-4843-95e1-1f9f57e3a3c8"
+    },
+    {
+      "id": "CACHE-02",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Đổi giá/tồn/category/brand rồi mutation trả thành công",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "CACHE-03",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Cache miss đang nạp trong lúc giá đổi",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "CACHE-04",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Nhiều request hot key hết TTL; unknown SKU",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "CACHE-05",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Redis timeout/down/recovery",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "JOB-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Provider email chậm 5 giây khi checkout",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "JOB-02",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Transient fail rồi thành công/permanent fail",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "JOB-03",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Crash sau external side effect trước DB DONE",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "JOB-04",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Outbox enqueue xong crash trước published",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "JOB-05",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Đơn chưa thanh toán 30 phút, đơn đã pay",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "JOB-06",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Qua 60 phút/restart lỡ lịch",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "JOB-07",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Đơn mới chưa thanh toán, sau đó payment confirmed/cancelled",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "TKT-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Claim đồng thời và reply sai ownership",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "TKT-02",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "AI classification fail hoặc nhãn HUMAN có trước",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "AI-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Hỏi trạng thái đơn/inventory trong context hợp lệ",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "AI-02",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Mã đơn không tồn tại/khách khác; tool DB fail",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "AI-02A",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Ticket không linked order, tra orderCode thuộc customer ticket",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "AI-03",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Hỏi ngoài ShopFast/prompt injection/unknown tool",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "AI-04",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "AI đề xuất đổi nhãn, chưa bấm Confirm",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "AI-05",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Confirm lặp, expired, stale hoặc đổi assignment",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "AI-06",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Gemini 429/timeout hoặc loop quá giới hạn",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "OPS-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "DB down / Redis down",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "OPS-02",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Chạy Redis/BullMQ contract smoke trên Memurai local và Redis 7 Linux",
+      "runId": "b2cfb3e5-302d-47fe-908e-57f09af33cfa"
+    },
+    {
+      "id": "UI-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "source": "Chạy toàn bộ customer/kho/support/admin flow",
+      "runId": "3ebb94c6-6f7d-4bcc-8c74-f043075dfd5e"
+    }
+  ]
+}

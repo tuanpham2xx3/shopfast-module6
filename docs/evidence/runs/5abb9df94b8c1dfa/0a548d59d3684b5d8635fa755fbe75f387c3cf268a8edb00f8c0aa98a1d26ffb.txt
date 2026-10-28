@@ -1,0 +1,722 @@
+{
+  "runId": "1793198194401-report",
+  "profile": "report",
+  "commit": "d4fe2524d32fcd8c2cbe624e011b97279162d97a",
+  "dirty": false,
+  "configHash": "1b50d400effaa908ea4899186a13d4f617d724e4d23efbbf6ebc58dec7621950",
+  "executedAt": "2026-10-28T14:36:34.401Z",
+  "status": "FAIL",
+  "cases": [
+    {
+      "id": "DEPLOYED-COMMIT",
+      "status": "PASS",
+      "deployedCommit": "d4fe2524d32fcd8c2cbe624e011b97279162d97a"
+    },
+    {
+      "id": "preflight",
+      "status": "PASS",
+      "source": "1793195808111-preflight.json"
+    },
+    {
+      "id": "ci",
+      "status": "PASS",
+      "source": "1793196134979-ci.json"
+    },
+    {
+      "id": "staging",
+      "status": "FAIL",
+      "source": "1793196395940-staging.json"
+    },
+    {
+      "id": "providers",
+      "status": "FAIL",
+      "source": "1793196326450-providers.json"
+    },
+    {
+      "id": "resilience",
+      "status": "PASS",
+      "source": "1793196500281-resilience.json"
+    },
+    {
+      "id": "performance",
+      "status": "PASS",
+      "source": "1793197296032-performance.json"
+    },
+    {
+      "id": "backup-restore",
+      "status": "PASS",
+      "source": "1793196548902-backup-restore.json"
+    },
+    {
+      "id": "deploy-rollback",
+      "status": "PASS",
+      "source": "1793196282746-deploy-rollback.json"
+    },
+    {
+      "id": "REQ-GENERAL-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-GENERAL-02",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-GENERAL-03",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-GENERAL-04",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-F01-01",
+      "status": "FAIL",
+      "reason": "Missing or failing dependencies: GATE-live-classification",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-F01-02",
+      "status": "FAIL",
+      "reason": "Missing or failing dependencies: GATE-live-ai-tools",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-F01-03",
+      "status": "FAIL",
+      "reason": "Missing or failing dependencies: GATE-live-refusal",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-F01-04",
+      "status": "FAIL",
+      "reason": "Missing or failing dependencies: GATE-live-human-confirmation",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-F02-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-F02-02",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-F02-03",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-F02-04",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-F03-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-F03-02",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-F03-03",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-F03-04",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-F04-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-F04-02",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-F04-03",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-F04-04",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-F05-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-F05-02",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-F05-03",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-F05-04",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-F06-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-F06-02",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-F06-03",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-F06-04",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-F07-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-F07-02",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-F07-03",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-F07-04",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-TECH-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-TECH-02",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-TECH-03",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-TECH-04",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-SEC-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-SEC-02",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-SEC-03",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-SEC-04",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-SEC-05",
+      "status": "BLOCKED",
+      "reason": "Missing or failing dependencies: GATE-cloud-human-group-mfa-leastprivilege",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-REL-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-REL-02",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-REL-03",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-REL-04",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-QUALITY-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-QUALITY-02",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-QUALITY-03",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-DELIVERY-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-DELIVERY-02",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-DELIVERY-03",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-DELIVERY-04",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-DELIVERY-05",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-DELIVERY-06",
+      "status": "BLOCKED",
+      "reason": "Missing or failing dependencies: GATE-published-coverage-restore",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-DELIVERY-07",
+      "status": "BLOCKED",
+      "reason": "Missing or failing dependencies: GATE-slides-and-timed-demo",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-UI-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-PERF-cached-read-p95",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-PERF-checkout-p95",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-PERF-realtime",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-PERF-cache-hit",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-PERF-deploy",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "REQ-DEFENSE-explanation",
+      "status": "BLOCKED",
+      "reason": "Missing or failing dependencies: GATE-human-q-and-a",
+      "runId": "4bc2835c-8c4c-4294-887e-d9e313d4e51b"
+    },
+    {
+      "id": "AUTH-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "AUTH-01A",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "AUTH-02",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "AUTH-03",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "AUTH-04",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "CAT-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "CAT-02",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "CART-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "ORD-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "ORD-02",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "ORD-03",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "ORD-04",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "ORD-05",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "ORD-06",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "ORD-07",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "ORD-08",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "ORD-09",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "ORD-10",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "RT-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "RT-02",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "RT-03",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "RT-04",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "3ebb94c6-6f7d-4bcc-8c74-f043075dfd5e"
+    },
+    {
+      "id": "RATE-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "RATE-02",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "RATE-03",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "CACHE-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "8acaf635-4295-4843-95e1-1f9f57e3a3c8"
+    },
+    {
+      "id": "CACHE-02",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "CACHE-03",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "CACHE-04",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "CACHE-05",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "JOB-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "JOB-02",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "JOB-03",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "JOB-04",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "JOB-05",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "JOB-06",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "JOB-07",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "TKT-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "TKT-02",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "AI-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "AI-02",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "AI-02A",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "AI-03",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "AI-04",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "AI-05",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "AI-06",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "OPS-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f"
+    },
+    {
+      "id": "OPS-02",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "b2cfb3e5-302d-47fe-908e-57f09af33cfa"
+    },
+    {
+      "id": "UI-01",
+      "status": "PASS",
+      "reason": "Verified receipt and artifact integrity; assertion validity remains reviewable",
+      "runId": "3ebb94c6-6f7d-4bcc-8c74-f043075dfd5e"
+    }
+  ]
+}

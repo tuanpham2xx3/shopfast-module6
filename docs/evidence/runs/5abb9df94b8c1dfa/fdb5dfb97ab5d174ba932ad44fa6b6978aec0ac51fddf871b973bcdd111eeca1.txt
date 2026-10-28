@@ -1,0 +1,50 @@
+{
+  "runId": "64460273-e8f3-41b0-bab2-1c1ca4e7c462",
+  "commit": "d4fe2524d32fcd8c2cbe624e011b97279162d97a",
+  "dirty": false,
+  "configHash": "1b50d400effaa908ea4899186a13d4f617d724e4d23efbbf6ebc58dec7621950",
+  "executedAt": "2026-10-28T14:28:37.709Z",
+  "scope": "Production worker configuration and compiled scheduler hooks, combined with real PostgreSQL controlled-clock reminder/expiry/daily-report tests. Does not claim a nightly production report has already run when no business day is due.",
+  "collectorSourceSha256": "80cb007a4e2c2b815b791d4388fcdc452e8cecb6bb536942d5385c606719e654",
+  "assertions": [
+    {
+      "name": "production worker entrypoint and schedule hooks",
+      "expected": "running exact source release, worker main command, 250ms timer/15s catch-up polling, 30m reminder and Bangkok daily hook",
+      "actual": {
+        "release": "d4fe2524d32fcd8c2cbe624e011b97279162d97a",
+        "running": "true",
+        "command": [
+          "node",
+          "dist/apps/worker/src/main.js"
+        ],
+        "compiled": {
+          "timer": true,
+          "catchUpPolling": true,
+          "reminder30Minutes": true,
+          "bangkokDaily": true
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "JOB-05 real PostgreSQL controlled-clock acceptance",
+      "expected": "same clean source/config with passing assertions and intact artifacts",
+      "actual": {
+        "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f",
+        "executedAt": "2026-10-28T13:59:17.260Z",
+        "status": "PASS"
+      },
+      "passed": true
+    },
+    {
+      "name": "JOB-06 real PostgreSQL controlled-clock acceptance",
+      "expected": "same clean source/config with passing assertions and intact artifacts",
+      "actual": {
+        "runId": "abef0927-eec3-434a-830a-0f7a24c2ac2f",
+        "executedAt": "2026-10-28T13:59:17.260Z",
+        "status": "PASS"
+      },
+      "passed": true
+    }
+  ]
+}

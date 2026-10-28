@@ -1,0 +1,242 @@
+{
+  "runId": "a7ff0a30-2fd2-4396-b643-2cab6783d5c9",
+  "commit": "d4fe2524d32fcd8c2cbe624e011b97279162d97a",
+  "dirty": false,
+  "configHash": "1b50d400effaa908ea4899186a13d4f617d724e4d23efbbf6ebc58dec7621950",
+  "executedAt": "2026-10-28T14:04:25.083Z",
+  "scope": "History gates retain observed historical workflow/PR SHAs; document checks assert explicit coverage, not human defense competence.",
+  "gates": {
+    "branch-protection-history": [
+      {
+        "name": "required checks enforced for administrators",
+        "expected": "strict application/docs checks",
+        "actual": {
+          "required": [
+            "application-checks",
+            "docs-checks"
+          ],
+          "strict": true,
+          "admins": true
+        },
+        "passed": true
+      },
+      {
+        "name": "successful checked PR merged",
+        "expected": "PR8 MERGED with both checks SUCCESS",
+        "actual": {
+          "state": "MERGED",
+          "checks": true
+        },
+        "passed": true
+      }
+    ],
+    "ci-failure-blocks-merge": [
+      {
+        "name": "failed required application check retained without merge",
+        "expected": "PR9 CLOSED, not merged, application-checks FAILURE under enforced required policy",
+        "actual": {
+          "state": "CLOSED",
+          "mergedAt": null,
+          "head": "016c2ff614deabaf28a1ff95fdadce18c569ad8d",
+          "failureUrl": "https://github.com/tuanpham2xx3/shopfast-module6/actions/runs/40690998876/job/122825462874",
+          "requiredPolicy": true
+        },
+        "passed": true
+      }
+    ],
+    "pipeline": [
+      {
+        "name": "successful build and deployment history",
+        "expected": "completed successful Release workflow including images and deploy",
+        "actual": {
+          "id": 40690479298,
+          "status": "completed",
+          "conclusion": "success",
+          "head": "9b7b96f3503b022e924a26a96f9abcf1d9403ea2",
+          "jobs": [
+            {
+              "name": "images",
+              "conclusion": "success"
+            },
+            {
+              "name": "deploy",
+              "conclusion": "success"
+            }
+          ]
+        },
+        "passed": true
+      }
+    ],
+    "pipeline-success-fail-links": [
+      {
+        "name": "successful build and deployment history",
+        "expected": "completed successful Release workflow including images and deploy",
+        "actual": {
+          "id": 40690479298,
+          "status": "completed",
+          "conclusion": "success",
+          "head": "9b7b96f3503b022e924a26a96f9abcf1d9403ea2",
+          "jobs": [
+            {
+              "name": "images",
+              "conclusion": "success"
+            },
+            {
+              "name": "deploy",
+              "conclusion": "success"
+            }
+          ]
+        },
+        "passed": true
+      },
+      {
+        "name": "failed required application check retained without merge",
+        "expected": "PR9 CLOSED, not merged, application-checks FAILURE under enforced required policy",
+        "actual": {
+          "state": "CLOSED",
+          "mergedAt": null,
+          "head": "016c2ff614deabaf28a1ff95fdadce18c569ad8d",
+          "failureUrl": "https://github.com/tuanpham2xx3/shopfast-module6/actions/runs/40690998876/job/122825462874",
+          "requiredPolicy": true
+        },
+        "passed": true
+      }
+    ],
+    "pipeline-total-duration": [
+      {
+        "name": "workflow total wall time",
+        "expected": "positive duration below ten minutes",
+        "actual": {
+          "workflow": 40690479298,
+          "createdAt": "2026-10-28T12:45:37Z",
+          "updatedAt": "2026-10-28T12:47:50Z",
+          "seconds": 133
+        },
+        "passed": true
+      }
+    ],
+    "readme-local-github": [
+      {
+        "name": "native local startup and public source instructions",
+        "expected": "Node/PostgreSQL/Memurai, migrate/seed/API/worker/web/test commands, public repository and structure links",
+        "actual": {
+          "sha256": "b638f9a2eb8d8e15e6bf5d2c632ac8c3acbd283ac72161f9e948c685144fa9d3"
+        },
+        "passed": true
+      }
+    ],
+    "integration-brief": [
+      {
+        "name": "seven integration topics and demo sequence",
+        "expected": "all seven topics, endpoint/job/event explanations and ten-minute sequence",
+        "actual": {
+          "sha256": "183df825ba33a480b3b2d272168be4955df83189c8b0f190ba8ed7df8c77bdb9"
+        },
+        "passed": true
+      }
+    ],
+    "architecture-review": [
+      {
+        "name": "documented module and data-flow boundaries",
+        "expected": "composition root, platform boundary, transactional outbox and typed module model",
+        "actual": {
+          "structureHash": "4b41b657ff635e87f97ebd5e32ee4810c078fb5240a196f3d2fc2e35550ed697",
+          "dataflowHash": "8c799aa6aa5aba712a19c5b4dd6a4262727193c51518f71bc9a34e7d5fafe062"
+        },
+        "passed": true
+      }
+    ],
+    "aws-diagram-dataflow-components": [
+      {
+        "name": "AWS and application flow documented",
+        "expected": "EC2, OIDC/SSM, S3, API/socket/outbox/worker/provider flow and component responsibilities",
+        "actual": {
+          "briefHash": "183df825ba33a480b3b2d272168be4955df83189c8b0f190ba8ed7df8c77bdb9",
+          "dataflowHash": "8c799aa6aa5aba712a19c5b4dd6a4262727193c51518f71bc9a34e7d5fafe062"
+        },
+        "passed": true
+      }
+    ],
+    "business-coverage-report": [
+      {
+        "name": "fresh executed unit and combined coverage",
+        "expected": "matching clean CI execution, unit and combined line coverage >=60%",
+        "actual": {
+          "unit-business": {
+            "total": {
+              "lines": {
+                "total": 1863,
+                "covered": 1119,
+                "skipped": 0,
+                "pct": 60.06
+              },
+              "statements": {
+                "total": 2057,
+                "covered": 1215,
+                "skipped": 0,
+                "pct": 59.06
+              },
+              "functions": {
+                "total": 384,
+                "covered": 176,
+                "skipped": 0,
+                "pct": 45.83
+              },
+              "branches": {
+                "total": 906,
+                "covered": 371,
+                "skipped": 0,
+                "pct": 40.94
+              },
+              "branchesTrue": {
+                "total": 0,
+                "covered": 0,
+                "skipped": 0,
+                "pct": 100
+              }
+            },
+            "fresh": true,
+            "sha256": "72a3b7bd680366523c34ddfd3c2533cdf783fd71aee66b146d53b889449ad86c"
+          },
+          "business": {
+            "total": {
+              "lines": {
+                "total": 1863,
+                "covered": 1616,
+                "skipped": 0,
+                "pct": 86.74
+              },
+              "statements": {
+                "total": 2057,
+                "covered": 1753,
+                "skipped": 0,
+                "pct": 85.22
+              },
+              "functions": {
+                "total": 384,
+                "covered": 297,
+                "skipped": 0,
+                "pct": 77.34
+              },
+              "branches": {
+                "total": 906,
+                "covered": 640,
+                "skipped": 0,
+                "pct": 70.64
+              },
+              "branchesTrue": {
+                "total": 0,
+                "covered": 0,
+                "skipped": 0,
+                "pct": 100
+              }
+            },
+            "fresh": true,
+            "sha256": "6f9f0d6020ee0f1f11d17e716ddc8f18d0fe6282272fa1f6d7e65823986dfb7d"
+          }
+        },
+        "passed": true
+      }
+    ]
+  }
+}
