@@ -100,3 +100,14 @@ Backoff exponential với jitter, base 2 giây, cap 60 giây. Lỗi permanent in
 Hết attempts: ghi failed_jobs riêng với reason đã che dữ liệu, giữ job failed trong BullMQ để dashboard; nếu ghi archive lỗi thì retry bước archive, không mất dấu thất bại. Admin retry giữ businessKey, thêm attempt/audit, không xóa lịch sử. Chỉ retry sau kiểm tra nguyên nhân; job đã DONE trả kết quả đã có.
 
 Redis unavailable: API nghiệp vụ vẫn commit đơn/outbox; UI báo tác vụ phụ đang chờ. Publisher/worker phục hồi sẽ drain backlog. Nếu DB unavailable thì không nhận tạo đơn hoặc xác nhận thành công giả.
+
+### 4.3 Retention local
+
+Worker chạy cleanup khi khởi động và mỗi giờ, độc lập với Redis readiness. Mỗi loại tối đa 500 bản ghi/lượt, transaction có advisory lock theo schema, row locks SKIP LOCKED và statement timeout 5 giây. Nếu lỗi, rollback và thử lại sau một phút; không chặn các tác vụ nghiệp vụ. Index retention được tạo bằng migration.
+
+- AI turn quá 30 ngày: xóa nếu chưa được dùng làm phản hồi khách. Turn đã duyệt giữ ID/FK làm provenance, che prompt và xóa draft response; `ticket_messages` và audit không bị xóa.
+- Proposal quá 30 ngày và đã hết hạn được xóa; session quá 30 ngày, hết hạn và không còn turn/proposal mới được xóa.
+- Payload job SUCCEEDED quá 90 ngày được thu gọn; giữ nguyên business key/status/result để replay không gửi email hoặc chạy tác dụng phụ lần nữa. Job PENDING/FAILED, dead letter và retry audit được giữ.
+- Security counter quá một ngày chỉ được xóa khi không còn khóa đang hiệu lực. Idempotency record chỉ dọn sau expiresAt; kiểm tra hiệu lực vẫn nằm ở request, không phụ thuộc scheduler.
+
+Chưa xóa outbox, đơn, hóa đơn, lịch sử tồn hoặc audit nghiệp vụ. Payload outbox và lịch sử thất bại dài hạn vẫn cần chính sách archive riêng khi thiết kế vận hành. Batch có giới hạn nên thời điểm dọn thực tế có thể muộn hơn ngưỡng khi backlog lớn; đây không phải SLA xóa dữ liệu tuyệt đối.

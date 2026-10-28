@@ -1,0 +1,211 @@
+{
+  "model": "gemini-3.1-flash-lite",
+  "executedAt": "2026-10-18T17:36:25.686Z",
+  "total": 30,
+  "intervalMs": 5000,
+  "correct": 30,
+  "accuracy": 1,
+  "matrix": {
+    "ORDER_STATUS": {
+      "ORDER_STATUS": 5,
+      "PAYMENT": 0,
+      "INVENTORY": 0,
+      "DELIVERY": 0,
+      "CANCELLATION": 0,
+      "OTHER": 0
+    },
+    "PAYMENT": {
+      "ORDER_STATUS": 0,
+      "PAYMENT": 5,
+      "INVENTORY": 0,
+      "DELIVERY": 0,
+      "CANCELLATION": 0,
+      "OTHER": 0
+    },
+    "INVENTORY": {
+      "ORDER_STATUS": 0,
+      "PAYMENT": 0,
+      "INVENTORY": 5,
+      "DELIVERY": 0,
+      "CANCELLATION": 0,
+      "OTHER": 0
+    },
+    "DELIVERY": {
+      "ORDER_STATUS": 0,
+      "PAYMENT": 0,
+      "INVENTORY": 0,
+      "DELIVERY": 5,
+      "CANCELLATION": 0,
+      "OTHER": 0
+    },
+    "CANCELLATION": {
+      "ORDER_STATUS": 0,
+      "PAYMENT": 0,
+      "INVENTORY": 0,
+      "DELIVERY": 0,
+      "CANCELLATION": 5,
+      "OTHER": 0
+    },
+    "OTHER": {
+      "ORDER_STATUS": 0,
+      "PAYMENT": 0,
+      "INVENTORY": 0,
+      "DELIVERY": 0,
+      "CANCELLATION": 0,
+      "OTHER": 5
+    }
+  },
+  "results": [
+    {
+      "expected": "ORDER_STATUS",
+      "predicted": "ORDER_STATUS",
+      "confidence": 1
+    },
+    {
+      "expected": "ORDER_STATUS",
+      "predicted": "ORDER_STATUS",
+      "confidence": 1
+    },
+    {
+      "expected": "ORDER_STATUS",
+      "predicted": "ORDER_STATUS",
+      "confidence": 1
+    },
+    {
+      "expected": "ORDER_STATUS",
+      "predicted": "ORDER_STATUS",
+      "confidence": 1
+    },
+    {
+      "expected": "ORDER_STATUS",
+      "predicted": "ORDER_STATUS",
+      "confidence": 1
+    },
+    {
+      "expected": "PAYMENT",
+      "predicted": "PAYMENT",
+      "confidence": 1
+    },
+    {
+      "expected": "PAYMENT",
+      "predicted": "PAYMENT",
+      "confidence": 1
+    },
+    {
+      "expected": "PAYMENT",
+      "predicted": "PAYMENT",
+      "confidence": 0.95
+    },
+    {
+      "expected": "PAYMENT",
+      "predicted": "PAYMENT",
+      "confidence": 0.98
+    },
+    {
+      "expected": "PAYMENT",
+      "predicted": "PAYMENT",
+      "confidence": 0.98
+    },
+    {
+      "expected": "INVENTORY",
+      "predicted": "INVENTORY",
+      "confidence": 1
+    },
+    {
+      "expected": "INVENTORY",
+      "predicted": "INVENTORY",
+      "confidence": 1
+    },
+    {
+      "expected": "INVENTORY",
+      "predicted": "INVENTORY",
+      "confidence": 0.98
+    },
+    {
+      "expected": "INVENTORY",
+      "predicted": "INVENTORY",
+      "confidence": 1
+    },
+    {
+      "expected": "INVENTORY",
+      "predicted": "INVENTORY",
+      "confidence": 1
+    },
+    {
+      "expected": "DELIVERY",
+      "predicted": "DELIVERY",
+      "confidence": 0.98
+    },
+    {
+      "expected": "DELIVERY",
+      "predicted": "DELIVERY",
+      "confidence": 0.98
+    },
+    {
+      "expected": "DELIVERY",
+      "predicted": "DELIVERY",
+      "confidence": 0.98
+    },
+    {
+      "expected": "DELIVERY",
+      "predicted": "DELIVERY",
+      "confidence": 1
+    },
+    {
+      "expected": "DELIVERY",
+      "predicted": "DELIVERY",
+      "confidence": 0.98
+    },
+    {
+      "expected": "CANCELLATION",
+      "predicted": "CANCELLATION",
+      "confidence": 1
+    },
+    {
+      "expected": "CANCELLATION",
+      "predicted": "CANCELLATION",
+      "confidence": 1
+    },
+    {
+      "expected": "CANCELLATION",
+      "predicted": "CANCELLATION",
+      "confidence": 1
+    },
+    {
+      "expected": "CANCELLATION",
+      "predicted": "CANCELLATION",
+      "confidence": 1
+    },
+    {
+      "expected": "CANCELLATION",
+      "predicted": "CANCELLATION",
+      "confidence": 1
+    },
+    {
+      "expected": "OTHER",
+      "predicted": "OTHER",
+      "confidence": 0.95
+    },
+    {
+      "expected": "OTHER",
+      "predicted": "OTHER",
+      "confidence": 0.95
+    },
+    {
+      "expected": "OTHER",
+      "predicted": "OTHER",
+      "confidence": 0.95
+    },
+    {
+      "expected": "OTHER",
+      "predicted": "OTHER",
+      "confidence": 0.95
+    },
+    {
+      "expected": "OTHER",
+      "predicted": "OTHER",
+      "confidence": 0.95
+    }
+  ],
+  "acceptance": "PASS"
+}

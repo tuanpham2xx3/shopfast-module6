@@ -3,7 +3,21 @@
   "monorepo": true,
   "root": "apps/api",
   "sourceRoot": "apps/api/src",
-  "compilerOptions": { "webpack": false, "deleteOutDir": false },
+  "compilerOptions": {
+    "webpack": false,
+    "deleteOutDir": false,
+    "plugins": [
+      {
+        "name": "@nestjs/swagger",
+        "options": {
+          "dtoFileNameSuffix": [".dto.ts", ".module.ts"],
+          "controllerFileNameSuffix": [".controller.ts", ".module.ts"],
+          "classValidatorShim": true,
+          "introspectComments": true
+        }
+      }
+    ]
+  },
   "projects": {
     "api": {
       "type": "application",

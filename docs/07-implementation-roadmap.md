@@ -4,6 +4,10 @@ Roadmap ưu tiên có một vertical slice chạy được sớm, sau đó bổ 
 
 ## 1. Mức ưu tiên
 
+Checkpoint cập nhật: code M4–M6 đã được tích hợp ở `feat/complete-application`, gồm jobs/invoice, realtime, cache/limiter, ticket/Gemini và UI các vai trò. Kết quả kiểm tra và giới hạn hiện tại ở [application-completion](evidence/application-completion.md). Nghiệm thu Redis/provider thật, hiệu năng/coverage và M8 vẫn chưa đạt/đang hoãn; không dùng các dòng trạng thái lịch sử bên dưới làm kết luận nghiệm thu mới nhất.
+
+Tiến độ thực tế 18/10/2026: M0 đã qua CI PostgreSQL16/Redis7; Memurai local vẫn chưa sẵn sàng. M1 auth, M2 catalog/kho và M3 luồng mua hàng cơ bản đã có code/evidence, browser thật chạy đến DELIVERED. M2 admin editor UI và các hardening/UI mở rộng còn thiếu. M4 jobs/realtime, M5 cache/limiter đầy đủ, M6 ticket/Gemini và M7 nghiệm thu toàn bộ chưa hoàn thành. Xem `docs/evidence/m1-auth.md`, `m2-catalog.md`, `m3-orders.md` trước khi tiếp tục.
+
 | Mức               | Ý nghĩa                                                       | Điều kiện                                         |
 | ----------------- | ------------------------------------------------------------- | ------------------------------------------------- |
 | P0 — Defense core | Đường chạy chính để minh họa từng F01–F07                     | Không cắt nếu chưa có quyết định thay đổi phạm vi |
@@ -74,7 +78,7 @@ Trạng thái 18/10/2026: đang triển khai trên `feat/m0-foundation`; xem [ev
 
 **P1:** lease/dedup, dead letter retry, catch-up sau restart, crash-window tests và provider email thật có idempotency/status lookup. Nếu chưa chứng minh được contract provider, evidence “đúng một email” giữ BLOCKED, không giả PASS.
 
-**P2:** retention/cleanup lịch sử job dài hạn và dashboard vận hành mở rộng.
+**P2:** đã có cleanup payload job thành công sau 90 ngày, giữ tombstone; archive outbox/dead-letter dài hạn và dashboard vận hành mở rộng còn hoãn.
 
 **Gate:** checkout không chờ provider; event chỉ tới đúng customer; worker restart không làm mất business event.
 
@@ -102,7 +106,7 @@ Trạng thái 18/10/2026: đang triển khai trên `feat/m0-foundation`; xem [ev
 
 **P1:** timeout/circuit breaker, prompt injection tests, clientMessageId dedup và stale proposal.
 
-**P2:** lưu hội thoại 30 ngày, dataset 30 ticket/confusion matrix và usage metrics chi tiết.
+**P2:** đã có cleanup hội thoại quá 30 ngày và dataset 30 ticket/confusion matrix (evidence riêng); usage metrics chi tiết còn thiếu.
 
 **Gate:** smoke Gemini thật với key ngoài repo; tool không đọc đơn khách khác; AI không tự ghi hoặc tự gửi khách.
 

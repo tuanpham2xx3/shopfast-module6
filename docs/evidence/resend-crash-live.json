@@ -1,0 +1,12 @@
+{
+  "executedAt": "2026-10-28T05:15:47.688Z",
+  "status": "PASS",
+  "provider": "Resend live",
+  "emailId": "01a180ef-924e-7578-9161-3e9772c2c3a2",
+  "checks": [
+    "provider accepted real email",
+    "child process killed before local receipt commit",
+    "new adapter replay returned same provider ID",
+    "receipt committed and private rendered body cleared"
+  ]
+}

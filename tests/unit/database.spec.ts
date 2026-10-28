@@ -8,7 +8,12 @@ describe("database configuration", () => {
     expect(source.options.synchronize).toBe(false);
     expect(source.options.logging).toBe(false);
     expect(source.migrations).toHaveLength(0);
-    expect(source.options.migrations).toHaveLength(1);
+    expect(source.options.migrations).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ name: "Foundation1780000000000" }),
+        expect.objectContaining({ name: "Auth1780000100000" }),
+      ]),
+    );
   });
   it("rejects an unsafe migration schema identifier", () => {
     expect(() =>

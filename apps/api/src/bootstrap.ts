@@ -13,16 +13,33 @@ import {
   ServiceUnavailableException,
   ValidationPipe,
 } from "@nestjs/common";
-import { NestFactory } from "@nestjs/core";
+import { APP_INTERCEPTOR, NestFactory } from "@nestjs/core";
 import { ConfigModule } from "@nestjs/config";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { json, Request, Response, NextFunction } from "express";
+import cookieParser from "cookie-parser";
 import { parseEnvironment } from "../../../libs/platform/src/config/environment";
 import { checkReadiness } from "../../../libs/platform/src/health/readiness";
 import {
   probeDatabase,
   probeRedis,
 } from "../../../libs/platform/src/health/dependency-probes";
+import { AuthError } from "../../../libs/modules/auth/auth.service";
+import { AuthModule } from "../../../libs/modules/auth/auth.module";
+import { CatalogModule } from "../../../libs/modules/catalog/catalog.module";
+import { CatalogError } from "../../../libs/modules/catalog/catalog.service";
+import { OrderError } from "../../../libs/modules/orders/order.service";
+import { OrderModule } from "../../../libs/modules/orders/order.module";
+import { RealtimeModule } from "../../../libs/modules/realtime/realtime.module";
+import { JobsModule } from "../../../libs/modules/jobs/jobs.module";
+import { TicketsModule } from "../../../libs/modules/tickets/tickets.module";
+import { TicketError } from "../../../libs/modules/tickets/tickets.service";
+import {
+  RuntimeModule,
+  RuntimeRateInterceptor,
+} from "../../../libs/modules/runtime/runtime.module";
+import { RateLimitError } from "../../../libs/modules/runtime/limiter";
+import { OperationsModule } from "../../../libs/modules/operations/operations.module";
 
 type IdentifiedRequest = Request & { requestId: string };
 
@@ -36,26 +53,102 @@ class ApiExceptionFilter implements ExceptionFilter {
       typeof exception === "object" && exception !== null && "type" in exception
         ? exception.type
         : undefined;
+    const authStatuses: Record<string, number> = {
+      INVALID_CREDENTIALS: 401,
+      INVALID_ACCESS_TOKEN: 401,
+      INVALID_REFRESH_TOKEN: 401,
+      REFRESH_TOKEN_REUSED: 401,
+      INVALID_VERIFICATION_CODE: 400,
+      EMAIL_ALREADY_REGISTERED: 409,
+      RATE_LIMITED: 429,
+    };
+    const databaseCode = (exception as { driverError?: { code?: string } })
+      ?.driverError?.code;
+    const catalogStatuses: Record<string, number> = {
+      FORBIDDEN: 403,
+      PRICE_CHANGED: 409,
+      OUT_OF_STOCK: 409,
+      PROMO_NOT_ELIGIBLE: 409,
+      PROMO_EXHAUSTED: 409,
+      PROMOTION_INVALID: 409,
+      INVALID_TRANSITION: 409,
+      REQUEST_IN_PROGRESS: 409,
+      NOT_FOUND: 404,
+      BAD_REQUEST: 400,
+      VERSION_CONFLICT: 409,
+      IDEMPOTENCY_CONFLICT: 409,
+      INSUFFICIENT_STOCK: 409,
+    };
     const status =
-      exception instanceof HttpException
-        ? exception.getStatus()
-        : parserType === "entity.too.large"
-          ? 413
-          : parserType === "entity.parse.failed"
-            ? 400
-            : 500;
+      exception instanceof TicketError
+        ? exception.code === "NOT_FOUND" ||
+          exception.code === "ORDER_NOT_ACCESSIBLE"
+          ? 404
+          : exception.code === "FORBIDDEN" ||
+              exception.code === "SESSION_NOT_ACCESSIBLE"
+            ? 403
+            : exception.code === "BAD_REQUEST"
+              ? 400
+              : 409
+        : exception instanceof CatalogError || exception instanceof OrderError
+          ? (catalogStatuses[exception.code] ?? 400)
+          : databaseCode === "23505"
+            ? 409
+            : databaseCode === "23503" || databaseCode === "23514"
+              ? 400
+              : exception instanceof AuthError
+                ? (authStatuses[exception.code] ?? 400)
+                : exception instanceof HttpException
+                  ? exception.getStatus()
+                  : parserType === "entity.too.large"
+                    ? 413
+                    : parserType === "entity.parse.failed"
+                      ? 400
+                      : 500;
     const messages: Record<number, [string, string]> = {
       400: ["BAD_REQUEST", "Invalid request"],
       401: ["UNAUTHORIZED", "Authentication required"],
       403: ["FORBIDDEN", "Access denied"],
       404: ["NOT_FOUND", "Resource not found"],
       413: ["PAYLOAD_TOO_LARGE", "Request body exceeds the size limit"],
+      409: [
+        "CONFLICT",
+        "Dữ liệu đã thay đổi hoặc thao tác xung đột. Vui lòng tải lại.",
+      ],
+      429: ["RATE_LIMITED", "Bạn thao tác quá nhanh. Vui lòng thử lại sau."],
       503: ["SERVICE_UNAVAILABLE", "Service unavailable"],
     };
-    const [code, message] = messages[status] ?? [
-      "INTERNAL_ERROR",
-      "Internal server error",
-    ];
+    const [code, message] =
+      exception instanceof TicketError
+        ? [
+            exception.code,
+            "Không thể xử lý yêu cầu hỗ trợ. Vui lòng kiểm tra quyền hoặc tải lại.",
+          ]
+        : exception instanceof CatalogError || exception instanceof OrderError
+          ? [
+              exception.code,
+              "Không thể thực hiện thao tác. Vui lòng kiểm tra dữ liệu hoặc tải lại.",
+            ]
+          : exception instanceof AuthError
+            ? [
+                exception.code,
+                exception.code === "RATE_LIMITED"
+                  ? `Bạn thao tác quá nhanh. Vui lòng thử lại sau ${exception.retryAfter ?? 900} giây.`
+                  : exception.code === "INVALID_CREDENTIALS"
+                    ? "Invalid email or password"
+                    : "Authentication request failed",
+              ]
+            : (messages[status] ?? ["INTERNAL_ERROR", "Internal server error"]);
+    if (exception instanceof AuthError && exception.code === "RATE_LIMITED") {
+      response.setHeader("Retry-After", exception.retryAfter ?? 900);
+    }
+    if (exception instanceof RateLimitError)
+      response.setHeader("Retry-After", exception.retryAfter);
+    if (
+      (exception instanceof OrderError || exception instanceof TicketError) &&
+      exception.code === "REQUEST_IN_PROGRESS"
+    )
+      response.setHeader("Retry-After", 1);
     response.status(status).json({
       error: { code, message, details: null },
       requestId: request.requestId,
@@ -88,8 +181,17 @@ class HealthController {
       ignoreEnvFile: process.env.NODE_ENV === "test",
       validate: parseEnvironment,
     }),
+    AuthModule,
+    CatalogModule,
+    OrderModule,
+    RealtimeModule,
+    RuntimeModule,
+    JobsModule,
+    TicketsModule,
+    OperationsModule,
   ],
   controllers: [HealthController],
+  providers: [{ provide: APP_INTERCEPTOR, useClass: RuntimeRateInterceptor }],
 })
 class ApiModule {}
 
@@ -111,6 +213,13 @@ export async function createApiApp(options: NestApplicationOptions = {}) {
     },
   );
   app.use(json({ limit: "64kb" }));
+  app.use(cookieParser());
+  // Only the private Compose Nginx network is trusted, never arbitrary Internet proxies.
+  if (process.env.TRUST_PROXY_CIDR)
+    app
+      .getHttpAdapter()
+      .getInstance()
+      .set("trust proxy", process.env.TRUST_PROXY_CIDR);
   app.setGlobalPrefix(environment.API_PREFIX);
   app.enableCors({ origin: environment.WEB_ORIGIN, credentials: true });
   app.useGlobalFilters(new ApiExceptionFilter());

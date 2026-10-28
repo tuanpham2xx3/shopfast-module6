@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "executedAt": "2026-10-28T05:14:03.342Z",
+  "checks": [
+    "warm real Redis cache",
+    "price mutation while Redis process stopped",
+    "DB fallback serves new price",
+    "restart and targeted invalidation before cache resumes"
+  ]
+}

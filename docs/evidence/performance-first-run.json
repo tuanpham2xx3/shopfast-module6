@@ -1,0 +1,47 @@
+{
+  "status": "FAIL",
+  "executedAt": "2026-10-28T04:49:49.406Z",
+  "fixtureSchema": "harness_load_1793162256",
+  "dataset": {
+    "customers": 200000,
+    "products": 10000,
+    "orders": 100000
+  },
+  "warmupMs": 120000,
+  "measureMs": 600000,
+  "vus": {
+    "catalog": 50,
+    "checkout": 10,
+    "sockets": 100
+  },
+  "stats": {
+    "catalog": {
+      "count": 30004,
+      "p95": 403.9143300000578,
+      "max": 920.1965520000085
+    },
+    "checkout": {
+      "count": 1000,
+      "p95": 255.1477109999978,
+      "max": 440.39196900001843
+    },
+    "secondRead": {
+      "count": 30,
+      "p95": 15.58884999999998,
+      "max": 16.39546299999995
+    },
+    "realtime": {
+      "count": 100,
+      "p95": 11,
+      "max": 14
+    }
+  },
+  "failures": 0,
+  "rateLimited": 6000,
+  "cacheHitRate": 0.9309723889555822,
+  "limitations": [
+    "Single host load generator competes for CPU with services",
+    "Fixture worker intentionally not sending provider traffic"
+  ],
+  "acceptance": "FAIL"
+}

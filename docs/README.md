@@ -1,6 +1,6 @@
 # ShopFast — Bộ tài liệu triển khai
 
-Ngày lập: 18/10/2026. Trạng thái: bản đặc tả v1 để review và làm căn cứ triển khai; chưa có mã sản phẩm.
+Ngày lập: 18/10/2026. Cập nhật28/10/2026: đã có các module ứng dụng và bản deploy HTTPS đầu trên EC2; Gemini/Resend đã có smoke thật, đang hoàn thiện harness, CI/CD, hiệu năng và nghiệm thu. Chưa hoàn tất toàn bộ SRS. Xem [execution ledger](evidence/aws-delivery-progress.md) và kết quả có phạm vi cụ thể trong `docs/evidence/`.
 
 Nguồn yêu cầu: `../Module 06 – Software Requirement Specification (SRS).docx.txt`.
 
@@ -36,3 +36,16 @@ Nguồn yêu cầu: `../Module 06 – Software Requirement Specification (SRS).d
 - [ ] Các DEC chưa được review trong decision log phải được xác nhận khi tới phần triển khai liên quan.
 - [ ] Chọn cấu hình hạ tầng và hoàn thiện kế hoạch vận hành ở giai đoạn sau.
 - [ ] Ghi bằng chứng kiểm thử thực tế sau mỗi mốc.
+
+## Đối chiếu gần nhất
+
+- [Runbook deploy, backup và harness](14-deployment-runbook.md).
+
+- [Plan bàn giao end-to-end và đầu vào cần cấp](13-end-to-end-delivery-plan.md).
+
+- [AWS: link mở nhanh khi setup và demo](12-aws-quick-links.md).
+
+- [Rà soát SRS và những phần chưa nghiệm thu](evidence/srs-audit-2026-10-19.md).
+- [Gemini agent thật: tool, proposal và xác nhận](evidence/gemini-agent-live.md).
+- [Retention và regression khi duyệt phản hồi đồng thời](evidence/retention.md).
+- [Coverage: phân biệt unit-only và coverage kết hợp](evidence/coverage-baseline.md).

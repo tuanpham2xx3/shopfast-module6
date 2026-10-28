@@ -1,0 +1,13 @@
+{
+  "executedAt": "2026-10-18T18:32:54.910Z",
+  "model": "gemini-3.1-flash-lite",
+  "intervalMs": 5000,
+  "requests": 6,
+  "checks": [
+    "live model selects both tools; response grounded in PostgreSQL",
+    "proposal leaves category and customer messages unchanged",
+    "turn replay makes no additional provider call",
+    "explicit human confirmation applies once and replays safely"
+  ],
+  "acceptance": "PASS"
+}

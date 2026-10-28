@@ -8,9 +8,16 @@ tools/reports/
 tools/.runtime/
 test-results/
 playwright-report/
+.playwright-mcp/
 dist/
 coverage/
 .codex/config.toml
 *.log
 *.tsbuildinfo
 .superpowers/
+
+# Local SSH keys and secrets
+/.secrets/
+*.pem
+*.ppk
+/harness/reports/

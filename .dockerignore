@@ -1,0 +1,14 @@
+node_modules
+dist
+.git
+.env
+.env.*
+.secrets
+tools
+coverage
+harness/reports
+playwright-report
+test-results
+.codex
+*.pem
+*.ppk

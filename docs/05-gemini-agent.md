@@ -4,6 +4,8 @@
 
 Dùng Gemini Developer API, API key lấy từ Google AI Studio. Không dùng OpenAI hoặc tự host mô hình cho v1. NestJS gọi qua adapter `GeminiProvider`; SDK đề xuất `@google/genai`. Model ID cấu hình `GEMINI_MODEL`, không hardcode tên model preview trong domain. Chọn model có function calling và structured response khi triển khai; chạy smoke test theo project/key thực tế.
 
+Baseline triển khai: adapter gọi REST `generateContent` chính thức bằng backend header `x-goog-api-key`; không cần cài SDK để giữ cùng API/provider. Câu trả lời factual hiển thị từ dữ liệu tool DB của lượt hiện tại, không dùng prose model làm bằng chứng cho chính nó. Gemini vẫn lựa chọn tool, phân loại và đề xuất; HTTP xác nhận mới thực thi proposal.
+
 Key chỉ nằm ở backend, qua `GEMINI_API_KEY`; không đặt biến VITE_ hoặc đưa key vào browser, seed, docs hay log. Quota/phí phụ thuộc tài khoản Google; không giả định API luôn miễn phí.
 
 Tài liệu tham chiếu chính thức, kiểm tra ngày 18/10/2026:

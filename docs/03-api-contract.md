@@ -37,6 +37,8 @@ Login sai email/password trả cùng thông báo. User DISABLED không đăng nh
 
 ## 3. Catalog / inventory
 
+Triển khai bổ sung: product detail/list có `inventoryVersion` để kiểm tra race cache. Mutation catalog/kho/đơn có thể trả `cacheInvalidationPending=true` khi DB đã commit nhưng Redis chưa vô hiệu hóa được; API bypass các tag liên quan và outbox retry. Các response này vẫn là thành công nghiệp vụ, không yêu cầu client gửi lại thao tác ghi bằng key mới.
+
 | Method/path                                  | Quyền           | Contract                                                                           |
 | -------------------------------------------- | --------------- | ---------------------------------------------------------------------------------- |
 | GET /categories                              | Public          | danh mục active                                                                    |

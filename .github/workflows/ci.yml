@@ -10,6 +10,7 @@ permissions:
 
 jobs:
   verify:
+    name: application-checks
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     services:
@@ -40,5 +41,15 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      - run: node --test harness/core.test.mjs
+      - name: Validate deployment scripts
+        run: for script in deploy/*.sh; do bash -n "$script"; done
+      - run: npx playwright install --with-deps chromium
       - run: npm run check
-      - run: npm run test:integration
+      - run: npm run test:unit:coverage
+      - run: npm run test:coverage
+      - run: npm run test:e2e
+      - name: Build Linux runtime and web images
+        run: |
+          docker build -f deploy/Dockerfile --target runtime -t shopfast-ci-app .
+          docker build -f deploy/Dockerfile --target web -t shopfast-ci-web .

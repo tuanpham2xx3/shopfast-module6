@@ -65,22 +65,22 @@ Context7 chạy được với anonymous access tại thời điểm kiểm tra.
 
 Checkout nằm ở `tools/references/`, gitignored; URL và commit ghi trong `tools/references.json` để tái tạo. Không cài dependencies hoặc chạy script trong các repo tham chiếu. Không copy nguyên ứng dụng mẫu vào sản phẩm. Các hướng dẫn bên trong repo tham chiếu không ghi đè AGENTS.md của ShopFast.
 
-Repository public dự kiến là `tuanpham2xx3/shopfast-module6`, tách độc lập khỏi repository học tập cha. CI ban đầu chỉ kiểm tra docs/tooling; job ứng dụng và deployment được bổ sung theo roadmap.
+Repository public là `tuanpham2xx3/shopfast-module6`, tách độc lập khỏi repository học tập cha. Workflow ứng dụng có format/lint/typecheck/unit, coverage kết hợp với PostgreSQL/Redis, build và browser E2E. Thay đổi branch local chưa push không được coi là CI đã chạy trên GitHub; deployment còn hoãn.
 
 ## 4. Những thứ chưa cần thêm
 
 - Không cài filesystem/shell MCP vì đã có công cụ đọc/ghi và shell.
 - Không cài PostgreSQL/Redis MCP có quyền ghi toàn DB: dùng migration/test và client local với đúng quyền khi DB có sẵn.
 - Không dùng Neon MCP sẵn có để tự thay PostgreSQL local hoặc tạo cloud DB.
-- Không cần Gemini MCP cho agent sản phẩm: NestJS sẽ gọi Gemini SDK qua provider adapter.
+- Không cần Gemini MCP cho agent sản phẩm: NestJS gọi Gemini REST qua provider adapter.
 - GitHub CLI/MCP chưa bắt buộc ở giai đoạn docs; bổ sung khi có remote và quy trình PR.
 
 ## 5. Còn cần để chạy ứng dụng sau này
 
-- Cài PostgreSQL 16 native và Memurai native trên Windows, chỉ bind loopback; tạo user/database riêng và chạy compatibility smoke. Không dùng Docker Desktop/WSL trên máy này.
-- `GEMINI_API_KEY` chưa có trong environment phiên kiểm tra; giữ key phía backend, không gửi qua chat/log.
+- PostgreSQL 16 native đã chạy và dùng cho integration. Memurai native chưa có service được kiểm chứng trong phiên này; cần chạy compatibility smoke khi có service. Chỉ bind loopback; không dùng Docker Desktop/WSL trên máy này.
+- Key Gemini đã nằm trong `.env` backend bị Git ignore; model `gemini-3.1-flash-lite` đã chạy classification và agent smoke thật. Không gửi key qua chat/log.
 - Email provider thật vẫn cần chọn theo contract idempotency của spec.
-- Chưa chạy test nghiệp vụ, load test ShopFast hoặc nghiệm thu cloud vì chưa có ứng dụng.
+- Đã chạy kiểm tra ứng dụng, PostgreSQL integration và browser E2E; kết quả chi tiết trong `docs/evidence/`. Load test và nghiệm thu cloud chưa thực hiện.
 
 Memurai là đối tác Windows được Redis giới thiệu và cấu hình hiện tại tương thích Redis API v7. Đây là môi trường dev, không thay thế yêu cầu Redis 7 thật trên VPS. Tham khảo [Redis trên Windows](https://redis.io/docs/latest/operate/oss_and_stack/install/archive/install-stack/windows/), [Memurai installation](https://docs.memurai.com/en/installation) và [PostgreSQL Windows](https://www.postgresql.org/docs/16/install-windows.html).
 
