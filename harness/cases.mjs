@@ -119,6 +119,32 @@ await writeFile(
   `harness/reports/receipts/${runId}-cases.json`,
   JSON.stringify(receipts, null, 2),
 );
+const partnerCase = receipts.find((receipt) => receipt.caseId === "JOB-03");
+if (partnerCase) {
+  const partnerAssertions = partnerCase.assertions.filter((assertion) =>
+    assertion.name.includes("never overwrites a newer partner"),
+  );
+  await writeFile(
+    `harness/reports/receipts/${runId}-partner-demo.json`,
+    JSON.stringify(
+      {
+        ...partnerCase,
+        caseId: "GATE-partner-versioned-demo",
+        status:
+          partnerCase.status === "PASS" &&
+          partnerAssertions.length === 1 &&
+          partnerAssertions[0].passed
+            ? "PASS"
+            : "BLOCKED",
+        assertions: partnerAssertions,
+        scope:
+          "User-approved PostgreSQL versioned partner demo; no third-party HTTP service or delivery claim. Queue/retry/dedup gates are assessed separately.",
+      },
+      null,
+      2,
+    ),
+  );
+}
 const summary = {
   runId,
   ...context,
