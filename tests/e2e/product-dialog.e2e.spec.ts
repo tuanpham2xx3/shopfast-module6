@@ -98,6 +98,7 @@ for (const width of [1280, 390]) {
     await popup.getByRole("button", { name: "Đóng chi tiết" }).click();
     await expect(popup).toHaveCount(0);
     await trigger.click();
+    await expect(popup).toBeVisible();
     await page.mouse.click(2, 2);
     await expect(popup).toHaveCount(0);
     await expect(page.getByLabel("Người nhận")).toHaveCount(0);

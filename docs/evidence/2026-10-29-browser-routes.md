@@ -24,3 +24,5 @@ Nginx bỏ HTTP proxy `/orders/` để deep link đơn trả SPA; transport Sock
 Lượt đầu còn selector cũ tìm inventory trong catalog; lượt tiếp theo tìm sản phẩm ở tab operations. Đã sửa thao tác điều hướng tới route tương ứng, giữ nguyên assertions nghiệp vụ và chạy lại toàn bộ đạt. Một lượt routing bị server Vite của runner khác đóng; lượt chạy độc lập và lượt tổng thể sau đó đều đạt. Test auth đã đổi kỳ vọng reload từ register mặc định sang giữ `/login`.
 
 Harness production `harness/browser-roles.cjs` đã cập nhật để đăng nhập và refresh workspace đúng URL cho customer/warehouse/support/admin. Kết quả cloud chỉ được ghi sau khi chạy trên bản release.
+
+CI lần đầu: 13/14 đạt; ca popup desktop bấm tọa độ backdrop ngay sau trigger mà chưa chờ dialog visible khi điều hướng bất đồng bộ. Đã thêm chờ visible trước thao tác tọa độ, giữ nguyên assertion đóng và kiểm tra thêm giỏ sau đó; chạy lại targeted browser suite và CI để xác nhận.
