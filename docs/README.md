@@ -39,6 +39,9 @@ Nguồn yêu cầu: `../Module 06 – Software Requirement Specification (SRS).d
 
 ## Đối chiếu gần nhất
 
+- [Cấu trúc repository và ranh giới phụ thuộc](19-repository-structure.md).
+- [Bộ slide HTML/PDF và cách trình chiếu](defense/README.md).
+
 - [Kịch bản bàn giao, demo 10 phút và Q&A](18-defense-walkthrough.md).
 - [Hiệu năng và S3 restore đã kiểm chứng trên release f8d1696](evidence/verified-performance-restore.md).
 

@@ -8,16 +8,16 @@ import { createHash, randomUUID } from "node:crypto";
 import { Queue, Worker } from "bullmq";
 import Redis from "ioredis";
 import { DataSource } from "typeorm";
-import { createDataSource } from "../database/data-source";
+import { createDataSource } from "../../../libs/platform/src/database/data-source";
 import {
   publishOutboxBatch,
   OutboxEvent,
   deliverFakeEvent,
-} from "../outbox/outbox";
-import { createJobsService } from "../../../modules/jobs/jobs.module";
-import { JobsService } from "../../../modules/jobs/jobs.service";
-import { domainEvents } from "../domain-events";
-import { RetentionService } from "../../../modules/jobs/retention.service";
+} from "../../../libs/platform/src/outbox/outbox";
+import { createJobsService } from "../../../libs/modules/jobs/src/jobs.module";
+import { JobsService } from "../../../libs/modules/jobs/src/jobs.service";
+import { domainEvents } from "../../../libs/platform/src/domain-events";
+import { RetentionService } from "../../../libs/modules/jobs/src/retention.service";
 export type OutboxSubscriber = (
   event: OutboxEvent,
   source: DataSource,

@@ -20,7 +20,10 @@ import { Request, Response } from "express";
 import { AccessGuard, RolesGuard, VerifiedGuard } from "./auth.guards";
 import { AuthRuntime } from "./auth.runtime";
 import { AuthError, AuthResult } from "./auth.service";
-import { RuntimeModule, RuntimeServices } from "../runtime/runtime.module";
+import {
+  RuntimeModule,
+  RuntimeServices,
+} from "../../runtime/src/runtime.module";
 
 class RegisterDto {
   @IsEmail() email!: string;

@@ -5,7 +5,7 @@ import { Jobs1780000500000 } from "../../database/migrations/1780000500000-jobs"
 import {
   DevelopmentEmailAdapter,
   JobsService,
-} from "../../libs/modules/jobs/jobs.service";
+} from "../../libs/modules/jobs/src/jobs.service";
 describe("durable jobs, invoice authorization and crash recovery", () => {
   let source: DataSource;
   let service: JobsService;

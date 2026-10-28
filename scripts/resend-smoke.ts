@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { randomUUID } from "node:crypto";
 import { writeFile } from "node:fs/promises";
-import { renderEmail } from "../libs/modules/jobs/email-templates";
+import { renderEmail } from "../libs/modules/jobs/src/email-templates";
 async function main() {
   if (!process.env.RESEND_API_KEY || !process.env.EMAIL_TEST_TO)
     throw new Error("Missing backend email configuration");

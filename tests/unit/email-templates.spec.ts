@@ -1,4 +1,4 @@
-import { renderEmail } from "../../libs/modules/jobs/email-templates";
+import { renderEmail } from "../../libs/modules/jobs/src/email-templates";
 describe("branded emails", () => {
   it("renders OTP with plain text and no secret in the URL", () => {
     const mail = renderEmail(

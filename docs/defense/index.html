@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ShopFast — Bảo vệ dự án</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #101c2c;
+        color: #15283f;
+      }
+      section {
+        width: 1280px;
+        height: 720px;
+        padding: 64px 80px;
+        background: #f6f8fb;
+        display: none;
+        position: relative;
+        overflow: hidden;
+      }
+      section.active {
+        display: block;
+      }
+      h1 {
+        font-size: 64px;
+        line-height: 1.12;
+        margin: 25px 0;
+        max-width: 1080px;
+        letter-spacing: -2px;
+      }
+      h2 {
+        font-size: 46px;
+        margin: 12px 0 36px;
+        letter-spacing: -1px;
+      }
+      p,
+      li {
+        font-size: 27px;
+        line-height: 1.5;
+      }
+      li {
+        margin: 15px 0;
+      }
+      .label {
+        color: #17624f;
+        font-size: 20px;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+      }
+      .accent {
+        color: #17624f;
+      }
+      .big {
+        font-size: 90px;
+        line-height: 1.1;
+        margin: 25px 0 12px;
+      }
+      .cols {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 64px;
+      }
+      .flow {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        margin: 32px 0;
+        font-size: 25px;
+      }
+      .node {
+        padding: 18px;
+        border: 2px solid #17624f;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 27px;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 18px 12px;
+        border-bottom: 1px solid #c6d2db;
+      }
+      th {
+        color: #17624f;
+      }
+      footer {
+        position: absolute;
+        bottom: 26px;
+        left: 80px;
+        right: 80px;
+        font-size: 17px;
+        color: #506379;
+      }
+      a {
+        color: #17624f;
+      }
+      aside {
+        display: none;
+      }
+      body.notes aside {
+        display: block;
+        position: absolute;
+        bottom: 65px;
+        background: #fff4ce;
+        padding: 12px;
+        font-size: 18px;
+        max-width: 1120px;
+      }
+      nav {
+        position: fixed;
+        bottom: 12px;
+        right: 16px;
+        display: flex;
+        gap: 8px;
+        z-index: 5;
+      }
+      button {
+        cursor: pointer;
+        padding: 10px 16px;
+        border: 0;
+        border-radius: 4px;
+        font-size: 18px;
+      }
+      @media screen and (max-width: 1279px) {
+        section {
+          zoom: calc(100vw / 1280px);
+        }
+      }
+      @page {
+        size: 13.333333in 7.5in;
+        margin: 0;
+      }
+      @media print {
+        body {
+          background: white;
+        }
+        section,
+        section.active {
+          display: block;
+          break-after: page;
+        }
+        section:last-of-type {
+          break-after: auto;
+        }
+        nav,
+        aside,
+        body.notes aside {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <section class="active">
+      <p class="label">Module 06 · ShopFast</p>
+      <h1>Mua hàng và hỗ trợ khách hàng với Gemini</h1>
+      <p>Transaction tồn kho · Realtime · Tác vụ nền · Triển khai AWS</p>
+      <p><a href="https://shopfast.tuanpq.com">shopfast.tuanpq.com</a></p>
+      <aside>
+        00:00–01:00. Giới thiệu bốn vai trò: customer, support, warehouse,
+        admin. Chỉ demo dữ liệu synthetic. Kịch bản chi tiết:
+        docs/18-defense-walkthrough.md.
+      </aside>
+      <footer>28/10/2026 · Bản trình bày dùng cùng evidence theo SHA</footer>
+    </section>
+    <section>
+      <p class="label">Kiến trúc</p>
+      <h2>Monolith chia module, hai tiến trình backend</h2>
+      <div class="flow">
+        <span class="node">React</span><span>→</span
+        ><span class="node">Nginx / HTTPS</span><span>→</span
+        ><span class="node">NestJS API</span><span>→</span
+        ><span class="node">PostgreSQL 16</span>
+      </div>
+      <div class="flow">
+        <span class="node">DB outbox</span><span>→</span
+        ><span class="node">Redis 7 / BullMQ</span><span>→</span
+        ><span class="node">Worker</span><span>→</span
+        ><span class="node">Email / PDF</span>
+      </div>
+      <p>EC2 Sydney · Gemini và Resend từ backend · Backup tới S3</p>
+      <p>Một host; chưa có HA chịu mất host hoặc mất vùng.</p>
+      <aside>
+        Nêu lý do: transaction đơn/tồn/outbox cùng DB, giảm chi phí vận hành.
+        Source: docs/02-data-architecture.md và docs/14-deployment-runbook.md.
+      </aside>
+      <footer>
+        DB và Redis không mở port public; browser không giữ provider key.
+      </footer>
+    </section>
+    <section>
+      <p class="label">Demo · Customer / Warehouse</p>
+      <h2>Checkout và cập nhật trạng thái</h2>
+      <ol>
+        <li>Chọn sản phẩm → giỏ hàng → checkout → mã đơn.</li>
+        <li>Warehouse chuyển trạng thái; customer nhận cập nhật.</li>
+        <li>Ngắt mạng rồi nối lại: đọc lại trạng thái cuối.</li>
+      </ol>
+      <p class="accent">
+        Server giữ transaction tồn/đơn/outbox và idempotency.
+      </p>
+      <aside>
+        01:00–03:30. Không sửa DB tay để làm demo. Giải thích reservation,
+        snapshot giá, ownership phòng socket và REST resync. Evidence
+        RT-04/UI-01 trong docs/evidence/harness-evidence-index.md.
+      </aside>
+      <footer>Socket là kênh thông báo; PostgreSQL là source of truth.</footer>
+    </section>
+    <section>
+      <p class="label">Hiệu năng đã đo · source f8d1696</p>
+      <h2>Cache và tải trên host kiểm thử</h2>
+      <table>
+        <tr>
+          <th>Phép đo</th>
+          <th>p95</th>
+          <th>Số mẫu</th>
+        </tr>
+        <tr>
+          <td>Catalog</td>
+          <td>6,51 ms</td>
+          <td>30.015</td>
+        </tr>
+        <tr>
+          <td>Checkout</td>
+          <td>16,67 ms</td>
+          <td>920</td>
+        </tr>
+        <tr>
+          <td>Realtime</td>
+          <td>9 ms</td>
+          <td>100</td>
+        </tr>
+      </table>
+      <p>
+        Cache hit <strong>96,78%</strong> · 0 lỗi · 2 phút warmup + 10 phút đo.
+      </p>
+      <aside>
+        03:30–04:15. Source docs/evidence/verified-performance-restore.md và
+        manifest69e75dffd2ee06cd. Dataset200k khách/10k sản phẩm/100k đơn. Load
+        generator cùng host; worker fixture không gọi provider. Không tuyên bố
+        tải Internet đa vùng. 429 có Retry-After, không spam auth live.
+      </aside>
+      <footer>
+        Giới hạn: load generator cùng host; kết quả giữ SHA thực thi gốc.
+      </footer>
+    </section>
+    <section>
+      <p class="label">Demo · Support</p>
+      <h2>Gemini đọc dữ liệu, con người duyệt thao tác</h2>
+      <div class="flow">
+        <span class="node">Ticket</span><span>→</span
+        ><span class="node">Tra đơn / tồn</span><span>→</span
+        ><span class="node">Đề xuất</span><span>→</span
+        ><span class="node">Xác nhận</span>
+      </div>
+      <ul>
+        <li>Kiểm quyền và ownership tại từng tool.</li>
+        <li>Chưa xác nhận: chưa ghi; replay: không gửi lặp.</li>
+        <li>Yêu cầu ngoài phạm vi phải từ chối.</li>
+      </ul>
+      <aside>
+        04:15–06:15. Gemini3.1FlashLite qua Google AI Studio API, key backend.
+        Nếu quota/mạng lỗi, nói rõ và mở smoke evidence cũ theo SHA; không giả
+        phản hồi live. Giữ tổng request dưới quota mỗi model/key. Source
+        docs/05-gemini-agent.md.
+      </aside>
+      <footer>
+        Không đưa OTP, token, API key hoặc dữ liệu khách thật vào slide.
+      </footer>
+    </section>
+    <section>
+      <p class="label">Demo · Admin</p>
+      <h2>Queue, retry và đối tác demo</h2>
+      <ul>
+        <li>Outbox bền vững trong transaction; job có business key.</li>
+        <li>Retry hữu hạn, backoff và dead letter quan sát được.</li>
+        <li>Đồng bộ tồn có version; snapshot cũ không ghi đè mới.</li>
+      </ul>
+      <p class="accent">Đối tác tồn kho là demo được người dùng chấp thuận.</p>
+      <aside>
+        06:15–07:15. Mở queue dashboard; phân biệt queued/active/failed. Giải
+        thích crash sau gửi mail trước đánh dấu done và idempotency provider.
+        Source decisionD25, docs/04-runtime-flows.md. Không tuyên bố kết nối đối
+        tác thật.
+      </aside>
+      <footer>
+        Email accepted không đồng nghĩa đã tới inbox; không hứa exactly-once
+        tuyệt đối.
+      </footer>
+    </section>
+    <section>
+      <p class="label">CI/CD</p>
+      <h2>Test lỗi thực sự chặn merge</h2>
+      <div class="cols">
+        <div>
+          <p class="big accent">BLOCKED</p>
+          <p>PR9: 1 test cố tình lỗi,<br />68 test còn lại đạt.</p>
+        </div>
+        <div>
+          <p>Required checks:</p>
+          <ul>
+            <li>application-checks</li>
+            <li>docs-checks</li>
+            <li>Áp dụng cả administrator</li>
+          </ul>
+        </div>
+      </div>
+      <aside>
+        07:15–08:00. Mở https://github.com/tuanpham2xx3/shopfast-module6/pull/9
+        và run40690998876. PR đã đóng, không merge. Đối chiếu PR8 có check xanh
+        trước merge. Source docs/evidence/ci-rejection-proof.md. OIDC credential
+        ngắn hạn gọi SSM document giới hạn.
+      </aside>
+      <footer>
+        Fixture âm chỉ có trong PR riêng; không đi vào production.
+      </footer>
+    </section>
+    <section>
+      <p class="label">Deploy / rollback · target 9b7b96f</p>
+      <h2>Phiên khách hàng qua promotion và rollback</h2>
+      <div class="cols">
+        <div>
+          <p class="big accent">57</p>
+          <p>Lượt đọc đơn được xác thực</p>
+        </div>
+        <div>
+          <p class="big accent">5 giây</p>
+          <p>Rollback sau health rejection</p>
+        </div>
+      </div>
+      <p>3 lần subscribe socket thành công · 0 lỗi · Đã restore release gốc.</p>
+      <aside>
+        08:00–08:30. Source sạch d208339; receipt71439da4c76d69db. Source
+        docs/evidence/harness-continuity-follow-up.md. Có inject lỗi sau
+        promotion; giữ cả báo cáo FAIL cũ. Đây không phải bài test mất host hoặc
+        HA.
+      </aside>
+      <footer>
+        SHA harness và SHA target riêng; không đổi nhãn evidence theo commit
+        mới.
+      </footer>
+    </section>
+    <section>
+      <p class="label">Phục hồi · source f8d1696</p>
+      <h2>S3 restore vào database cô lập</h2>
+      <p class="big accent">7 giây</p>
+      <p>
+        Checksum backup và PDF · Số dòng khớp<br />Đăng nhập và đọc đơn trên dữ
+        liệu restore
+      </p>
+      <p>Unit line coverage 60,06% · Business combined lines 86,74%</p>
+      <aside>
+        08:30–09:30. Source docs/evidence/verified-performance-restore.md;
+        manifesta91198117f40a921. Không restore đè DB live. Unit
+        statements59,06%, không nói mọi metric unit vượt60%. Backup timer và
+        quyền S3 cần audit riêng.
+      </aside>
+      <footer>
+        Thời gian đo của lần restore; không phải cam kết RTO cho mọi dung lượng.
+      </footer>
+    </section>
+    <section>
+      <p class="label">Nghiệm thu / Q&A</p>
+      <h2>Phần đã chứng minh và giới hạn còn lại</h2>
+      <ul>
+        <li>49 case chức năng đạt ở lần full run f8d1696.</li>
+        <li>Evidence có SHA, expected/actual, timestamp và hash.</li>
+        <li>MFA/least privilege phải kiểm đúng nguồn danh tính.</li>
+        <li>Diễn tập và Q&A cần người dùng thực hiện.</li>
+      </ul>
+      <p>
+        <a href="https://github.com/tuanpham2xx3/shopfast-module6"
+          >Source và evidence trên GitHub</a
+        >
+      </p>
+      <aside>
+        09:30–10:00 rồi5phútQ&A. Không tuyên bố toàn SRS PASS. Hỏi: transaction
+        boundary? cache stale race? email crash? vì sao một host không HA? vì
+        sao IAM MFA0 không kết luận BuilderID không MFA? Checklist
+        docs/18-defense-walkthrough.md.
+      </aside>
+      <footer>
+        Phím ← / → chuyển slide · N hiện ghi chú · Ctrl+P in toàn bộ deck
+      </footer>
+    </section>
+    <nav aria-label="Điều khiển trình chiếu">
+      <button id="prev">← Trước</button><button id="notes">Ghi chú</button
+      ><button id="next">Sau →</button>
+    </nav>
+    <script>
+      const slides = [...document.querySelectorAll("section")];
+      let current = 0;
+      function show(index) {
+        current = Math.max(0, Math.min(slides.length - 1, index));
+        slides.forEach((s, i) => s.classList.toggle("active", i === current));
+        document.title = `ShopFast ${current + 1}/${slides.length}`;
+      }
+      document.getElementById("prev").onclick = () => show(current - 1);
+      document.getElementById("next").onclick = () => show(current + 1);
+      document.getElementById("notes").onclick = () =>
+        document.body.classList.toggle("notes");
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight") show(current + 1);
+        if (e.key === "ArrowLeft") show(current - 1);
+        if (e.key.toLowerCase() === "n")
+          document.body.classList.toggle("notes");
+      });
+    </script>
+  </body>
+</html>

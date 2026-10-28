@@ -1,4 +1,4 @@
-import { AuthService } from "../../libs/modules/auth/auth.service";
+import { AuthService } from "../../libs/modules/auth/src/auth.service";
 import * as argon2 from "argon2";
 import jwt from "jsonwebtoken";
 import { createHash, randomUUID } from "node:crypto";

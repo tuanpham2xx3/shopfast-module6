@@ -5,10 +5,10 @@ const {
 } = require("/app/dist-tools/libs/platform/src/database/data-source.js");
 const {
   CatalogService,
-} = require("/app/dist-tools/libs/modules/catalog/catalog.service.js");
+} = require("/app/dist-tools/libs/modules/catalog/src/catalog.service.js");
 const {
   CatalogCache,
-} = require("/app/dist-tools/libs/modules/runtime/catalog-cache.js");
+} = require("/app/dist-tools/libs/modules/runtime/src/catalog-cache.js");
 const schema = process.env.DATABASE_SCHEMA;
 if (!/^harness_recovery_[0-9]+$/.test(schema || ""))
   throw new Error("Isolated schema required");

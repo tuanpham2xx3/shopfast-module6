@@ -24,22 +24,22 @@ import {
   probeDatabase,
   probeRedis,
 } from "../../../libs/platform/src/health/dependency-probes";
-import { AuthError } from "../../../libs/modules/auth/auth.service";
-import { AuthModule } from "../../../libs/modules/auth/auth.module";
-import { CatalogModule } from "../../../libs/modules/catalog/catalog.module";
-import { CatalogError } from "../../../libs/modules/catalog/catalog.service";
-import { OrderError } from "../../../libs/modules/orders/order.service";
-import { OrderModule } from "../../../libs/modules/orders/order.module";
-import { RealtimeModule } from "../../../libs/modules/realtime/realtime.module";
-import { JobsModule } from "../../../libs/modules/jobs/jobs.module";
-import { TicketsModule } from "../../../libs/modules/tickets/tickets.module";
-import { TicketError } from "../../../libs/modules/tickets/tickets.service";
+import { AuthError } from "../../../libs/modules/auth/src/auth.service";
+import { AuthModule } from "../../../libs/modules/auth/src/auth.module";
+import { CatalogModule } from "../../../libs/modules/catalog/src/catalog.module";
+import { CatalogError } from "../../../libs/modules/catalog/src/catalog.service";
+import { OrderError } from "../../../libs/modules/orders/src/order.service";
+import { OrderModule } from "../../../libs/modules/orders/src/order.module";
+import { RealtimeModule } from "../../../libs/modules/realtime/src/realtime.module";
+import { JobsModule } from "../../../libs/modules/jobs/src/jobs.module";
+import { TicketsModule } from "../../../libs/modules/tickets/src/tickets.module";
+import { TicketError } from "../../../libs/modules/tickets/src/tickets.service";
 import {
   RuntimeModule,
   RuntimeRateInterceptor,
-} from "../../../libs/modules/runtime/runtime.module";
-import { RateLimitError } from "../../../libs/modules/runtime/limiter";
-import { OperationsModule } from "../../../libs/modules/operations/operations.module";
+} from "../../../libs/modules/runtime/src/runtime.module";
+import { RateLimitError } from "../../../libs/modules/runtime/src/limiter";
+import { OperationsModule } from "../../../libs/modules/operations/src/operations.module";
 
 type IdentifiedRequest = Request & { requestId: string };
 

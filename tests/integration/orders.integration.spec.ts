@@ -1,12 +1,12 @@
 import { randomUUID } from "node:crypto";
 import { DataSource } from "typeorm";
 import { createDataSource } from "../../libs/platform/src/database/data-source";
-import { CatalogService } from "../../libs/modules/catalog/catalog.service";
-import { OrderService } from "../../libs/modules/orders/order.service";
+import { CatalogService } from "../../libs/modules/catalog/src/catalog.service";
+import { OrderService } from "../../libs/modules/orders/src/order.service";
 import {
   JobsService,
   DevelopmentEmailAdapter,
-} from "../../libs/modules/jobs/jobs.service";
+} from "../../libs/modules/jobs/src/jobs.service";
 
 describe("order transaction invariants", () => {
   let source: DataSource;

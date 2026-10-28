@@ -3,14 +3,17 @@ import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import { writeFile } from "node:fs/promises";
 import { createDataSource } from "../libs/platform/src/database/data-source";
-import { TicketsService, Actor } from "../libs/modules/tickets/tickets.service";
-import { AiService } from "../libs/modules/ai/ai.service";
+import {
+  TicketsService,
+  Actor,
+} from "../libs/modules/tickets/src/tickets.service";
+import { AiService } from "../libs/modules/ai/src/ai.service";
 import {
   GoogleGeminiProvider,
   GeminiProvider,
   ProviderRequest,
-} from "../libs/modules/ai/gemini.provider";
-import { CatalogService } from "../libs/modules/catalog/catalog.service";
+} from "../libs/modules/ai/src/gemini.provider";
+import { CatalogService } from "../libs/modules/catalog/src/catalog.service";
 
 async function main() {
   assert(

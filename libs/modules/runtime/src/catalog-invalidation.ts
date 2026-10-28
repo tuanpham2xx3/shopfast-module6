@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { EntityManager } from "typeorm";
-import { enqueueOutbox } from "../../platform/src/outbox/outbox";
+import { enqueueOutbox } from "../../../platform/src/outbox/outbox";
 
 export async function enqueueCatalogInvalidation(
   manager: EntityManager,

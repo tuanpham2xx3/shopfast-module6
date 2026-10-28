@@ -1,4 +1,8 @@
 module.exports = {
+  modulePathIgnorePatterns: [
+    "<rootDir>/.secrets/",
+    "<rootDir>/tools/references/",
+  ],
   testPathIgnorePatterns: [
     "/node_modules/",
     "\\.integration\\.spec\\.ts$",

@@ -4,16 +4,18 @@ ShopFast là bài Defense Case Study Module 6: backend thương mại điện t�
 
 ## Trạng thái
 
-Đã có auth, catalog/kho/đơn, BullMQ jobs/invoice PDF, Socket.IO realtime, Redis cache/fallback, rate limiting, ticket/support và Gemini agent với human confirmation. UI customer/kho/support/admin đã nối API. Provider thật, Redis local và performance/cloud chưa nghiệm thu; xem `docs/evidence/external-acceptance-pending.md`.
+Ứng dụng chạy tại <https://shopfast.tuanpq.com>, gồm auth, catalog/kho/đơn, BullMQ jobs/invoice PDF, Socket.IO, cache/fallback, rate limit, ticket/support và Gemini với human confirmation. Đã có smoke provider thật, CI/CD và các phép đo hiệu năng/restore theo từng SHA. [Chỉ mục evidence](docs/evidence/harness-evidence-index.md) ghi phạm vi đã kiểm chứng; [plan hoàn tất SRS](docs/16-srs-completion-plan.md) giữ các gate chưa đạt. Chưa tuyên bố toàn bộ SRS hoàn tất.
 
 - [Bộ tài liệu triển khai](docs/README.md)
 - [Product spec](docs/01-product-spec.md)
 - [Implementation roadmap](docs/07-implementation-roadmap.md)
 - [Acceptance checklist](docs/08-acceptance.md)
+- [Cấu trúc repository và ranh giới phụ thuộc](docs/19-repository-structure.md)
+- [Slide HTML/PDF và ghi chú bảo vệ](docs/defense/README.md)
 
 ## Môi trường phát triển
 
-Máy Windows phát triển không dùng Docker Desktop/WSL. M0 sẽ dùng PostgreSQL 16 native và Memurai tương thích Redis API v7. Docker Compose và Redis 7 thật được dùng trên VPS/Linux ở giai đoạn hạ tầng và nghiệm thu cuối.
+Máy Windows phát triển không dùng Docker Desktop/WSL. Dev dùng PostgreSQL16 native và Memurai tương thích Redis API7; CI/VPS dùng Docker Linux và Redis7 thật. Endpoint test lấy từ env riêng, không hardcode credential hoặc dùng database production làm test database.
 
 Tooling hiện có:
 
@@ -28,7 +30,7 @@ Xem [hướng dẫn tooling](docs/11-development-tooling.md) để cài MCP, Nod
 
 ## Quy trình
 
-Mọi thay đổi triển khai trên branch riêng, qua kiểm tra phù hợp và commit theo Conventional Commits. Có CI tài liệu và workflow ứng dụng (format, lint, typecheck, test, build, integration); deployment VPS sẽ bổ sung ở mốc hạ tầng.
+Mọi thay đổi trên branch riêng, kiểm tra và commit theo Conventional Commits. Main yêu cầu application-checks/docs-checks; workflow kiểm format, ranh giới kiến trúc, lint, typecheck, test, coverage, browser và build Linux. Workflow release đẩy image theo SHA lên GHCR rồi dùng AWS OIDC/SSM deploy EC2. Xem [runbook](docs/14-deployment-runbook.md) và [bằng chứng CI chặn test lỗi](docs/evidence/ci-rejection-proof.md).
 
 ## Chạy ứng dụng local
 
@@ -60,8 +62,8 @@ npm run dev:web
 
 `npm run check` chạy format/lint/typecheck/unit/HTTP contract/build. Integration yêu cầu `TEST_DATABASE_URL` và `TEST_REDIS_URL` riêng rồi chạy `npm run test:integration`; test tạo schema/key/queue riêng và dọn sau khi chạy, không dùng FLUSHDB.
 
-Máy phát triển hiện có PostgreSQL portable ở `tools/.runtime/services/postgresql/pgsql`, DB riêng tại port `55432` và `.env` local đã tạo. Mật khẩu chỉ nằm trong các file gitignored. Cách khởi động/dừng: `powershell -File scripts/local-postgres.ps1 start` hoặc `stop`. Memurai chưa cài xong; xem [evidence M0](docs/evidence/m0-progress.md).
+Runtime portable, dữ liệu local và credential nằm trong `tools/.runtime`/file ignored; đường dẫn trên máy agent không phải điều kiện cho một máy mới. Cách quản lý PostgreSQL portable: `powershell -File scripts/local-postgres.ps1 start` hoặc `stop`. Memurai phải chạy native và bind loopback; xem [tooling](docs/11-development-tooling.md). Cùng integration suite đã được chạy với Memurai API7 và Redis7Linux; kết quả giữ endpoint/config của từng lần.
 
-GitHub Actions đã chạy đạt nền tảng M0 với PostgreSQL 16/Redis 7 trên Linux. Các commit triển khai sau đang ở local; chưa push hoặc deploy VPS.
+[Nguồn public và lịch sử CI](https://github.com/tuanpham2xx3/shopfast-module6), [harness guide](docs/17-harness-guide.md) và [kịch bản nghiệm thu](docs/18-defense-walkthrough.md) là các điểm bắt đầu để kiểm tra bản bàn giao. Tài liệu evidence theo mốc cũ chỉ là lịch sử, không tự đại diện release mới.
 
 Browser E2E thật: đặt `TEST_DATABASE_URL`, chạy `npm run build:api`, cài Chromium bằng `npx playwright install chromium`, rồi `npm run test:e2e`. Test tự chạy API/web trên port 4300/4173, tạo schema riêng và dọn sau khi chạy. Luồng thật gồm đăng ký/xác minh, reload session, nhập tồn, mua/hủy/mua lại, payment MOCK và DELIVERED; không cần Redis cho bộ test này.

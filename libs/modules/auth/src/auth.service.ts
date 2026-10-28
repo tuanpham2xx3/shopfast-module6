@@ -2,8 +2,8 @@ import { createHash, randomBytes, randomInt, randomUUID } from "node:crypto";
 import * as argon2 from "argon2";
 import * as jwt from "jsonwebtoken";
 import { DataSource, EntityManager } from "typeorm";
-import { enqueueOutbox } from "../../platform/src/outbox/outbox";
-import { domainEvents } from "../../platform/src/domain-events";
+import { enqueueOutbox } from "../../../platform/src/outbox/outbox";
+import { domainEvents } from "../../../platform/src/domain-events";
 
 const DUMMY_HASH =
   "$argon2id$v=19$m=65536,t=3,p=4$u4tn5/QBkajPFwbV7vg+fw$1RGvrL5mH3lKeiXS1ZEx5Ji+x5lLmXyIj8emT0XhWd4";

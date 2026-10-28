@@ -54,6 +54,10 @@ Thiết kế sau phải xử lý migration tương thích khi chạy hai version
 
 ## 3. Rủi ro cần theo dõi
 
+### D26 — Chuẩn hóa module và composition root
+
+28/10/2026: theo yêu cầu chuẩn hóa cấu trúc dự án, source mỗi feature nằm trong `libs/modules/<feature>/src`. Worker orchestration chuyển từ platform về `apps/worker/src`; platform không phụ thuộc nghiệp vụ. Thêm architecture check vào CI. Không đổi contract HTTP/socket, database schema, quyền, transaction hoặc khóa idempotency. Xem [cấu trúc repository](19-repository-structure.md).
+
 ### D25 — Đối tác tồn kho demo được người dùng chấp thuận
 
 28/10/2026: người dùng xác nhận “Không có, dùng đối tác demo”. Nghiệm thu luồng `inventory.partner-sync` với `partner_inventory` mô phỏng có version và business key; ghi rõ đây là demo trong API/dashboard/report/slide. Không yêu cầu credential/endpoint đối tác thật và không tuyên bố đã gửi dữ liệu ra bên thứ ba. Vẫn kiểm queue không chặn checkout, retry/dedup và snapshot cũ không ghi đè mới. Gate `partner-http-contract` trước đây đổi thành `partner-versioned-demo`; không suy việc người dùng chấp thuận thành test đã PASS.

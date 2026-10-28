@@ -4,7 +4,7 @@ import { createDataSource } from "../../libs/platform/src/database/data-source";
 import {
   RuntimeLimiter,
   RateLimitError,
-} from "../../libs/modules/runtime/limiter";
+} from "../../libs/modules/runtime/src/limiter";
 describe("authoritative runtime limiting", () => {
   let source: DataSource;
   let limiter: RuntimeLimiter;
