@@ -2,6 +2,7 @@
   fs = require("fs"),
   dotenv = require("dotenv");
 (async () => {
+  const { submitBrowserLogin } = await import("./browser-login.mjs");
   const seed = dotenv.parse(fs.readFileSync(".secrets/deployment-seed.env"));
   const browser = await chromium.launch();
   const checks = [];
@@ -33,9 +34,7 @@
       await page
         .getByLabel("Mật khẩu", { exact: true })
         .fill(seed.DEV_SEED_PASSWORD);
-      await page
-        .getByRole("button", { name: "Đăng nhập", exact: true })
-        .click();
+      await submitBrowserLogin(page);
       await expect(
         page.getByRole("button", { name: "Đăng xuất", exact: true }),
       ).toBeVisible({ timeout: 15000 });

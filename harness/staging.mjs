@@ -5,8 +5,10 @@ import { readFile, mkdir, writeFile } from "node:fs/promises";
 import { spawnSync } from "node:child_process";
 import dotenv from "dotenv";
 import { io } from "socket.io-client";
+import { submitBrowserLogin } from "./browser-login.mjs";
 const base = "https://shopfast.tuanpq.com",
-  checks = [];
+  checks = [],
+  aiAttempts = [];
 await mkdir("harness/reports", { recursive: true });
 const seed = dotenv.parse(await readFile(".secrets/deployment-seed.env"));
 const tokens = {};
@@ -253,24 +255,33 @@ try {
     body: { body: "ShopFast đã tiếp nhận yêu cầu kiểm tra." },
   });
   checks.push("TKT-customer-support-claim-reply");
-  const session = (
-    await request(`/staff/tickets/${ticket.id}/ai-sessions`, {
-      method: "POST",
-      role: "support",
-    })
-  ).data;
-  const clientMessageId = randomUUID();
+  let session, clientMessageId, answer;
   const message = `Tra cứu trạng thái đơn ${order.code} và tồn kho SKU ${product.sku} bằng cả hai tool. Trả JSON đúng hợp đồng với claims cho cả hai resource.`;
   const beforeAi = (
     await request(`/tickets/${ticket.id}`, { role: "customer" })
   ).data;
-  const answer = (
-    await request(`/staff/ai-sessions/${session.sessionId}/messages`, {
-      method: "POST",
-      role: "support",
-      body: { message, clientMessageId },
-    })
-  ).data;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    session = (
+      await request(`/staff/tickets/${ticket.id}/ai-sessions`, {
+        method: "POST",
+        role: "support",
+      })
+    ).data;
+    clientMessageId = randomUUID();
+    answer = (
+      await request(`/staff/ai-sessions/${session.sessionId}/messages`, {
+        method: "POST",
+        role: "support",
+        body: { message, clientMessageId },
+      })
+    ).data;
+    aiAttempts.push({ attempt: attempt + 1, status: answer.status });
+    if (answer.status !== "UNAVAILABLE" || attempt === 1) break;
+    console.log(
+      "Gemini UNAVAILABLE retained in evidence; retrying a new read-only turn after 6s",
+    );
+    await new Promise((resolve) => setTimeout(resolve, 6000));
+  }
   assert.equal(answer.status, "OK", "Production Gemini turn must succeed");
   assert(
     answer.evidence.some(
@@ -325,7 +336,7 @@ try {
       .click();
     await page.getByLabel("Email", { exact: true }).fill(email);
     await page.getByLabel("Mật khẩu", { exact: true }).fill(password);
-    await page.getByRole("button", { name: "Đăng nhập", exact: true }).click();
+    await submitBrowserLogin(page);
     await expect(
       page.getByRole("button", { name: "Đăng xuất", exact: true }),
     ).toBeVisible();
@@ -383,6 +394,7 @@ try {
         target: base,
         status: process.exitCode ? "FAIL" : "PASS",
         checks,
+        aiAttempts,
       },
       null,
       2,

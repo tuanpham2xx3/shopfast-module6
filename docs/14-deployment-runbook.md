@@ -31,6 +31,8 @@ Web release directories0755/files0644 để Nginx worker đọc public assets qu
 
 E2E local/CI dùng `/api/v1` tương đối qua Vite dev proxy giống production; không chỉ test URL API tuyệt đối. URL WebSocket resolve theo origin trang khi API base tương đối. Staging có browser login/workspace riêng cho Customer/Warehouse/Support/Admin; screenshots và role report nằm trong ignored `harness/reports/`.
 
+Login giới hạn5/IP/phút. Các browser tests dùng chung IP phải đọc429/Retry-After, chờ countdown rồi retry tối đa3lần; không tăng/bypass limiter để test xanh. Gemini public smoke giữ lại trạng thái từng lần trong `aiAttempts`, chỉ thử thêm một read-only turn/session mới sau6giây khi UNAVAILABLE; vẫn yêu cầu OK, đủ hai evidence và replay/no-auto-reply để PASS. Không retry mutation bằng key mới.
+
 ## Backup và restore
 
 Daily systemd timer chạy19:00UTC (02:00Asia/Bangkok ngày sau), persistent catch-up, jitter5phút. Backup upload pg_dump custom archive + checksum ra S3 private/encrypted/versioned `backups/`; loại schema fixture `harness_*`/`test_*`, giữ local3ngày, S3 lifecycle30ngày. IAM role lấy credentials tạm từ EC2.
