@@ -1,0 +1,9 @@
+{
+  "startedAt": "2026-10-28T12:22:21.989Z",
+  "finishedAt": "2026-10-28T12:22:25.156Z",
+  "status": "PASS",
+  "exitCode": 0,
+  "timedOut": false,
+  "durationMs": 3167,
+  "output": "{\"mtime\": 1793190141.0408428, \"report\": {\"status\": \"PASS\", \"executedAt\": \"2026-10-28T12:22:21.041Z\", \"fixtureSchema\": \"harness_load_1793189401\", \"dataset\": {\"customers\": 200000, \"products\": 10000, \"orders\": 100000}, \"warmupMs\": 120000, \"measureMs\": 600000, \"vus\": {\"catalog\": 50, \"checkout\": 10, \"sockets\": 100}, \"arrivalSchedule\": \"Catalog50requests/sec staggered20ms; checkout10VUs each6.5seconds staggered650ms. Earlier synchronized burst result retained separately.\", \"stats\": {\"catalog\": {\"count\": 30015, \"p95\": 6.509842999977991, \"max\": 81.06988600001205}, \"checkout\": {\"count\": 920, \"p95\": 16.67490799992811, \"max\": 53.29768800002057}, \"secondRead\": {\"count\": 30, \"p95\": 15.84123199999999, \"max\": 16.069098000000054}, \"realtime\": {\"count\": 100, \"p95\": 9, \"max\": 14}}, \"failures\": 0, \"rateLimited\": 0, \"cacheHitRate\": 0.9678354776348244, \"limitations\": [\"Single host load generator competes for CPU with services\", \"Fixture worker intentionally not sending provider traffic\"], \"acceptance\": \"PASS\"}}\n"
+}

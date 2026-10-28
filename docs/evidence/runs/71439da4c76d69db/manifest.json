@@ -1,0 +1,57 @@
+{
+  "sourceReceipt": "harness\\reports\\receipts\\7166c141-7d3c-434a-a605-d5f2c717e574-continuity.json",
+  "receipts": [
+    {
+      "runId": "7166c141-7d3c-434a-a605-d5f2c717e574",
+      "caseId": "GATE-active-deploy-continuity",
+      "commit": "d208339b498c1faa0b7c3406b8c1f48efdc9abd1",
+      "dirty": false,
+      "configHash": "a9c9caaea5a529a5012ef9e8fc5db62f3b4a5ffc9dae700385250cf5726c0785",
+      "executedAt": "2026-10-28T12:54:49.662Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": ["node", "harness/deploy-continuity.mjs"],
+      "assertions": [
+        {
+          "name": "authenticated HTTP reads across promotion/rollback",
+          "expected": "at least five reads and zero errors",
+          "actual": {
+            "samples": 57,
+            "errors": []
+          },
+          "passed": true
+        },
+        {
+          "name": "private subscription survives via reconnect",
+          "expected": "at least two successful subscriptions",
+          "actual": 3,
+          "passed": true
+        },
+        {
+          "name": "restore original release",
+          "expected": true,
+          "actual": true,
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/continuity-1793191945741.json",
+          "bytes": 9173,
+          "sha256": "cae25121ca54235d4390ea6ff8057830cd578361f4b1c531bb59c8d43d47e999"
+        }
+      ],
+      "targetCommit": "9b7b96f3503b022e924a26a96f9abcf1d9403ea2",
+      "candidateCommit": "edd1fe6f814925636be5c561de8809ea7f0f68be"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "harness/reports/continuity-1793191945741.json",
+      "bytes": 9173,
+      "sha256": "cae25121ca54235d4390ea6ff8057830cd578361f4b1c531bb59c8d43d47e999",
+      "exportedPath": "docs/evidence/runs/71439da4c76d69db/cae25121ca54235d4390ea6ff8057830cd578361f4b1c531bb59c8d43d47e999.txt"
+    }
+  ],
+  "note": "PNG reviewed separately before commit/publication; hash integrity does not prove assertion coverage."
+}

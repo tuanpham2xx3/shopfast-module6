@@ -1,0 +1,415 @@
+{
+  "status": "PASS",
+  "executedAt": "2026-10-28T12:54:49.662Z",
+  "original": "9b7b96f3503b022e924a26a96f9abcf1d9403ea2",
+  "candidate": "edd1fe6f814925636be5c561de8809ea7f0f68be",
+  "restored": true,
+  "durationMs": 143921,
+  "samples": [
+    {
+      "at": 1793191956196,
+      "status": 200,
+      "durationMs": 891,
+      "version": 5
+    },
+    {
+      "at": 1793191959091,
+      "status": 200,
+      "durationMs": 312,
+      "version": 5
+    },
+    {
+      "at": 1793191961418,
+      "status": 200,
+      "durationMs": 280,
+      "version": 5
+    },
+    {
+      "at": 1793191963699,
+      "status": 200,
+      "durationMs": 280,
+      "version": 5
+    },
+    {
+      "at": 1793191965987,
+      "status": 200,
+      "durationMs": 276,
+      "version": 5
+    },
+    {
+      "at": 1793191968271,
+      "status": 200,
+      "durationMs": 884,
+      "version": 5
+    },
+    {
+      "at": 1793191971166,
+      "status": 200,
+      "durationMs": 295,
+      "version": 5
+    },
+    {
+      "at": 1793191973465,
+      "status": 200,
+      "durationMs": 286,
+      "version": 5
+    },
+    {
+      "at": 1793191975753,
+      "status": 200,
+      "durationMs": 279,
+      "version": 5
+    },
+    {
+      "at": 1793191978040,
+      "status": 200,
+      "durationMs": 278,
+      "version": 5
+    },
+    {
+      "at": 1793191980327,
+      "status": 200,
+      "durationMs": 294,
+      "version": 5
+    },
+    {
+      "at": 1793191982623,
+      "status": 200,
+      "durationMs": 282,
+      "version": 5
+    },
+    {
+      "at": 1793191984915,
+      "status": 200,
+      "durationMs": 279,
+      "version": 5
+    },
+    {
+      "at": 1793191987209,
+      "status": 200,
+      "durationMs": 278,
+      "version": 5
+    },
+    {
+      "at": 1793191989496,
+      "status": 200,
+      "durationMs": 280,
+      "version": 5
+    },
+    {
+      "at": 1793191991779,
+      "status": 200,
+      "durationMs": 280,
+      "version": 5
+    },
+    {
+      "at": 1793191994073,
+      "status": 200,
+      "durationMs": 277,
+      "version": 5
+    },
+    {
+      "at": 1793191996350,
+      "status": 200,
+      "durationMs": 278,
+      "version": 5
+    },
+    {
+      "at": 1793191998641,
+      "status": 200,
+      "durationMs": 279,
+      "version": 5
+    },
+    {
+      "at": 1793192000919,
+      "status": 200,
+      "durationMs": 276,
+      "version": 5
+    },
+    {
+      "at": 1793192003205,
+      "status": 200,
+      "durationMs": 279,
+      "version": 5
+    },
+    {
+      "at": 1793192005497,
+      "status": 200,
+      "durationMs": 282,
+      "version": 5
+    },
+    {
+      "at": 1793192007781,
+      "status": 200,
+      "durationMs": 278,
+      "version": 5
+    },
+    {
+      "at": 1793192010070,
+      "status": 200,
+      "durationMs": 279,
+      "version": 5
+    },
+    {
+      "at": 1793192012356,
+      "status": 200,
+      "durationMs": 279,
+      "version": 5
+    },
+    {
+      "at": 1793192014643,
+      "status": 200,
+      "durationMs": 423,
+      "version": 5
+    },
+    {
+      "at": 1793192017067,
+      "status": 200,
+      "durationMs": 278,
+      "version": 5
+    },
+    {
+      "at": 1793192019354,
+      "status": 200,
+      "durationMs": 281,
+      "version": 5
+    },
+    {
+      "at": 1793192021650,
+      "status": 200,
+      "durationMs": 278,
+      "version": 5
+    },
+    {
+      "at": 1793192023939,
+      "status": 200,
+      "durationMs": 278,
+      "version": 5
+    },
+    {
+      "at": 1793192026232,
+      "status": 200,
+      "durationMs": 279,
+      "version": 5
+    },
+    {
+      "at": 1793192028512,
+      "status": 200,
+      "durationMs": 370,
+      "version": 5
+    },
+    {
+      "at": 1793192030885,
+      "status": 200,
+      "durationMs": 888,
+      "version": 5
+    },
+    {
+      "at": 1793192033774,
+      "status": 200,
+      "durationMs": 308,
+      "version": 5
+    },
+    {
+      "at": 1793192036086,
+      "status": 200,
+      "durationMs": 299,
+      "version": 5
+    },
+    {
+      "at": 1793192038395,
+      "status": 200,
+      "durationMs": 305,
+      "version": 5
+    },
+    {
+      "at": 1793192040708,
+      "status": 200,
+      "durationMs": 1150,
+      "version": 5
+    },
+    {
+      "at": 1793192043862,
+      "status": 200,
+      "durationMs": 281,
+      "version": 5
+    },
+    {
+      "at": 1793192046158,
+      "status": 200,
+      "durationMs": 278,
+      "version": 5
+    },
+    {
+      "at": 1793192048449,
+      "status": 200,
+      "durationMs": 275,
+      "version": 5
+    },
+    {
+      "at": 1793192050730,
+      "status": 200,
+      "durationMs": 278,
+      "version": 5
+    },
+    {
+      "at": 1793192053021,
+      "status": 200,
+      "durationMs": 276,
+      "version": 5
+    },
+    {
+      "at": 1793192055303,
+      "status": 200,
+      "durationMs": 277,
+      "version": 5
+    },
+    {
+      "at": 1793192057589,
+      "status": 200,
+      "durationMs": 277,
+      "version": 5
+    },
+    {
+      "at": 1793192059876,
+      "status": 200,
+      "durationMs": 279,
+      "version": 5
+    },
+    {
+      "at": 1793192062164,
+      "status": 200,
+      "durationMs": 287,
+      "version": 5
+    },
+    {
+      "at": 1793192064459,
+      "status": 200,
+      "durationMs": 280,
+      "version": 5
+    },
+    {
+      "at": 1793192066744,
+      "status": 200,
+      "durationMs": 276,
+      "version": 5
+    },
+    {
+      "at": 1793192069029,
+      "status": 200,
+      "durationMs": 295,
+      "version": 5
+    },
+    {
+      "at": 1793192071338,
+      "status": 200,
+      "durationMs": 275,
+      "version": 5
+    },
+    {
+      "at": 1793192073617,
+      "status": 200,
+      "durationMs": 277,
+      "version": 5
+    },
+    {
+      "at": 1793192075903,
+      "status": 200,
+      "durationMs": 276,
+      "version": 5
+    },
+    {
+      "at": 1793192078184,
+      "status": 200,
+      "durationMs": 276,
+      "version": 5
+    },
+    {
+      "at": 1793192080463,
+      "status": 200,
+      "durationMs": 279,
+      "version": 5
+    },
+    {
+      "at": 1793192082748,
+      "status": 200,
+      "durationMs": 274,
+      "version": 5
+    },
+    {
+      "at": 1793192085027,
+      "status": 200,
+      "durationMs": 279,
+      "version": 5
+    },
+    {
+      "at": 1793192087315,
+      "status": 200,
+      "durationMs": 278,
+      "version": 5
+    }
+  ],
+  "subscriptions": [
+    {
+      "socketId": "8qBcg7m0ZwbkgEHdAAAD",
+      "at": 1793191954896,
+      "version": 5
+    },
+    {
+      "socketId": "dORO3PYLoRDKR4yxAAAA",
+      "at": 1793192015695,
+      "version": 5
+    },
+    {
+      "socketId": "BR74RjEJqIqDgPCWAAAA",
+      "at": 1793192087275,
+      "version": 5
+    }
+  ],
+  "subscriptionAttempts": [
+    {
+      "socketId": "8qBcg7m0ZwbkgEHdAAAD",
+      "startedAt": 1793191954614,
+      "finishedAt": 1793191954896,
+      "outcome": "acknowledged"
+    },
+    {
+      "socketId": "dORO3PYLoRDKR4yxAAAA",
+      "startedAt": 1793192015377,
+      "finishedAt": 1793192015695,
+      "outcome": "acknowledged"
+    },
+    {
+      "socketId": "BR74RjEJqIqDgPCWAAAA",
+      "startedAt": 1793192086975,
+      "finishedAt": 1793192087275,
+      "outcome": "acknowledged"
+    }
+  ],
+  "errors": [],
+  "deploy": {
+    "status": "PASS",
+    "exitCode": 0,
+    "timedOut": false,
+    "durationMs": 57278,
+    "output": "edd1fe6f814925636be5c561de8809ea7f0f68be: Pulling from tuanpham2xx3/shopfast-module6-app\nDigest: sha256:b14b5c6c3a843e689d43893309c762e07022f04030d9cec5d1974055c5ae8fc3\nStatus: Image is up to date for ghcr.io/tuanpham2xx3/shopfast-module6-app:edd1fe6f814925636be5c561de8809ea7f0f68be\nghcr.io/tuanpham2xx3/shopfast-module6-app:edd1fe6f814925636be5c561de8809ea7f0f68be\nedd1fe6f814925636be5c561de8809ea7f0f68be: Pulling from tuanpham2xx3/shopfast-module6-web\nDigest: sha256:2932d9cc12b5c38c7ff752d3ea0a18cbfa65d824710641ebdca1ed7d99b3cd2d\nStatus: Image is up to date for ghcr.io/tuanpham2xx3/shopfast-module6-web:edd1fe6f814925636be5c561de8809ea7f0f68be\nghcr.io/tuanpham2xx3/shopfast-module6-web:edd1fe6f814925636be5c561de8809ea7f0f68be\nApplied 0 migrations\nnginx: the configuration file /etc/nginx/nginx.conf syntax is ok\nnginx: configuration file /etc/nginx/nginx.conf test is successful\n2026/10/28 12:52:44 [notice] 272#272: signal process started\nRelease promoted: edd1fe6f814925636be5c561de8809ea7f0f68be\n",
+    "artifact": {
+      "path": "harness/reports/artifacts/03515dc3-4a94-4c4f-96f5-7e828a5f5a61.log",
+      "sha256": "8b3afe50f5d13e5ad351431860d6723d7e68401c8a5065f09fcfd036b5538368",
+      "bytes": 1207
+    }
+  },
+  "rollback": {
+    "status": "PASS",
+    "exitCode": 0,
+    "timedOut": false,
+    "durationMs": 8680,
+    "output": "{\"status\":\"PASS\",\"durationSeconds\":5,\"previousFrontendRestored\":true,\"previousNginxRestored\":true,\"httpsReady\":true,\"injection\":\"forced post-promotion health rejection of otherwise healthy fixture candidate\"}\n",
+    "artifact": {
+      "path": "harness/reports/artifacts/ea472838-fc0b-45d4-bbd2-8eae2af25f4b.log",
+      "sha256": "50588b3d233022386a62cf4173d8ec089b69326f3f642917571c423b90e1de27",
+      "bytes": 412
+    }
+  },
+  "scope": "Authenticated browser order session, HTTP reads and private socket across healthy promotion and injected unhealthy candidate rollback. No host failure/HA claim."
+}

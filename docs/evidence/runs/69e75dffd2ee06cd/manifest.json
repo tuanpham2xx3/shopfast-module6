@@ -1,0 +1,629 @@
+{
+  "sourceReceipt": "harness\\reports\\receipts\\057301aa-ba67-410c-8422-bc3bba2c65d8-remote.json",
+  "receipts": [
+    {
+      "runId": "057301aa-ba67-410c-8422-bc3bba2c65d8",
+      "caseId": "GATE-performance-read",
+      "commit": "f8d169625a2820f54cdc6214f76dbd9dec7e1f17",
+      "dirty": false,
+      "configHash": "11adada81b612c3897cb97b4d1c70bd51e2912a86d1210892efc5954004a808a",
+      "executedAt": "2026-10-28T12:22:25.159Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "ssh",
+        "-o",
+        "BatchMode=yes",
+        "-i",
+        ".secrets/shopfast-ec2.pem",
+        "ubuntu@3.27.169.177",
+        "sudo python3 -c 'import json,os; p=\"/opt/shopfast/reports/performance.json\"; print(json.dumps({\"mtime\":os.path.getmtime(p),\"report\":json.load(open(p))}))'"
+      ],
+      "assertions": [
+        {
+          "name": "remote report freshly written by this execution",
+          "expected": "mtime >= run start minus 5 seconds",
+          "actual": 1793190141.0408428,
+          "passed": true
+        },
+        {
+          "name": "report status",
+          "expected": "PASS",
+          "actual": "PASS",
+          "passed": true
+        },
+        {
+          "name": "catalog samples",
+          "expected": ">=1000",
+          "actual": 30015,
+          "passed": true
+        },
+        {
+          "name": "catalog p95",
+          "expected": "<50ms",
+          "actual": 6.509842999977991,
+          "passed": true
+        },
+        {
+          "name": "checkout samples",
+          "expected": ">=100",
+          "actual": 920,
+          "passed": true
+        },
+        {
+          "name": "checkout p95",
+          "expected": "<300ms",
+          "actual": 16.67490799992811,
+          "passed": true
+        },
+        {
+          "name": "secondRead samples",
+          "expected": ">=30",
+          "actual": 30,
+          "passed": true
+        },
+        {
+          "name": "secondRead p95",
+          "expected": "<20ms",
+          "actual": 15.84123199999999,
+          "passed": true
+        },
+        {
+          "name": "realtime samples",
+          "expected": ">=100",
+          "actual": 100,
+          "passed": true
+        },
+        {
+          "name": "realtime max",
+          "expected": "<1000ms",
+          "actual": 14,
+          "passed": true
+        },
+        {
+          "name": "cache hit",
+          "expected": ">=80% and <=100%",
+          "actual": 0.9678354776348244,
+          "passed": true
+        },
+        {
+          "name": "errors and 429",
+          "expected": 0,
+          "actual": {
+            "failures": 0,
+            "rateLimited": 0
+          },
+          "passed": true
+        },
+        {
+          "name": "measurement duration",
+          "expected": "warmup>=120s, measure>=600s",
+          "actual": {
+            "warmup": 120000,
+            "measure": 600000
+          },
+          "passed": true
+        },
+        {
+          "name": "dataset",
+          "expected": "200k customers/10k products/100k orders",
+          "actual": {
+            "customers": 200000,
+            "products": 10000,
+            "orders": 100000
+          },
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/8b2123b5-3ced-4c8d-b746-133c14c03a21.log",
+          "sha256": "12c79efd1c3c9082468e3d153d07fe6aa9de821adec204b673b42f18b7f8b25d",
+          "bytes": 1283
+        }
+      ],
+      "scope": "Isolated synthetic dataset, TLS load generator on the same EC2; not Internet RTT or live provider load."
+    },
+    {
+      "runId": "057301aa-ba67-410c-8422-bc3bba2c65d8",
+      "caseId": "GATE-performance-checkout",
+      "commit": "f8d169625a2820f54cdc6214f76dbd9dec7e1f17",
+      "dirty": false,
+      "configHash": "11adada81b612c3897cb97b4d1c70bd51e2912a86d1210892efc5954004a808a",
+      "executedAt": "2026-10-28T12:22:25.159Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "ssh",
+        "-o",
+        "BatchMode=yes",
+        "-i",
+        ".secrets/shopfast-ec2.pem",
+        "ubuntu@3.27.169.177",
+        "sudo python3 -c 'import json,os; p=\"/opt/shopfast/reports/performance.json\"; print(json.dumps({\"mtime\":os.path.getmtime(p),\"report\":json.load(open(p))}))'"
+      ],
+      "assertions": [
+        {
+          "name": "remote report freshly written by this execution",
+          "expected": "mtime >= run start minus 5 seconds",
+          "actual": 1793190141.0408428,
+          "passed": true
+        },
+        {
+          "name": "report status",
+          "expected": "PASS",
+          "actual": "PASS",
+          "passed": true
+        },
+        {
+          "name": "catalog samples",
+          "expected": ">=1000",
+          "actual": 30015,
+          "passed": true
+        },
+        {
+          "name": "catalog p95",
+          "expected": "<50ms",
+          "actual": 6.509842999977991,
+          "passed": true
+        },
+        {
+          "name": "checkout samples",
+          "expected": ">=100",
+          "actual": 920,
+          "passed": true
+        },
+        {
+          "name": "checkout p95",
+          "expected": "<300ms",
+          "actual": 16.67490799992811,
+          "passed": true
+        },
+        {
+          "name": "secondRead samples",
+          "expected": ">=30",
+          "actual": 30,
+          "passed": true
+        },
+        {
+          "name": "secondRead p95",
+          "expected": "<20ms",
+          "actual": 15.84123199999999,
+          "passed": true
+        },
+        {
+          "name": "realtime samples",
+          "expected": ">=100",
+          "actual": 100,
+          "passed": true
+        },
+        {
+          "name": "realtime max",
+          "expected": "<1000ms",
+          "actual": 14,
+          "passed": true
+        },
+        {
+          "name": "cache hit",
+          "expected": ">=80% and <=100%",
+          "actual": 0.9678354776348244,
+          "passed": true
+        },
+        {
+          "name": "errors and 429",
+          "expected": 0,
+          "actual": {
+            "failures": 0,
+            "rateLimited": 0
+          },
+          "passed": true
+        },
+        {
+          "name": "measurement duration",
+          "expected": "warmup>=120s, measure>=600s",
+          "actual": {
+            "warmup": 120000,
+            "measure": 600000
+          },
+          "passed": true
+        },
+        {
+          "name": "dataset",
+          "expected": "200k customers/10k products/100k orders",
+          "actual": {
+            "customers": 200000,
+            "products": 10000,
+            "orders": 100000
+          },
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/8b2123b5-3ced-4c8d-b746-133c14c03a21.log",
+          "sha256": "12c79efd1c3c9082468e3d153d07fe6aa9de821adec204b673b42f18b7f8b25d",
+          "bytes": 1283
+        }
+      ],
+      "scope": "Isolated synthetic dataset, TLS load generator on the same EC2; not Internet RTT or live provider load."
+    },
+    {
+      "runId": "057301aa-ba67-410c-8422-bc3bba2c65d8",
+      "caseId": "GATE-performance-realtime",
+      "commit": "f8d169625a2820f54cdc6214f76dbd9dec7e1f17",
+      "dirty": false,
+      "configHash": "11adada81b612c3897cb97b4d1c70bd51e2912a86d1210892efc5954004a808a",
+      "executedAt": "2026-10-28T12:22:25.159Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "ssh",
+        "-o",
+        "BatchMode=yes",
+        "-i",
+        ".secrets/shopfast-ec2.pem",
+        "ubuntu@3.27.169.177",
+        "sudo python3 -c 'import json,os; p=\"/opt/shopfast/reports/performance.json\"; print(json.dumps({\"mtime\":os.path.getmtime(p),\"report\":json.load(open(p))}))'"
+      ],
+      "assertions": [
+        {
+          "name": "remote report freshly written by this execution",
+          "expected": "mtime >= run start minus 5 seconds",
+          "actual": 1793190141.0408428,
+          "passed": true
+        },
+        {
+          "name": "report status",
+          "expected": "PASS",
+          "actual": "PASS",
+          "passed": true
+        },
+        {
+          "name": "catalog samples",
+          "expected": ">=1000",
+          "actual": 30015,
+          "passed": true
+        },
+        {
+          "name": "catalog p95",
+          "expected": "<50ms",
+          "actual": 6.509842999977991,
+          "passed": true
+        },
+        {
+          "name": "checkout samples",
+          "expected": ">=100",
+          "actual": 920,
+          "passed": true
+        },
+        {
+          "name": "checkout p95",
+          "expected": "<300ms",
+          "actual": 16.67490799992811,
+          "passed": true
+        },
+        {
+          "name": "secondRead samples",
+          "expected": ">=30",
+          "actual": 30,
+          "passed": true
+        },
+        {
+          "name": "secondRead p95",
+          "expected": "<20ms",
+          "actual": 15.84123199999999,
+          "passed": true
+        },
+        {
+          "name": "realtime samples",
+          "expected": ">=100",
+          "actual": 100,
+          "passed": true
+        },
+        {
+          "name": "realtime max",
+          "expected": "<1000ms",
+          "actual": 14,
+          "passed": true
+        },
+        {
+          "name": "cache hit",
+          "expected": ">=80% and <=100%",
+          "actual": 0.9678354776348244,
+          "passed": true
+        },
+        {
+          "name": "errors and 429",
+          "expected": 0,
+          "actual": {
+            "failures": 0,
+            "rateLimited": 0
+          },
+          "passed": true
+        },
+        {
+          "name": "measurement duration",
+          "expected": "warmup>=120s, measure>=600s",
+          "actual": {
+            "warmup": 120000,
+            "measure": 600000
+          },
+          "passed": true
+        },
+        {
+          "name": "dataset",
+          "expected": "200k customers/10k products/100k orders",
+          "actual": {
+            "customers": 200000,
+            "products": 10000,
+            "orders": 100000
+          },
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/8b2123b5-3ced-4c8d-b746-133c14c03a21.log",
+          "sha256": "12c79efd1c3c9082468e3d153d07fe6aa9de821adec204b673b42f18b7f8b25d",
+          "bytes": 1283
+        }
+      ],
+      "scope": "Isolated synthetic dataset, TLS load generator on the same EC2; not Internet RTT or live provider load."
+    },
+    {
+      "runId": "057301aa-ba67-410c-8422-bc3bba2c65d8",
+      "caseId": "GATE-performance-hit",
+      "commit": "f8d169625a2820f54cdc6214f76dbd9dec7e1f17",
+      "dirty": false,
+      "configHash": "11adada81b612c3897cb97b4d1c70bd51e2912a86d1210892efc5954004a808a",
+      "executedAt": "2026-10-28T12:22:25.159Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "ssh",
+        "-o",
+        "BatchMode=yes",
+        "-i",
+        ".secrets/shopfast-ec2.pem",
+        "ubuntu@3.27.169.177",
+        "sudo python3 -c 'import json,os; p=\"/opt/shopfast/reports/performance.json\"; print(json.dumps({\"mtime\":os.path.getmtime(p),\"report\":json.load(open(p))}))'"
+      ],
+      "assertions": [
+        {
+          "name": "remote report freshly written by this execution",
+          "expected": "mtime >= run start minus 5 seconds",
+          "actual": 1793190141.0408428,
+          "passed": true
+        },
+        {
+          "name": "report status",
+          "expected": "PASS",
+          "actual": "PASS",
+          "passed": true
+        },
+        {
+          "name": "catalog samples",
+          "expected": ">=1000",
+          "actual": 30015,
+          "passed": true
+        },
+        {
+          "name": "catalog p95",
+          "expected": "<50ms",
+          "actual": 6.509842999977991,
+          "passed": true
+        },
+        {
+          "name": "checkout samples",
+          "expected": ">=100",
+          "actual": 920,
+          "passed": true
+        },
+        {
+          "name": "checkout p95",
+          "expected": "<300ms",
+          "actual": 16.67490799992811,
+          "passed": true
+        },
+        {
+          "name": "secondRead samples",
+          "expected": ">=30",
+          "actual": 30,
+          "passed": true
+        },
+        {
+          "name": "secondRead p95",
+          "expected": "<20ms",
+          "actual": 15.84123199999999,
+          "passed": true
+        },
+        {
+          "name": "realtime samples",
+          "expected": ">=100",
+          "actual": 100,
+          "passed": true
+        },
+        {
+          "name": "realtime max",
+          "expected": "<1000ms",
+          "actual": 14,
+          "passed": true
+        },
+        {
+          "name": "cache hit",
+          "expected": ">=80% and <=100%",
+          "actual": 0.9678354776348244,
+          "passed": true
+        },
+        {
+          "name": "errors and 429",
+          "expected": 0,
+          "actual": {
+            "failures": 0,
+            "rateLimited": 0
+          },
+          "passed": true
+        },
+        {
+          "name": "measurement duration",
+          "expected": "warmup>=120s, measure>=600s",
+          "actual": {
+            "warmup": 120000,
+            "measure": 600000
+          },
+          "passed": true
+        },
+        {
+          "name": "dataset",
+          "expected": "200k customers/10k products/100k orders",
+          "actual": {
+            "customers": 200000,
+            "products": 10000,
+            "orders": 100000
+          },
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/8b2123b5-3ced-4c8d-b746-133c14c03a21.log",
+          "sha256": "12c79efd1c3c9082468e3d153d07fe6aa9de821adec204b673b42f18b7f8b25d",
+          "bytes": 1283
+        }
+      ],
+      "scope": "Isolated synthetic dataset, TLS load generator on the same EC2; not Internet RTT or live provider load."
+    },
+    {
+      "runId": "057301aa-ba67-410c-8422-bc3bba2c65d8",
+      "caseId": "CACHE-01",
+      "commit": "f8d169625a2820f54cdc6214f76dbd9dec7e1f17",
+      "dirty": false,
+      "configHash": "11adada81b612c3897cb97b4d1c70bd51e2912a86d1210892efc5954004a808a",
+      "executedAt": "2026-10-28T12:22:25.159Z",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "ssh",
+        "-o",
+        "BatchMode=yes",
+        "-i",
+        ".secrets/shopfast-ec2.pem",
+        "ubuntu@3.27.169.177",
+        "sudo python3 -c 'import json,os; p=\"/opt/shopfast/reports/performance.json\"; print(json.dumps({\"mtime\":os.path.getmtime(p),\"report\":json.load(open(p))}))'"
+      ],
+      "assertions": [
+        {
+          "name": "remote report freshly written by this execution",
+          "expected": "mtime >= run start minus 5 seconds",
+          "actual": 1793190141.0408428,
+          "passed": true
+        },
+        {
+          "name": "report status",
+          "expected": "PASS",
+          "actual": "PASS",
+          "passed": true
+        },
+        {
+          "name": "catalog samples",
+          "expected": ">=1000",
+          "actual": 30015,
+          "passed": true
+        },
+        {
+          "name": "catalog p95",
+          "expected": "<50ms",
+          "actual": 6.509842999977991,
+          "passed": true
+        },
+        {
+          "name": "checkout samples",
+          "expected": ">=100",
+          "actual": 920,
+          "passed": true
+        },
+        {
+          "name": "checkout p95",
+          "expected": "<300ms",
+          "actual": 16.67490799992811,
+          "passed": true
+        },
+        {
+          "name": "secondRead samples",
+          "expected": ">=30",
+          "actual": 30,
+          "passed": true
+        },
+        {
+          "name": "secondRead p95",
+          "expected": "<20ms",
+          "actual": 15.84123199999999,
+          "passed": true
+        },
+        {
+          "name": "realtime samples",
+          "expected": ">=100",
+          "actual": 100,
+          "passed": true
+        },
+        {
+          "name": "realtime max",
+          "expected": "<1000ms",
+          "actual": 14,
+          "passed": true
+        },
+        {
+          "name": "cache hit",
+          "expected": ">=80% and <=100%",
+          "actual": 0.9678354776348244,
+          "passed": true
+        },
+        {
+          "name": "errors and 429",
+          "expected": 0,
+          "actual": {
+            "failures": 0,
+            "rateLimited": 0
+          },
+          "passed": true
+        },
+        {
+          "name": "measurement duration",
+          "expected": "warmup>=120s, measure>=600s",
+          "actual": {
+            "warmup": 120000,
+            "measure": 600000
+          },
+          "passed": true
+        },
+        {
+          "name": "dataset",
+          "expected": "200k customers/10k products/100k orders",
+          "actual": {
+            "customers": 200000,
+            "products": 10000,
+            "orders": 100000
+          },
+          "passed": true
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "harness/reports/artifacts/8b2123b5-3ced-4c8d-b746-133c14c03a21.log",
+          "sha256": "12c79efd1c3c9082468e3d153d07fe6aa9de821adec204b673b42f18b7f8b25d",
+          "bytes": 1283
+        }
+      ],
+      "scope": "Isolated synthetic dataset, TLS load generator on the same EC2; not Internet RTT or live provider load."
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "harness/reports/artifacts/8b2123b5-3ced-4c8d-b746-133c14c03a21.log",
+      "sha256": "12c79efd1c3c9082468e3d153d07fe6aa9de821adec204b673b42f18b7f8b25d",
+      "bytes": 1283,
+      "exportedPath": "docs/evidence/runs/69e75dffd2ee06cd/12c79efd1c3c9082468e3d153d07fe6aa9de821adec204b673b42f18b7f8b25d.txt"
+    }
+  ],
+  "note": "PNG reviewed separately before commit/publication; hash integrity does not prove assertion coverage."
+}
