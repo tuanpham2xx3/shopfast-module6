@@ -39,6 +39,8 @@ Nguồn yêu cầu: `../Module 06 – Software Requirement Specification (SRS).d
 
 ## Đối chiếu gần nhất
 
+- [AWS: link mở nhanh khi setup và demo](12-aws-quick-links.md).
+
 - [Rà soát SRS và những phần chưa nghiệm thu](evidence/srs-audit-2026-10-19.md).
 - [Gemini agent thật: tool, proposal và xác nhận](evidence/gemini-agent-live.md).
 - [Retention và regression khi duyệt phản hồi đồng thời](evidence/retention.md).
