@@ -111,7 +111,7 @@
     {
       "id": "REQ-F05-01",
       "dependencies": ["JOB-01", "JOB-04", "JOB-07"],
-      "externalGates": ["partner-http-contract", "live-worker-email"]
+      "externalGates": ["partner-versioned-demo", "live-worker-email"]
     },
     {
       "id": "REQ-F05-02",

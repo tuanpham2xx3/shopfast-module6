@@ -108,6 +108,8 @@ Người dùng nhấn mạnh: phải có demo chạy thật, test PASS và minh 
 
 ## 5. Đầu vào ngoài và giới hạn quyền
 
+Chốt28/10/2026: người dùng không có sandbox và chọn đối tác demo. Áp dụng D25 trong decision log: nghiệm thu versioned demo hiện có, không còn blocker yêu cầu bên thứ ba thật; giữ nhãn demo và minh chứng queue/retry/idempotency/version. Các đoạn hỏi endpoint phía trên là phương án lịch sử nếu có nhu cầu tích hợp thật.
+
 Hiện chưa cần người dùng cấp lại domain/GitHub/SSH/Gemini/Resend. AWS session hết hạn thì cần login lại; IAM/MFA chỉ yêu cầu thao tác khi audit thiếu quyền hoặc thiếu chứng cứ. Đầu vào đối tác thật là phụ thuộc riêng như P1; không tự tạo bằng chứng.
 
 Giữ EC2/S3/SSM/OIDC hiện có, credit-only; không tự tạo tài nguyên trả phí/nâng máy. Không Docker Desktop/WSL trên Windows. Push/PR/merge khi CI đạt/deploy trong phạm vi đã cho phép; không force-push hoặc bypass checks. Plan này chỉ sửa tài liệu, chưa thực thi fault injection hay triển khai tính năng.
