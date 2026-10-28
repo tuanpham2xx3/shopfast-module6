@@ -24,6 +24,10 @@ Route guard chỉ hỗ trợ trải nghiệm, mọi quyền bắt buộc kiểm 
 
 ## 2. Luồng mua hàng
 
+Catalog: nút “Xem …” mở dialog chi tiết có ảnh, giá, tồn khả dụng, SKU, thương hiệu, danh mục và mô tả. Dialog khóa cuộn nền, giữ focus bên trong; đóng bằng X, Escape hoặc bấm ngoài và trả focus về nút mở. Bố cục một cột trên mobile.
+
+Thanh điều hướng có icon giỏ hàng cho khách và customer, badge là tổng số lượng sản phẩm từ server. Bấm mở màn hình giỏ/checkout riêng; catalog chỉ giữ lịch sử đơn ở cuối trang. Khách được dẫn tới đăng nhập/xác minh rồi mở giỏ. Sửa/xóa/đặt đơn cập nhật badge; lỗi tải giỏ hiển thị thông báo và nút thử lại, không giả thành giỏ trống.
+
 1. Guest xem catalog; thêm giỏ yêu cầu login, quay lại sản phẩm sau login.
 2. Customer chưa verify được hướng dẫn xác minh trước khi giỏ/checkout.
 3. Checkout lấy giá hiện tại, hiển thị chính sách promo và tổng tính từ server sau đặt đơn.

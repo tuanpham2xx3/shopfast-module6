@@ -116,6 +116,9 @@ test("UI-01 RT-04 real browser purchase, role operations and offline socket reco
     await page
       .getByRole("button", { name: "Thêm Live headphones vào giỏ" })
       .click();
+    await page
+      .getByRole("button", { name: "Giỏ hàng, 1 sản phẩm", exact: true })
+      .click();
     await page.getByLabel("Người nhận").fill("Demo Buyer");
     await page.getByLabel("Địa chỉ nhận hàng").fill("123 Demo Street");
     await page.getByLabel("Số điện thoại").fill("0901234567");
@@ -158,8 +161,12 @@ test("UI-01 RT-04 real browser purchase, role operations and offline socket reco
         .getByText("CANCELLED", { exact: true })
         .first(),
     ).toBeVisible();
+    await page.getByRole("button", { name: "Cửa hàng", exact: true }).click();
     await page
       .getByRole("button", { name: "Thêm Live headphones vào giỏ" })
+      .click();
+    await page
+      .getByRole("button", { name: "Giỏ hàng, 1 sản phẩm", exact: true })
       .click();
     await page.getByLabel("Người nhận").fill("Demo Buyer");
     await page.getByLabel("Địa chỉ nhận hàng").fill("123 Demo Street");
