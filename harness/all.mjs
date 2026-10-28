@@ -6,6 +6,7 @@ const profiles = [
   { name: "platform-evidence", script: "harness/platform-cases.mjs" },
   { name: "runtime-evidence", script: "harness/runtime-audit.mjs" },
   { name: "cloud-audit", script: "harness/cloud-audit.mjs" },
+  { name: "delivery-evidence", script: "harness/delivery-audit.mjs" },
   "deploy-rollback",
   "providers",
   "staging",

@@ -1,5 +1,9 @@
 ﻿import { execFileSync } from "node:child_process";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, writeFile, readFile } from "node:fs/promises";
+import { randomUUID } from "node:crypto";
+import { harnessContext } from "./context.mjs";
+import { digest } from "./evidence.mjs";
+const context = harnessContext();
 const aws =
   process.env.AWS_CLI_PATH ??
   (process.platform === "win32"
@@ -192,6 +196,15 @@ try {
     ),
   );
   const summary = call("iam", "get-account-summary").SummaryMap;
+  check(
+    "No-human-AWS-access-keys",
+    "no root access keys or IAM users",
+    {
+      rootAccessKeys: summary.AccountAccessKeysPresent,
+      users: summary.Users,
+    },
+    summary.AccountAccessKeysPresent === 0 && summary.Users === 0,
+  );
   const identityInstances = call(
     "sso-admin",
     "list-instances",
@@ -266,6 +279,99 @@ try {
       2,
     ),
   );
+  const runId = randomUUID(),
+    executedAt = new Date().toISOString();
+  let runtime;
+  try {
+    runtime = JSON.parse(
+      await readFile("harness/reports/runtime-audit.json", "utf8"),
+    );
+  } catch {}
+  const hostAssertions = (runtime?.assertions ?? []).filter((a) =>
+    ["postgresPort", "redisPort"].includes(a.name),
+  );
+  const runtimeFresh =
+    runtime?.commit === context.commit &&
+    runtime?.configHash === context.configHash &&
+    Date.now() - Date.parse(runtime.executedAt) < 300000;
+  const technical = assertions.map((a) => ({
+    name: a.id,
+    expected: a.expected,
+    actual: a.actual,
+    passed: a.passed,
+  }));
+  const gateAssertions = {
+    "cloud-operations": technical,
+    "temporary-credentials": technical.filter((a) =>
+      [
+        "No-human-AWS-access-keys",
+        "OIDC-restricted-subject",
+        "Deploy-role-actions",
+        "Backup-role-scope",
+      ].includes(a.name),
+    ),
+    "cloud-and-host-network": [
+      ...technical.filter((a) =>
+        ["SG-only-web-and-admin-SSH", "IMDSv2", "EBS-encrypted"].includes(
+          a.name,
+        ),
+      ),
+      {
+        name: "fresh host network snapshot",
+        expected: "same source/config within five minutes",
+        actual: { commit: runtime?.commit, executedAt: runtime?.executedAt },
+        passed: runtimeFresh && hostAssertions.length === 2,
+      },
+      ...hostAssertions,
+    ],
+  };
+  const bytes = Buffer.from(
+    JSON.stringify(
+      {
+        runId,
+        ...context,
+        executedAt,
+        technical,
+        gateAssertions,
+        identityEvidence,
+      },
+      null,
+      2,
+    ),
+  );
+  const artifactPath = `harness/reports/artifacts/${runId}-cloud.json`;
+  await mkdir("harness/reports/artifacts", { recursive: true });
+  await mkdir("harness/reports/receipts", { recursive: true });
+  await writeFile(artifactPath, bytes);
+  for (const [gate, selected] of Object.entries(gateAssertions)) {
+    const minimum = {
+      "cloud-operations": 15,
+      "temporary-credentials": 4,
+      "cloud-and-host-network": 6,
+    }[gate];
+    const passed =
+      selected.length >= minimum && selected.every((a) => a.passed);
+    await writeFile(
+      `harness/reports/receipts/${runId}-${gate}.json`,
+      JSON.stringify(
+        {
+          runId,
+          ...context,
+          executedAt,
+          caseId: `GATE-${gate}`,
+          status: passed ? "PASS" : "FAIL",
+          exitCode: passed ? 0 : 1,
+          command: ["node", "harness/cloud-audit.mjs"],
+          assertions: selected,
+          artifacts: [
+            { path: artifactPath, bytes: bytes.length, sha256: digest(bytes) },
+          ],
+        },
+        null,
+        2,
+      ),
+    );
+  }
   console.log(
     JSON.stringify({
       status,
