@@ -99,8 +99,9 @@ df -h /
 - [ ] Kiểm tra SSH 22 chỉ cho IP quản trị `/32`. Ảnh trước Launch còn là Anywhere; chưa có evidence đã sửa.
 - [ ] Kiểm tra HTTP 80 và HTTPS 443 public; không public 3000/5432/6379.
 - [ ] Kiểm tra EBS encryption và KMS key thực tế.
-- [ ] SSH và xác nhận OS/RAM/dung lượng thực tế.
-- [ ] Cài Docker/Compose trên EC2; không cài Docker Desktop/WSL trên workstation.
+- [x] SSH và xác nhận OS/RAM/dung lượng thực tế — 28/10/2026.
+- [x] Cài Docker/Compose trên EC2; không cài Docker Desktop/WSL trên workstation.
+- [x] Dựng PostgreSQL16/Redis7, healthcheck đạt, chỉ publish loopback; xem [evidence bootstrap](evidence/ec2-bootstrap-2026-10-28.md).
 - [ ] Cấu hình S3 backup và IAM role, rồi domain/HTTPS, CI/CD và restore theo từng bước.
 
 Việc triển khai VPS đang được người dùng hướng dẫn thực hiện từng bước; chưa có bằng chứng ứng dụng đã deploy hoặc nghiệm thu cloud.
