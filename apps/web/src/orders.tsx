@@ -39,14 +39,18 @@ export function Orders({
   staff,
   revision,
   onChange,
+  showCart = true,
 }: {
   api: Api;
   token: string;
   staff: boolean;
   revision: number;
   onChange: () => void;
+  showCart?: boolean;
 }) {
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [cartLoading, setCartLoading] = useState(false);
+  const [cartError, setCartError] = useState("");
   const [orders, setOrders] = useState<Order[]>([]);
   const [selected, setSelected] = useState<Order | null>(null);
   const [error, setError] = useState("");
@@ -74,18 +78,24 @@ export function Orders({
       .catch((e) => {
         if (active) setError(e.message);
       });
-    if (!staff)
+    if (!staff && showCart) {
+      setCartLoading(true);
+      setCartError("");
       api<{ items: CartItem[] }>("/cart", {}, token)
         .then((r) => {
           if (active) setCart(r.items);
         })
         .catch((e) => {
-          if (active) setError(e.message);
+          if (active) setCartError(e.message);
+        })
+        .finally(() => {
+          if (active) setCartLoading(false);
         });
+    }
     return () => {
       active = false;
     };
-  }, [api, token, staff, prefix, revision, orderPage, statusFilter]);
+  }, [api, token, staff, prefix, revision, orderPage, statusFilter, showCart]);
   useEffect(() => {
     if (!selectedId) return;
     let active = true;
@@ -333,12 +343,27 @@ export function Orders({
   }
   return (
     <section className="orders-panel">
-      <h2>{staff ? "Xử lý đơn hàng" : "Giỏ hàng và đơn của bạn"}</h2>
+      <h2>
+        {staff
+          ? "Xử lý đơn hàng"
+          : showCart
+            ? "Giỏ hàng và đơn của bạn"
+            : "Đơn hàng của bạn"}
+      </h2>
       {error && <p role="alert">{error}</p>}
-      {!staff && (
+      {!staff && showCart && (
         <>
           <div>
-            {cart.length === 0 ? (
+            {cartLoading ? (
+              <p role="status">Đang tải giỏ hàng…</p>
+            ) : cartError ? (
+              <p role="alert">
+                {cartError}{" "}
+                <button type="button" className="switch" onClick={onChange}>
+                  Thử lại giỏ hàng
+                </button>
+              </p>
+            ) : cart.length === 0 ? (
               <p>Giỏ hàng đang trống.</p>
             ) : (
               cart.map((item) => (
@@ -373,7 +398,7 @@ export function Orders({
               ))
             )}
           </div>
-          {cart.length > 0 && (
+          {!cartLoading && !cartError && cart.length > 0 && (
             <form className="checkout-form" onSubmit={checkout}>
               <h3>Thông tin nhận hàng</h3>
               <label>

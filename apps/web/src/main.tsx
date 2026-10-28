@@ -8,6 +8,7 @@ import "./styles.css";
 import { Catalog } from "./catalog";
 import { Tickets } from "./tickets";
 import { Admin } from "./admin";
+import { Orders } from "./orders";
 import { api, restoreSession, User } from "./client";
 
 function App() {
@@ -40,8 +41,37 @@ function App() {
   const [messageError, setMessageError] = useState(false);
   const [busy, setBusy] = useState(false);
   const [screen, setScreen] = useState<
-    "auth" | "catalog" | "tickets" | "admin"
+    "auth" | "catalog" | "tickets" | "admin" | "cart"
   >("auth");
+  const [cartRevision, setCartRevision] = useState(0);
+  const [cartCount, setCartCount] = useState<number | null>(null);
+  const [cartRequested, setCartRequested] = useState(false);
+  const canShop = Boolean(user?.verified && user.role === "CUSTOMER");
+  useEffect(() => {
+    let active = true;
+    setCartCount(null);
+    if (canShop) {
+      api<{ items: { quantity: number }[] }>("/cart", {}, accessToken)
+        .then((result) => {
+          if (active)
+            setCartCount(
+              result.items.reduce((sum, item) => sum + item.quantity, 0),
+            );
+        })
+        .catch(() => {
+          /* The cart page displays its own retryable API error. */
+        });
+    }
+    return () => {
+      active = false;
+    };
+  }, [canShop, user?.id, accessToken, cartRevision, screen]);
+  useEffect(() => {
+    if (cartRequested && canShop) {
+      setScreen("cart");
+      setCartRequested(false);
+    }
+  }, [cartRequested, canShop]);
   const [rateUntil, setRateUntil] = useState(0);
   const [now, setNow] = useState(Date.now());
   const [resendUntil, setResendUntil] = useState(0);
@@ -203,6 +233,56 @@ function App() {
         >
           {user ? "Tài khoản" : "Đăng nhập / Đăng ký"}
         </button>
+        {(!user || user.role === "CUSTOMER") && (
+          <button
+            type="button"
+            className="cart-link"
+            aria-label={
+              cartCount === null
+                ? "Giỏ hàng"
+                : `Giỏ hàng, ${cartCount} sản phẩm`
+            }
+            aria-current={screen === "cart" ? "page" : undefined}
+            onClick={() => {
+              if (canShop) {
+                setScreen("cart");
+                window.scrollTo(0, 0);
+              } else {
+                setCartRequested(true);
+                setScreen("auth");
+                setMode(user ? "verify" : "login");
+                setMessageError(false);
+                setMessage(
+                  user
+                    ? "Xác minh email để sử dụng giỏ hàng."
+                    : "Đăng nhập để sử dụng giỏ hàng.",
+                );
+              }
+            }}
+          >
+            <svg
+              aria-hidden="true"
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M3 3h2l2.5 12h10l3-9H6" />
+              <circle cx="9" cy="20" r="1" />
+              <circle cx="18" cy="20" r="1" />
+            </svg>
+            <span className="cart-text">Giỏ hàng</span>
+            {cartCount !== null && cartCount > 0 && (
+              <span className="cart-count" aria-hidden="true">
+                {cartCount > 99 ? "99+" : cartCount}
+              </span>
+            )}
+          </button>
+        )}
       </div>
       <button
         className="theme-toggle"
@@ -217,6 +297,29 @@ function App() {
       </button>
     </nav>
   );
+  if (screen === "cart" && canShop)
+    return (
+      <>
+        {navigation}
+        {rateNotice}
+        <main className="cart-page">
+          <button
+            type="button"
+            className="switch"
+            onClick={() => setScreen("catalog")}
+          >
+            ← Tiếp tục mua sắm
+          </button>
+          <Orders
+            api={api}
+            token={accessToken}
+            staff={false}
+            revision={cartRevision}
+            onChange={() => setCartRevision((value) => value + 1)}
+          />
+        </main>
+      </>
+    );
   if (screen === "tickets" && user?.verified)
     return (
       <>
@@ -246,6 +349,7 @@ function App() {
         <Catalog
           api={api}
           token={accessToken}
+          onCartChange={() => setCartRevision((value) => value + 1)}
           customer={Boolean(user?.verified && user.role === "CUSTOMER")}
           staff={Boolean(
             user?.verified && ["WAREHOUSE", "ADMIN"].includes(user.role),

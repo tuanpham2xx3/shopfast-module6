@@ -1,0 +1,127 @@
+import { expect, test } from "@playwright/test";
+for (const width of [1280, 390]) {
+  test(`product popup and navigation cart at ${width}px`, async ({
+    page,
+  }, testInfo) => {
+    await page.setViewportSize({ width, height: 844 });
+    let quantity = 0;
+    const product = {
+      id: "product-1",
+      name: "Micro USB",
+      sku: "MICRO-USB",
+      price: 250000,
+      available: 7,
+      description: "Micro thu âm USB cho cuộc gọi và ghi âm.",
+      imageUrl: "",
+      category: { name: "Âm thanh" },
+      brand: { name: "ShopFast" },
+    };
+    await page.route("**/api/v1/**", async (route) => {
+      const path = new URL(route.request().url()).pathname.split("/api/v1")[1];
+      let data: unknown = {};
+      if (path === "/auth/refresh")
+        data = {
+          accessToken: "synthetic-token",
+          user: {
+            id: "customer-1",
+            email: "popup@example.test",
+            displayName: "Popup Customer",
+            role: "CUSTOMER",
+            verified: true,
+          },
+        };
+      else if (path === "/categories" || path === "/brands") data = [];
+      else if (path === "/products") data = { items: [product], total: 1 };
+      else if (path === "/cart/items" && route.request().method() === "POST")
+        quantity++;
+      else if (path === "/cart/items/product-1") {
+        if (route.request().method() === "DELETE") quantity = 0;
+        else quantity = route.request().postDataJSON().quantity;
+      } else if (path === "/cart")
+        data = {
+          items: quantity
+            ? [
+                {
+                  productId: product.id,
+                  name: product.name,
+                  quantity,
+                  price: product.price,
+                  available: 7,
+                  active: true,
+                },
+              ]
+            : [],
+        };
+      else if (path?.startsWith("/orders")) data = { items: [], total: 0 };
+      await route.fulfill({ json: { data } });
+    });
+    await page.goto("/");
+    await expect(
+      page.getByRole("heading", { name: "Chào Popup Customer" }),
+    ).toBeVisible();
+    await page.getByRole("button", { name: "Cửa hàng", exact: true }).click();
+    const trigger = page.getByRole("button", {
+      name: "Xem Micro USB",
+      exact: true,
+    });
+    await trigger.click();
+    const popup = page.getByRole("dialog", { name: "Micro USB" });
+    await expect(popup).toBeVisible();
+    await expect(popup.getByText(product.description)).toBeVisible();
+    await expect(popup.getByText("MICRO-USB", { exact: true })).toBeVisible();
+    await expect(popup.getByText("250.000 ₫", { exact: true })).toBeVisible();
+    await expect(page.locator("body")).toHaveCSS("overflow", "hidden");
+    await expect(
+      popup.getByRole("button", { name: "Đóng chi tiết" }),
+    ).toBeFocused();
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Tab");
+    await expect(
+      popup.getByRole("button", { name: "Đóng chi tiết" }),
+    ).toBeFocused();
+    await page.screenshot({
+      path: testInfo.outputPath(`product-popup-${width}.png`),
+    });
+    await page.keyboard.press("Escape");
+    await expect(popup).toHaveCount(0);
+    await expect(trigger).toBeFocused();
+    await expect(page.locator("body")).not.toHaveCSS("overflow", "hidden");
+    await trigger.click();
+    await popup.getByRole("button", { name: "Đóng chi tiết" }).click();
+    await expect(popup).toHaveCount(0);
+    await trigger.click();
+    await page.mouse.click(2, 2);
+    await expect(popup).toHaveCount(0);
+    await expect(page.getByLabel("Người nhận")).toHaveCount(0);
+    await page
+      .getByRole("button", { name: "Thêm Micro USB vào giỏ", exact: true })
+      .click();
+    const cart = page.getByRole("button", {
+      name: "Giỏ hàng, 1 sản phẩm",
+      exact: true,
+    });
+    await expect(cart).toBeVisible();
+    await cart.click();
+    await expect(page.getByLabel("Người nhận")).toBeVisible();
+    await expect(page.getByLabel("Số lượng Micro USB")).toHaveValue("1");
+    await page.getByLabel("Số lượng Micro USB").fill("2");
+    await page.getByLabel("Người nhận").click();
+    await expect(
+      page.getByRole("button", { name: "Giỏ hàng, 2 sản phẩm", exact: true }),
+    ).toBeVisible();
+    await page
+      .getByRole("button", { name: "Xóa Micro USB", exact: true })
+      .click();
+    await expect(
+      page.getByText("Giỏ hàng đang trống.", { exact: true }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "Giỏ hàng, 0 sản phẩm", exact: true }),
+    ).toBeVisible();
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
+  });
+}
