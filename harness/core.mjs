@@ -38,14 +38,25 @@ export async function runCommand(
     const finish = async (result) => {
       if (finished) return;
       finished = true;
-      const content = safeOutput();
+      const captured = safeOutput();
+      const content =
+        JSON.stringify(
+          {
+            startedAt: new Date(start).toISOString(),
+            finishedAt: new Date().toISOString(),
+            ...result,
+            output: captured,
+          },
+          null,
+          2,
+        ) + "\n";
       const path = `harness/reports/artifacts/${randomUUID()}.log`;
       try {
         await mkdir("harness/reports/artifacts", { recursive: true });
         await writeFile(path, content);
         resolve({
           ...result,
-          output: content.slice(-4000),
+          output: captured.slice(-4000),
           artifact: {
             path,
             sha256: createHash("sha256").update(content).digest("hex"),

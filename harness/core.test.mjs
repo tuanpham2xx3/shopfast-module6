@@ -54,12 +54,24 @@ test("full output is retained with a verifiable hash while the console excerpt s
   ]);
   assert.equal(result.status, "PASS");
   const bytes = await readFile(result.artifact.path);
-  assert(bytes.toString().startsWith("START-"));
-  assert(bytes.toString().trimEnd().endsWith("-END"));
+  const full = JSON.parse(bytes.toString());
+  assert(full.output.startsWith("START-"));
+  assert(full.output.trimEnd().endsWith("-END"));
   assert.equal(bytes.length, result.artifact.bytes);
   assert.equal(
     createHash("sha256").update(bytes).digest("hex"),
     result.artifact.sha256,
   );
   assert(result.output.length <= 4000);
+});
+test("a silent successful command retains execution evidence without inventing stdout", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const { verifyArtifact } = await import("./evidence.mjs");
+  const result = await runCommand(process.execPath, ["-e", "process.exit(0)"]);
+  assert.equal(result.output, "");
+  assert.equal(await verifyArtifact(result.artifact), true);
+  const evidence = JSON.parse(await readFile(result.artifact.path, "utf8"));
+  assert.equal(evidence.exitCode, 0);
+  assert.equal(evidence.output, "");
+  assert(Number.isFinite(Date.parse(evidence.startedAt)));
 });
