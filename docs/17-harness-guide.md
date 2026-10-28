@@ -21,16 +21,4 @@ Không Docker Desktop/WSL. Dev dùng PostgreSQL16 native; Memurai API7 bind loop
 | `node harness/derive.mjs`           | 62requirement từ dependency case + external gates, cùng commit/config                              | Thiếu external receipt thì BLOCKED; không dùng report cũ tự chứng nhận                              |
 | `npm run harness:report`            | 8profiles +111requirement/case results + artifact integrity                                        | Exit nonzero nếu thiếu một mục hoặc deployed SHA khác                                               |
 
-`harness:all` vẫn chạy8profiles và report. Các collector case/browser/platform phải chạy thêm trong cùng context; chưa chạy collector thì report đúng là BLOCKED. Chưa có command tự sinh mọi external gate: các gap phải nhìn thấy thay vì runner tự bỏ qua. `requirement-map.json` là danh sách dependency đầy đủ; chính xác của mapping phải review source test, không suy từ test title là đủ rule.
-
-## Receipt và artifact
-
-Receipt lưu `harness/reports/receipts/<runId>-*.json`: caseId, commit, dirty, configHash, executedAt, status, exitCode, command, assertions(expected/actual/passed), artifacts(path/bytes/sha256). Source thay đổi trong lúc collector chạy làm dirty; dirty receipt không thể chứng nhận PASS. Các run cũ được giữ bằng UUID, kể cả FAIL. Một report mới BLOCKED không xóa lịch sử PASS nhưng cũng không được lựa PASS cũ để che lần mới fail.
-
-Log đầy đủ sanitize được lưu theo UUID; output console chỉ là excerpt4KB. SRS/acceptance source hash chuẩn LF, artifact binary hash giữ nguyên byte. Chỉ có hash không chứng minh assertion đúng; manifest giúp người nghiệm thu mở source test/log/screenshot và chạy lại.
-
-`node harness/export-evidence.mjs <receipt.json>` kiểm hash, loại file nhạy cảm/trace, scan secret patterns rồi xuất bundle vào `docs/evidence/runs/<digest>/`. Kết quả EXPORTED_REVIEW_REQUIRED: agent phải review ảnh và nội dung trước stage/commit public. Không tự upload raw reports/trace trong CI.
-
-## Trạng thái thực thi
-
-Xem [development validation](evidence/harness-hardening-2026-10-28.md). Tài liệu này mô tả cách chạy, không phải báo cáo full acceptance. Những case cloud identity, active deploy, external partner, performance release và hồ sơ bảo vệ phải có receipt/biên bản đúng phạm vi trước khi gọi all done.
+`harness:all` chạy8profiles, thêm platform/runtime/cloud audit rồi report. Profile CI dùng case collector `--collect` thay cho Jest integration trực tiếp, và dùng browser collector để tạo receipt; `--collect` chỉ cho phép command exit0 khi các test thực thi PASS, vẫn giữ4case external BLOCKED trong JSON để final report kiểm tiếp. Cloud audit có thể trả BLOCKED cho identity/manual gate và làm all exit nonzero. Chưa có command tự sinh mọi external gate: các gap phải nhìn thấy thay vì runner tự bỏ qua. `requirement-map.json` là danh sách dependency; reviewer vẫn đối chiếu source assertions với từng yêu cầu.

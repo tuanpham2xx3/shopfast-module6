@@ -211,4 +211,17 @@ console.log(
     dirty: context.dirty,
   }),
 );
-if (summary.status !== "PASS") process.exitCode = 1;
+if (process.argv.includes("--collect")) {
+  // CI collection proves the executed Jest assertions, not external acceptance.
+  // The JSON retains BLOCKED for browser/load/platform cases; final report gates
+  // still require their independent receipts.
+  if (
+    run.status !== "PASS" ||
+    receipts.some(
+      (receipt) =>
+        receipt.status !== "PASS" &&
+        !map.cases.find((item) => item.id === receipt.caseId)?.external,
+    )
+  )
+    process.exitCode = 1;
+} else if (summary.status !== "PASS") process.exitCode = 1;

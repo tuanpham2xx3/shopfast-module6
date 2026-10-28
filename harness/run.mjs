@@ -135,17 +135,9 @@ switch (profile) {
       "apps/web",
     ]);
     if (required(["TEST_DATABASE_URL", "TEST_REDIS_URL"], "INTEGRATION"))
-      await command("INTEGRATION-COVERAGE", [
-        "node_modules/jest/bin/jest.js",
-        "--config",
-        "jest.business.config.js",
-        "--runInBand",
-      ]);
+      await command("INTEGRATION-COVERAGE", ["harness/cases.mjs", "--collect"]);
     if (required(["TEST_DATABASE_URL"], "BROWSER-E2E"))
-      await command("BROWSER-E2E", [
-        "node_modules/@playwright/test/cli.js",
-        "test",
-      ]);
+      await command("BROWSER-E2E", ["harness/browser-cases.mjs"]);
     break;
   case "staging":
     await staging();
