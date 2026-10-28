@@ -117,8 +117,14 @@ try {
           json.data?.version < before.version
         )
           errors.push("authenticated order read failed");
-      } catch {
-        samples.push({ at: t, status: 0, durationMs: Date.now() - t });
+      } catch (error) {
+        samples.push({
+          at: t,
+          status: 0,
+          durationMs: Date.now() - t,
+          error: error.name,
+          cause: error.cause?.code ?? null,
+        });
         errors.push("request unavailable");
       }
       await new Promise((r) => setTimeout(r, 2000));

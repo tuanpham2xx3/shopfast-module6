@@ -24,3 +24,9 @@ Registry62mục SRS (bao gồm user classes, deliverables, performance, defense 
 ## Còn lại trước full acceptance
 
 Nối external receipts và requirement-level mapping có assertion, không chỉ profile; runtime/cloud identity audit đúng home region; active deployment rehearsal; coverage/version/security/deliverables gates; xuất artifact đã sanitize có link/hash; CI và rehearsal final release. Các kết quả trên là development validation, phải có fresh clean-commit run để bàn giao.
+
+## Rehearsal bổ sung
+
+- Active deployment lần trước sửa: FAIL, một authenticated HTTP read bị `UND_ERR_SOCKET`; health/deploy/rollback vẫn PASS. Giữ artifact `continuity-1793185244229.json` local. Không gọi health PASS là continuity PASS.
+- Sau thêm Nginx keepalive_min_timeout5s/timeout10s: rehearsal PASS,56HTTP observations không lỗi,3private socket subscriptions, injected rollback PASS, finally restore release UI `e6dee5b`. Đây là cấu hình Nginx mới trên cặp image có sẵn `e6dee5b`/`edd1fe6`, không phải tuyên bố image của harness branch đã deploy. Raw report trong `harness/reports/continuity-*.json`; cần export review trước bàn giao public.
+- Gemini3.1FlashLite smoke mở rộng6/6PASS,6provider requests cách tối thiểu5s:2tools grounded DB, proposal chưa ghi, replay không gọi model, human confirm đúng một lần, ngoài phạm vi OUT_OF_SCOPE và ticketPAYMENT classification đúng fixture độc lập. Không phải bằng chứng mọi prompt ngoài phạm vi đều được từ chối.
