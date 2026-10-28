@@ -51,6 +51,10 @@ Chỉ đánh dấu phần đã có xác nhận. Yêu cầu quyền qua nhóm, le
 
 Domain ứng dụng: `shopfast.tuanpq.com`. Ngày 28/10/2026 agent tạo bản ghi Cloudflare A → `3.27.169.177`, TTL300, DNS only (không proxy), record ID `46993d1b5ccf9b089f7b7e996276f37f`. Chỉ thêm subdomain này; không sửa apex hoặc DNS khác. DNS chưa đồng nghĩa ứng dụng/HTTPS đã deploy.
 
+### Resend — domain gửi email
+
+Ngày 28/10/2026 đã tạo `mail.shopfast.tuanpq.com` trên Resend, domain ID `01688b42-e744-4ae5-a123-8fbc3cb0e6ae`, region `ap-northeast-1`, receiving disabled. Sender dự kiến `ShopFast <no-reply@mail.shopfast.tuanpq.com>`. Đã tạo bốn DNS record Cloudflare (DNS only, TTL300): TXT DKIM `resend._domainkey.mail.shopfast`, MX + TXT SPF `send.mail.shopfast`, CNAME `rsend.mail.shopfast`. Không sửa DNS/email domain gốc. Verify API trả HTTP200; lần kiểm tra ngay sau đó status `pending`, chưa công bố gửi thật đạt. Chưa gửi email vì thiếu `EMAIL_TEST_TO` trong environment. Setup key chỉ ở `.env` ignored, chưa cấp key gửi riêng hoặc thu hồi setup key.
+
 Nguồn: ảnh EC2 Console do người dùng cung cấp ngày 28/10/2026, chưa kiểm tra qua SSH hoặc AWS API.
 
 | Mục | Giá trị |
