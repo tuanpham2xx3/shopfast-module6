@@ -17,6 +17,7 @@ export function harnessContext() {
         reboot: process.env.HARNESS_REBOOT_HOST === "true",
         databaseConfigured: !!process.env.TEST_DATABASE_URL,
         redisConfigured: !!process.env.TEST_REDIS_URL,
+        memuraiConfigured: !!process.env.TEST_MEMURAI_URL,
         candidate: process.env.HARNESS_CANDIDATE_SHA ?? null,
         continuityCandidate: process.env.HARNESS_CONTINUITY_SHA ?? null,
         credentials: createHash("sha256")
@@ -26,6 +27,7 @@ export function harnessContext() {
               process.env.RESEND_API_KEY,
               process.env.TEST_DATABASE_URL,
               process.env.TEST_REDIS_URL,
+              process.env.TEST_MEMURAI_URL,
             ].join("|"),
           )
           .digest("hex"),
