@@ -42,7 +42,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run harness:check
-      - run: node --test harness/core.test.mjs harness/evidence.test.mjs harness/remote-evidence.test.mjs
+      - run: npm run harness:selftest
       - name: Validate deployment scripts
         run: for script in deploy/*.sh; do bash -n "$script"; done
       - run: npx playwright install --with-deps chromium

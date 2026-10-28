@@ -154,8 +154,16 @@ await writeFile(
   ),
 );
 if (partnerCase) {
-  const partnerAssertions = partnerCase.assertions.filter((assertion) =>
-    assertion.name.includes("never overwrites a newer partner"),
+  const partnerAssertions = partnerCase.assertions.filter(
+    (assertion) =>
+      Array.isArray(assertion.actual) &&
+      assertion.actual.some(
+        (result) =>
+          typeof result.test === "string" &&
+          result.test.includes(
+            "never overwrites a newer partner inventory snapshot",
+          ),
+      ),
   );
   await writeFile(
     `harness/reports/receipts/${runId}-partner-demo.json`,

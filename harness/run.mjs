@@ -96,12 +96,7 @@ switch (profile) {
       "--check",
       "harness/*.{mjs,cjs,json}",
     ]);
-    await command("HARNESS-SELFTEST", [
-      "--test",
-      "harness/core.test.mjs",
-      "harness/evidence.test.mjs",
-      "harness/remote-evidence.test.mjs",
-    ]);
+    await command("HARNESS-SELFTEST", ["harness/selftest.mjs"]);
     await command("FORMAT", [
       "node_modules/prettier/bin/prettier.cjs",
       "--check",
