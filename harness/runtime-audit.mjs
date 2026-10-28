@@ -25,6 +25,12 @@ printf 'backupEnabled\\t'; systemctl is-enabled shopfast-backup.timer
 printf 'backupActive\\t'; systemctl is-active shopfast-backup.timer
 printf 'backupAgeSeconds\\t'; python3 -c 'import os,time; print(int(time.time()-os.path.getmtime("backups/last-success")))'
 printf 'backupCalendar\\t'; systemctl cat shopfast-backup.timer | grep '^OnCalendar='
+printf 'composeConfig\\t'; docker compose -f compose.infra.yml -f compose.app.yml config --quiet >/dev/null && printf 'valid\\n'
+printf 'workerImageId\\t'; docker inspect -f '{{.Image}}' "shopfast-worker-$sha"
+printf 'webRelease\\t'; readlink releases/current
+printf 'webAssetsHash\\t'; (cd "releases/$sha/web"; find . -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+printf 'taggedWebAssetsHash\\t'; docker run --rm --network none --entrypoint sh "ghcr.io/tuanpham2xx3/shopfast-module6-web:$sha" -c "cd /usr/share/nginx/html; find . -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1"
+printf 'offhostBackup\\t'; /opt/shopfast/aws-venv/bin/aws s3api list-objects-v2 --bucket shopfast-backups-321323528839-ap-southeast-2 --prefix backups/ --region ap-southeast-2 --output json | python3 -c 'import sys,json,datetime; x=[o for o in json.load(sys.stdin).get("Contents",[]) if o["Key"].endswith(".dump")]; o=max(x,key=lambda o:o["LastModified"]); print(json.dumps({"ageSeconds":(datetime.datetime.now(datetime.timezone.utc)-datetime.datetime.fromisoformat(o["LastModified"].replace("Z","+00:00"))).total_seconds(),"bytes":o["Size"]}))'
 `;
 const remote = spawnSync(
   "ssh",
@@ -108,6 +114,35 @@ check(
   Number(values.backupAgeSeconds) >= 0 &&
     Number(values.backupAgeSeconds) < 27 * 3600,
 );
+let offhost;
+try {
+  offhost = JSON.parse(values.offhostBackup);
+} catch {}
+check(
+  "fresh S3 backup",
+  "nonempty off-host dump uploaded within 27h",
+  offhost,
+  offhost?.bytes > 0 &&
+    offhost?.ageSeconds >= 0 &&
+    offhost.ageSeconds < 27 * 3600,
+);
+check(
+  "Linux Compose release images",
+  "valid Compose, matching API/worker image IDs and web assets matching the SHA-tagged image",
+  {
+    config: values.composeConfig,
+    worker: values.workerImageId,
+    webRelease: values.webRelease,
+    webAssetsHash: values.webAssetsHash,
+    taggedWebAssetsHash: values.taggedWebAssetsHash,
+  },
+  values.composeConfig === "valid" &&
+    !!manifest?.appImageId &&
+    values.workerImageId === manifest.appImageId &&
+    values.webRelease === manifest.commit &&
+    /^[a-f0-9]{64}$/.test(values.webAssetsHash ?? "") &&
+    values.webAssetsHash === values.taggedWebAssetsHash,
+);
 const document = await fetch("https://shopfast.tuanpq.com", {
   redirect: "manual",
   signal: AbortSignal.timeout(15000),
@@ -155,6 +190,15 @@ for (const [gate, names] of Object.entries({
   "https-redirect": ["HTTPS redirect"],
   "https-live-url": ["live HTTPS UI"],
   "sha-digest-release": ["commit-pinned image"],
+  "linux-compose-images": [
+    "Linux Compose release images",
+    "commit-pinned image",
+  ],
+  "daily-offhost-backup": [
+    "daily backup timer",
+    "backup freshness",
+    "fresh S3 backup",
+  ],
 })) {
   const selected = assertions.filter((assertion) =>
     names.includes(assertion.name),
