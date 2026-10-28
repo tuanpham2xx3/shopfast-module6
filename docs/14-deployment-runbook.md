@@ -17,6 +17,8 @@ Main phải qua PR và `application-checks`/`docs-checks`, branch protection enf
 
 SSM document `ShopFastDeploy` chỉ nhận Commit40hex và chạy script cố định. Role Actions chỉ SendCommand tới document+instance này và đọc trạng thái invocation, không có quyền shell document tùy ý/IAM/S3.
 
+Repo dùng immutable OIDC subject: `repo:tuanpham2xx3@134152079/shopfast-module6@1424291781:environment:production`. Kiểm tra bằng `gh api repos/tuanpham2xx3/shopfast-module6/actions/oidc/customization/sub`; không dùng định dạng chỉ chứa tên repo cũ. Provisioner cập nhật trust cả khi role đã tồn tại. Xem [GitHub OIDC reference](https://docs.github.com/en/actions/reference/security/oidc).
+
 ```bash
 cd /opt/shopfast
 sudo bash deploy-release.sh <commit40hex>

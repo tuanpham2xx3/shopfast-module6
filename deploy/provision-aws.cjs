@@ -211,7 +211,7 @@ async function main() {
           StringEquals: {
             "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
             "token.actions.githubusercontent.com:sub":
-              "repo:tuanpham2xx3/shopfast-module6:environment:production",
+              "repo:tuanpham2xx3@134152079/shopfast-module6@1424291781:environment:production",
           },
         },
       },
@@ -221,6 +221,11 @@ async function main() {
     call("iam", "create-role", {
       RoleName: ghRole,
       AssumeRolePolicyDocument: JSON.stringify(trust),
+    });
+  else
+    call("iam", "update-assume-role-policy", {
+      RoleName: ghRole,
+      PolicyDocument: JSON.stringify(trust),
     });
   call("iam", "put-role-policy", {
     RoleName: ghRole,
