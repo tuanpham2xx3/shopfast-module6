@@ -6,6 +6,7 @@ Trạng thái từng gate nằm trong [execution ledger](evidence/aws-delivery-p
 
 - Domain `shopfast.tuanpq.com`, EC2 Sydney; Nginx HTTPS + API/worker private, PostgreSQL16/Redis7 named volumes.
 - `/opt/shopfast/.env`: mật khẩu bootstrap DB và image references. `/opt/shopfast/app.env`: application DB role DML, signing keys, Gemini và Resend sending-only key. Files mode600, không commit/cat vào log.
+- Admin production phải có email nhận thật được chủ dự án cấp để nhận báo cáo ngày; không để địa chỉ `.test` cho recipient thật. `DEV_SEED_ADMIN_EMAIL` trong credential file ignored ghi email đăng nhập admin production (có thể dùng alias inbox nghiệm thu). Dev local vẫn có thể dùng địa chỉ seed `.test` với fake adapter.
 - `.secrets/deployment-seed.env` local giữ credential demo; không reset password người dùng có sẵn. Thay đổi secret/role phải có kế hoạch đồng bộ API/worker và refresh sessions.
 - `releases/<commit>/web`, symlink `releases/current`, `nginx/default.conf` và `release.json` lưu release active. Không xóa previous release trước khi nghiệm thu.
 
@@ -16,6 +17,8 @@ Main phải qua PR và `application-checks`/`docs-checks`, branch protection enf
 `AWS_DEPLOY_ENABLED=true` chỉ bật sau khi OIDC/SSM, image pull và registry visibility đã kiểm tra. Nếu biến chưa bật, deploy job SKIPPED không phải deploy PASS. GHCR images mặc định có thể private; cần chuyển package public trước anonymous pull, hoặc thiết kế auth tạm riêng, không ghi PAT dài hạn lên EC2.
 
 SSM document `ShopFastDeploy` chỉ nhận Commit40hex và chạy script cố định. Role Actions chỉ SendCommand tới document+instance này và đọc trạng thái invocation, không có quyền shell document tùy ý/IAM/S3.
+
+Repo dùng immutable OIDC subject: `repo:tuanpham2xx3@134152079/shopfast-module6@1424291781:environment:production`. Kiểm tra bằng `gh api repos/tuanpham2xx3/shopfast-module6/actions/oidc/customization/sub`; không dùng định dạng chỉ chứa tên repo cũ. Provisioner cập nhật trust cả khi role đã tồn tại. Xem [GitHub OIDC reference](https://docs.github.com/en/actions/reference/security/oidc).
 
 ```bash
 cd /opt/shopfast
@@ -37,6 +40,8 @@ sudo bash /opt/shopfast/restore-rehearsal.sh
 
 Restore tải lại từ S3, checksum và restore vào database `harness_restore_<timestamp>`, so sánh counts/invariant tồn, đo thời gian rồi cleanup. Count comparison với DB live có thể fail nếu người dùng ghi đồng thời; phải đối chiếu snapshot/manifest trước khi kết luận corruption. Không restore đè DB live. Nếu backup/restore FAIL, không ghi nghiệm thu đạt và kiểm tra quyền/storage/timer. Theo dõi last-success và credit; lịch daily là RPO tới24h, không phải zero loss.
 
+`harness:backup-restore` thêm HOST-RESTART gate: cần `HARNESS_REBOOT_HOST=true` trong cửa sổ đã cho phép, tạo backup mới trước reboot. Kiểm tra boot ID đổi, named volumes, counts users/products/orders/inventories và release được giữ, HTTPS ready trong180giây. Website gián đoạn ngắn. Count comparison có cùng giới hạn concurrent writes; không kết luận mất dữ liệu chỉ từ count mismatch. SSH tunnel local cần mở lại sau reboot nếu còn chạy integration tests.
+
 ## Harness
 
 ```text
@@ -54,6 +59,8 @@ npm run harness:all
 ```
 
 Profiles provider chỉ chạy khi `HARNESS_LIVE_PROVIDERS=true`, vào EMAIL_TEST_TO và model backend đã cấp; respect RPM. Redis integration local có thể dùng SSH tunnel tới DB15 với random keys/queues, không flush DB0.
+
+Staging chạy Gemini qua API public trên EC2: tra đơn đã giao và SKU bằng cả hai tool, kiểm tra evidence từ DB, replay cùng clientMessageId và xác nhận không tự thêm tin nhắn cho khách. Provider profile riêng kiểm tra proposal/explicit confirmation bằng PostgreSQL fixture và Gemini thật.
 
 Report trong ignored `harness/reports/`, theo commit/config hash; summary không reuse run khác SHA. Profile thiếu phải BLOCKED và exit nonzero. Secrets scan không thay thế audit lịch sử/image; logs phải redacted trước chia sẻ.
 

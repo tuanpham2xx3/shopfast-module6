@@ -79,7 +79,10 @@ try {
       await request("/auth/login", {
         method: "POST",
         body: {
-          email: `${role}@shopfast.test`,
+          email:
+            role === "admin" && seed.DEV_SEED_ADMIN_EMAIL
+              ? seed.DEV_SEED_ADMIN_EMAIL
+              : `${role}@shopfast.test`,
           password: seed.DEV_SEED_PASSWORD,
         },
       })
@@ -250,6 +253,52 @@ try {
     body: { body: "ShopFast đã tiếp nhận yêu cầu kiểm tra." },
   });
   checks.push("TKT-customer-support-claim-reply");
+  const session = (
+    await request(`/staff/tickets/${ticket.id}/ai-sessions`, {
+      method: "POST",
+      role: "support",
+    })
+  ).data;
+  const clientMessageId = randomUUID();
+  const message = `Tra cứu trạng thái đơn ${order.code} và tồn kho SKU ${product.sku} bằng cả hai tool. Trả JSON đúng hợp đồng với claims cho cả hai resource.`;
+  const beforeAi = (
+    await request(`/tickets/${ticket.id}`, { role: "customer" })
+  ).data;
+  const answer = (
+    await request(`/staff/ai-sessions/${session.sessionId}/messages`, {
+      method: "POST",
+      role: "support",
+      body: { message, clientMessageId },
+    })
+  ).data;
+  assert.equal(answer.status, "OK", "Production Gemini turn must succeed");
+  assert(
+    answer.evidence.some(
+      (e) =>
+        e.tool === "get_order_status" &&
+        e.resourceId === order.code &&
+        e.resultSummary.status === "DELIVERED",
+    ),
+    "Production model must ground order status in DB",
+  );
+  assert(
+    answer.evidence.some(
+      (e) => e.tool === "check_inventory" && e.resourceId === product.sku,
+    ),
+    "Production model must call inventory tool",
+  );
+  const replay = (
+    await request(`/staff/ai-sessions/${session.sessionId}/messages`, {
+      method: "POST",
+      role: "support",
+      body: { message, clientMessageId },
+    })
+  ).data;
+  assert.deepEqual(replay, answer);
+  const afterAi = (await request(`/tickets/${ticket.id}`, { role: "customer" }))
+    .data;
+  assert.equal(afterAi.messages.total, beforeAi.messages.total);
+  checks.push("AI-production-Gemini-two-tools-replay-no-auto-reply");
   await request("/admin/health", { role: "customer", expected: 403 });
   checks.push("RBAC-customer-denied-admin");
   const { chromium } = await import("@playwright/test");
