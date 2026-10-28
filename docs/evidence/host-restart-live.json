@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "executedAt": "2026-10-28T06:14:24.926Z",
+  "durationSeconds": 27.175,
+  "bootChanged": true,
+  "volumesPreserved": true,
+  "countsMatched": true,
+  "commit": "4e7e6fb93489967279620ba9d6a284e79cc547f5",
+  "httpsReady": true
+}

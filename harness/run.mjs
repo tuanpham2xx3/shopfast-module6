@@ -20,6 +20,7 @@ const configHash = createHash("sha256")
       target: "https://shopfast.tuanpq.com",
       model: process.env.GEMINI_MODEL,
       live: process.env.HARNESS_LIVE_PROVIDERS === "true",
+      reboot: process.env.HARNESS_REBOOT_HOST === "true",
       databaseConfigured: !!process.env.TEST_DATABASE_URL,
       redisConfigured: !!process.env.TEST_REDIS_URL,
       candidate: process.env.HARNESS_CANDIDATE_SHA ?? null,
@@ -269,6 +270,13 @@ switch (profile) {
         ])
       ).status,
     );
+    if (process.env.HARNESS_REBOOT_HOST === "true")
+      await command("HOST-RESTART", ["harness/host-restart.mjs"]);
+    else
+      blocked(
+        "HOST-RESTART",
+        "Set HARNESS_REBOOT_HOST=true for the authorized EC2 reboot rehearsal",
+      );
     break;
   case "deploy-rollback":
     if (!/^[0-9a-f]{40}$/.test(process.env.HARNESS_CANDIDATE_SHA ?? ""))

@@ -114,7 +114,7 @@ npm run harness:deploy-rollback
 npm run harness:report
 ```
 
-Các lệnh trên là target plan, CHƯA tồn tại/CHƯA chạy. Runner không reset/drop app schema mặc định; require explicit fixture marker và validate host/database name trước destructive cleanup. Tách service account test/demo và phase load; không ảnh hưởng inbox thật ngoài địa chỉ được cấp.
+Các lệnh trên đã được triển khai; trạng thái chạy thực tế theo commit/config nằm trong `harness/reports/`, không suy ra PASS từ danh sách lệnh. Runner không reset/drop app schema mặc định; require explicit fixture marker và validate host/database name trước destructive cleanup. Tách service account test/demo và phase load; không ảnh hưởng inbox thật ngoài địa chỉ được cấp. `harness:all` chạy tuần tự toàn bộ profiles. Host reboot trong backup/restore require `HARNESS_REBOOT_HOST=true`, backup thành công trong30phút, kiểm tra boot ID đổi, giữ named volumes/counts/release và HTTPS ready trong180giây; gây gián đoạn ngắn, chỉ chạy trong cửa sổ nghiệm thu được cho phép.
 
 ## 7. Điểm quyết định và giới hạn
 
