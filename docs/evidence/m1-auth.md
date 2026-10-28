@@ -5,13 +5,13 @@ Branch: `feat/m1-auth`
 
 ## Automated checks
 
-| Scope | Command | Result |
-| --- | --- | --- |
-| Auth service and HTTP | `jest --config jest.integration.config.js --runInBand --runTestsByPath tests/integration/auth.integration.spec.ts tests/integration/auth-http.integration.spec.ts` | PASS, 6 tests |
-| PostgreSQL integrations | `jest --config jest.integration.config.js --runInBand --runTestsByPath tests/integration/database.integration.spec.ts tests/integration/outbox.integration.spec.ts tests/integration/auth.integration.spec.ts tests/integration/auth-http.integration.spec.ts` | PASS, 10 tests |
-| Auth guards | `jest --runInBand --runTestsByPath tests/unit/auth-guards.spec.ts` | PASS, 3 tests |
-| Browser auth flow | `npm run test:e2e` | PASS, Chromium register → verify → account |
-| Web production build | `npm run build:web` | PASS |
+| Scope                   | Command                                                                                                                                                                                                                                                        | Result                                     |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
+| Auth service and HTTP   | `jest --config jest.integration.config.js --runInBand --runTestsByPath tests/integration/auth.integration.spec.ts tests/integration/auth-http.integration.spec.ts`                                                                                             | PASS, 6 tests                              |
+| PostgreSQL integrations | `jest --config jest.integration.config.js --runInBand --runTestsByPath tests/integration/database.integration.spec.ts tests/integration/outbox.integration.spec.ts tests/integration/auth.integration.spec.ts tests/integration/auth-http.integration.spec.ts` | PASS, 10 tests                             |
+| Auth guards             | `jest --runInBand --runTestsByPath tests/unit/auth-guards.spec.ts`                                                                                                                                                                                             | PASS, 3 tests                              |
+| Browser auth flow       | `npm run test:e2e`                                                                                                                                                                                                                                             | PASS, Chromium register → verify → account |
+| Web production build    | `npm run build:web`                                                                                                                                                                                                                                            | PASS                                       |
 
 `npm run check` passed locally: formatting, lint, typecheck, 16 Jest tests, and all three production builds. GitHub Actions also installs Chromium and runs `test:e2e` on the pull request.
 
@@ -33,14 +33,14 @@ Evidence:
 
 ## Acceptance mapping
 
-| Case | Status | Evidence |
-| --- | --- | --- |
-| AUTH-01 | PASS | integration test normalizes email, hashes password and forces CUSTOMER |
-| AUTH-01A | PASS | browser walkthrough and auth HTTP integration complete register → OTP without another login |
-| AUTH-02 OTP attempts | PASS | one-time code, resend invalidation, expiry and five-attempt ceiling explicitly tested |
-| AUTH-02 protected modules | PARTIAL | verified guard is implemented and tested; checkout itself belongs to M4 |
-| AUTH-03 | PASS | integration test proves rotated-token reuse revokes the active family |
-| AUTH-04 | PARTIAL | access/verified/role guards return 401/403 in unit tests; private-resource ownership is exercised in later business modules |
+| Case                      | Status  | Evidence                                                                                                                    |
+| ------------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------- |
+| AUTH-01                   | PASS    | integration test normalizes email, hashes password and forces CUSTOMER                                                      |
+| AUTH-01A                  | PASS    | browser walkthrough and auth HTTP integration complete register → OTP without another login                                 |
+| AUTH-02 OTP attempts      | PASS    | one-time code, resend invalidation, expiry and five-attempt ceiling explicitly tested                                       |
+| AUTH-02 protected modules | PARTIAL | verified guard is implemented and tested; checkout itself belongs to M4                                                     |
+| AUTH-03                   | PASS    | integration test proves rotated-token reuse revokes the active family                                                       |
+| AUTH-04                   | PARTIAL | access/verified/role guards return 401/403 in unit tests; private-resource ownership is exercised in later business modules |
 
 Tokens and OTPs are absent from API responses and screenshots. Cloud deployment remains deferred by project decision.
 

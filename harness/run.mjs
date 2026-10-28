@@ -97,6 +97,8 @@ switch (profile) {
     break;
   case "staging":
     await staging();
+    if (required(["EMAIL_TEST_TO", "RESEND_API_KEY"], "STAGING-FULL"))
+      await command("STAGING-FULL", ["harness/staging.mjs"]);
     break;
   case "providers":
     if (process.env.HARNESS_LIVE_PROVIDERS !== "true")
@@ -142,9 +144,18 @@ switch (profile) {
     );
     break;
   case "backup-restore":
-    blocked(
+    add(
       "BACKUP-RESTORE",
-      "Off-host backup and isolated restore not configured yet",
+      (
+        await runCommand("ssh", [
+          "-o",
+          "BatchMode=yes",
+          "-i",
+          ".secrets/shopfast-ec2.pem",
+          "ubuntu@3.27.169.177",
+          "sudo bash /opt/shopfast/backup.sh && sudo bash /opt/shopfast/restore-rehearsal.sh",
+        ])
+      ).status,
     );
     break;
   case "deploy-rollback":
