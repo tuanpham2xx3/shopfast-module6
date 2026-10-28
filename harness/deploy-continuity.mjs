@@ -6,6 +6,10 @@ import { chromium, expect } from "@playwright/test";
 import { io } from "socket.io-client";
 import { submitBrowserLogin } from "./browser-login.mjs";
 import { runCommand } from "./core.mjs";
+import { harnessContext } from "./context.mjs";
+import { digest } from "./evidence.mjs";
+import { randomUUID } from "node:crypto";
+const executionContext = harnessContext();
 const base = "https://shopfast.tuanpq.com",
   candidate = process.env.HARNESS_CANDIDATE_SHA;
 assert(/^[a-f0-9]{40}$/.test(candidate ?? ""), "Built candidate SHA required");
@@ -202,6 +206,52 @@ try {
   await writeFile(
     "harness/reports/deploy-continuity.json",
     JSON.stringify(result, null, 2),
+  );
+  const finalContext = harnessContext();
+  executionContext.dirty ||=
+    finalContext.dirty || finalContext.commit !== executionContext.commit;
+  const reportPath = `harness/reports/continuity-${started}.json`;
+  const content = await readFile(reportPath);
+  const receipt = {
+    runId: randomUUID(),
+    caseId: "GATE-active-deploy-continuity",
+    ...executionContext,
+    executedAt: result.executedAt,
+    status: result.status,
+    exitCode: result.status === "PASS" ? 0 : 1,
+    command: ["node", "harness/deploy-continuity.mjs"],
+    assertions: [
+      {
+        name: "authenticated HTTP reads across promotion/rollback",
+        expected: "at least five reads and zero errors",
+        actual: { samples: samples.length, errors },
+        passed: samples.length >= 5 && errors.length === 0,
+      },
+      {
+        name: "private subscription survives via reconnect",
+        expected: "at least two successful subscriptions",
+        actual: subscriptions.length,
+        passed: subscriptions.length >= 2,
+      },
+      {
+        name: "restore original release",
+        expected: true,
+        actual: restored,
+        passed: restored,
+      },
+    ],
+    artifacts: [
+      { path: reportPath, bytes: content.length, sha256: digest(content) },
+    ],
+    targetCommit: original,
+    candidateCommit: candidate,
+  };
+  if (receipt.assertions.some((assertion) => !assertion.passed))
+    receipt.status = "FAIL";
+  await mkdir("harness/reports/receipts", { recursive: true });
+  await writeFile(
+    `harness/reports/receipts/${receipt.runId}-continuity.json`,
+    JSON.stringify(receipt, null, 2),
   );
   console.log(
     JSON.stringify({

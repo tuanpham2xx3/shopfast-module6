@@ -7,6 +7,8 @@ import { runCommand, aggregate } from "./core.mjs";
 import { assessRequirements, verifyArtifact } from "./evidence.mjs";
 import { deriveRequirements } from "./derive.mjs";
 import { recordCommandGates } from "./gates.mjs";
+import { recordRemoteProfile } from "./remote-evidence.mjs";
+const startedAt = Date.now();
 const profile = process.argv[2] ?? "preflight";
 const directory = "harness/reports";
 await mkdir(directory, { recursive: true });
@@ -92,6 +94,7 @@ switch (profile) {
       "--test",
       "harness/core.test.mjs",
       "harness/evidence.test.mjs",
+      "harness/remote-evidence.test.mjs",
     ]);
     await command("FORMAT", [
       "node_modules/prettier/bin/prettier.cjs",
@@ -379,6 +382,27 @@ switch (profile) {
   }
   default:
     throw new Error("Unknown harness profile");
+}
+for (const remoteProfile of {
+  performance: ["performance"],
+  resilience: ["worker-crash", "redis-outage"],
+  "backup-restore": ["backup-restore"],
+  "deploy-rollback": ["deploy-rollback"],
+}[profile] ?? []) {
+  try {
+    add(
+      "EVIDENCE-" + remoteProfile,
+      await recordRemoteProfile(
+        remoteProfile,
+        { commit, dirty, configHash },
+        startedAt,
+      ),
+    );
+  } catch {
+    add("EVIDENCE-" + remoteProfile, "FAIL", {
+      reason: "Remote execution evidence could not be verified",
+    });
+  }
 }
 const result = {
   runId: `${Date.now()}-${profile}`,
