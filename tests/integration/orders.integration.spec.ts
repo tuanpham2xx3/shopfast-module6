@@ -233,6 +233,39 @@ describe("order transaction invariants", () => {
       `SELECT used_count FROM "${schema}".promotions WHERE code='LAST'`,
     );
     expect(used_count).toBe(1);
+    const winner = results.find(
+      (result) => result.status === "fulfilled",
+    ) as PromiseFulfilledResult<Awaited<ReturnType<OrderService["checkout"]>>>;
+    const [owner] = await source.query(
+      `SELECT customer_id FROM "${schema}".orders WHERE id=$1`,
+      [winner.value.id],
+    );
+    await service.transition(
+      winner.value.id,
+      { id: owner.customer_id, role: "CUSTOMER" },
+      "CANCELLED",
+      1,
+      "promo-cancel",
+      "Cancelled promotional order",
+    );
+    expect(
+      (
+        await source.query(
+          `SELECT used_count FROM "${schema}".promotions WHERE code='LAST'`,
+        )
+      )[0].used_count,
+    ).toBe(1);
+    // Increase only this isolated test's total quota to distinguish per-customer
+    // redemption protection from the unrelated exhausted-quota condition.
+    await source.query(
+      `UPDATE "${schema}".promotions SET total_quota=5 WHERE code='LAST'`,
+    );
+    await expect(
+      service.checkout(owner.customer_id, "promo-cannot-reuse-after-cancel", {
+        ...input(),
+        promoCode: "LAST",
+      }),
+    ).rejects.toMatchObject({ code: "PROMO_NOT_ELIGIBLE" });
   });
   it("expires unpaid orders once and leaves paid orders reserved", async () => {
     const unpaid = await service.checkout(customer, "expiry-unpaid", input());
