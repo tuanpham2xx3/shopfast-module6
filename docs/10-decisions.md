@@ -32,6 +32,8 @@ Những DEC được dùng để tạo bản spec cụ thể, có thể sửa kh
 
 ## 2. Những việc hạ tầng chưa chốt
 
+Cập nhật 28/10/2026: người dùng đã mở giai đoạn AWS, tự tạo EC2 và cho phép agent setup baseline qua SSH. Plan end-to-end và các quyền/đầu vào ngoài đang chờ ở [docs13](13-end-to-end-delivery-plan.md). Các đoạn hoãn bên dưới là baseline lịch sử; không có nghĩa được bỏ nghiệm thu hạ tầng hoặc tự tạo tài nguyên ngoài phạm vi được cấp.
+
 Chưa chọn instance/region, ngân sách, domain, DNS/TLS, registry, storage file, email provider, metrics platform hay phương thức deployment. Không cần mua/tạo tài nguyên để hoàn thành giai đoạn viết spec. Docker không được khởi động/cài trên workstation; chỉ cấu hình khi tới VPS/CI hoặc môi trường Linux được người dùng yêu cầu.
 
 Các yêu cầu gốc vẫn bắt buộc cho nghiệm thu cuối:

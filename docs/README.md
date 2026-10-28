@@ -39,6 +39,8 @@ Nguồn yêu cầu: `../Module 06 – Software Requirement Specification (SRS).d
 
 ## Đối chiếu gần nhất
 
+- [Plan bàn giao end-to-end và đầu vào cần cấp](13-end-to-end-delivery-plan.md).
+
 - [AWS: link mở nhanh khi setup và demo](12-aws-quick-links.md).
 
 - [Rà soát SRS và những phần chưa nghiệm thu](evidence/srs-audit-2026-10-19.md).
