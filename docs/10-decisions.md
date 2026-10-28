@@ -28,6 +28,10 @@
 | D21 | Implement toàn bộ ứng dụng trước; nghiệm thu Redis/Gemini/email thật sau | Người dùng chọn 18/10/2026 | Không chặn code do service/key local chưa sẵn sàng |
 | D22 | Retention AI 30 ngày; job thành công thu gọn payload sau 90 ngày, giữ tombstone chống chạy trùng | Baseline triển khai 19/10/2026 | Không xóa phản hồi khách/audit; cleanup có batch, advisory lock và không phụ thuộc Redis |
 
+### D23 — UI refresh 28/10/2026
+
+Người dùng yêu cầu cải thiện UI/UX và tải ảnh mạng về dự án. Giữ thương hiệu xanh ShopFast, typography Be Vietnam Pro tự host, token sáng/tối đồng bộ, native form controls và breakpoint responsive. Lựa chọn theme lưu localStorage dưới key `shopfast:theme`. Ảnh demo tải về public assets, có nguồn/giấy phép và nhãn minh họa; ưu tiên imageUrl hợp lệ của catalog, dùng ảnh local cho seed Audio khi URL mẫu thiếu/hỏng. Không sửa tên trường hoặc giới hạn nghiệp vụ. Chi tiết audit và evidence trong [UI refresh](15-ui-refresh.md).
+
 Những DEC được dùng để tạo bản spec cụ thể, có thể sửa khi review; không phải tuyên bố người dùng đã xác nhận tất cả lựa chọn.
 
 ## 2. Những việc hạ tầng chưa chốt
