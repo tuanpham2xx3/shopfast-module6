@@ -26,7 +26,7 @@ Route guard chỉ hỗ trợ trải nghiệm, mọi quyền bắt buộc kiểm 
 
 Catalog: nút “Xem …” mở dialog chi tiết có ảnh, giá, tồn khả dụng, SKU, thương hiệu, danh mục và mô tả. Dialog khóa cuộn nền, giữ focus bên trong; đóng bằng X, Escape hoặc bấm ngoài và trả focus về nút mở. Bố cục một cột trên mobile.
 
-Thanh điều hướng có icon giỏ hàng cho khách và customer, badge là tổng số lượng sản phẩm từ server. Bấm mở màn hình giỏ/checkout riêng; catalog chỉ giữ lịch sử đơn ở cuối trang. Khách được dẫn tới đăng nhập/xác minh rồi mở giỏ. Sửa/xóa/đặt đơn cập nhật badge; lỗi tải giỏ hiển thị thông báo và nút thử lại, không giả thành giỏ trống.
+Thanh điều hướng có icon giỏ hàng cho khách và customer, badge là tổng số lượng sản phẩm từ server. Bấm bật/tắt dropdown giỏ ngay dưới menu: danh sách hàng, giá, tăng/giảm số lượng, xóa, tạm tính và nút “Tiến hành thanh toán” sang checkout riêng. Đóng bằng X, Escape hoặc bấm ngoài; Escape trả focus về icon. Mobile dùng panel vừa chiều ngang màn hình và cuộn bên trong nếu nhiều hàng. Catalog chỉ giữ lịch sử đơn ở cuối trang. Khách xem lời mời đăng nhập trong dropdown trước khi được dẫn tới đăng nhập/xác minh. Sửa/xóa/đặt đơn cập nhật badge; lỗi tải giỏ hiển thị thông báo và nút thử lại, không giả thành giỏ trống.
 
 1. Guest xem catalog; thêm giỏ yêu cầu login, quay lại sản phẩm sau login.
 2. Customer chưa verify được hướng dẫn xác minh trước khi giỏ/checkout.
