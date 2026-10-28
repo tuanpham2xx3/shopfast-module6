@@ -1,0 +1,30 @@
+name: shopfast
+services:
+  api:
+    image: ${APP_IMAGE:?Set APP_IMAGE}
+    env_file: app.env
+    restart: unless-stopped
+    mem_limit: 768m
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:3000/api/v1/health/live').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+  worker:
+    image: ${APP_IMAGE:?Set APP_IMAGE}
+    command: [node, dist/apps/worker/src/main.js]
+    env_file: app.env
+    restart: unless-stopped
+    stop_grace_period: 60s
+    mem_limit: 768m
+  web:
+    image: ${WEB_IMAGE:?Set WEB_IMAGE}
+    restart: unless-stopped
+    ports: ["80:80", "443:443"]
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /var/www/certbot:/var/www/certbot:ro
+    depends_on:
+      api:
+        condition: service_healthy
+    mem_limit: 128m

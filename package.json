@@ -34,7 +34,16 @@
     "test:contract": "jest --runInBand --testPathPattern=contract",
     "typecheck": "tsc --noEmit",
     "start:api": "node dist/apps/api/src/main.js",
-    "start:worker": "node dist/apps/worker/src/main.js"
+    "start:worker": "node dist/apps/worker/src/main.js",
+    "harness:preflight": "node harness/run.mjs preflight",
+    "harness:ci": "node harness/run.mjs ci",
+    "harness:staging": "node harness/run.mjs staging",
+    "harness:providers": "node harness/run.mjs providers",
+    "harness:resilience": "node harness/run.mjs resilience",
+    "harness:performance": "node harness/run.mjs performance",
+    "harness:backup-restore": "node harness/run.mjs backup-restore",
+    "harness:deploy-rollback": "node harness/run.mjs deploy-rollback",
+    "harness:report": "node harness/run.mjs report"
   },
   "dependencies": {
     "@nestjs/common": "10.4.22",

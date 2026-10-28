@@ -32,6 +32,7 @@ describe("PostgreSQL migration contract", () => {
       "Jobs1780000500000",
       "TicketsAi1780000600000",
       "RetentionIndexes1780000700000",
+      "EmailDeliveries1780000800000",
     ]);
     expect(await source.runMigrations()).toHaveLength(0);
     const tables = await source.query(

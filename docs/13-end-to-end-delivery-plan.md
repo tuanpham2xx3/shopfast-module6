@@ -2,6 +2,8 @@
 
 Ngày: 28/10/2026. Trạng thái: PLAN, chưa phải biên bản đạt nghiệm thu. Người dùng yêu cầu agent tự triển khai, test, debug, validate và bàn giao để người dùng nghiệm thu; chủ động gom những cấu hình ngoài quyền truy cập hiện tại.
 
+Đang thực thi: [execution ledger và blocker thực tế](evidence/aws-delivery-progress.md). Profile harness chưa đủ case luôn trả BLOCKED, không được coi lệnh đã tồn tại là tiêu chí đã đạt.
+
 ## 1. Kết quả phải bàn giao
 
 Một URL HTTPS chạy ứng dụng đủ vai trò; code qua PR/CI; image theo commit; deploy và rollback tự động; backup ngoài EC2 và restore đã diễn tập; test harness chạy lại được; bảng SRS PASS/FAIL/BLOCKED có evidence; tài khoản demo riêng và kịch bản bảo vệ. Không dùng kết quả cũ để khẳng định build mới đạt. Không chạy Docker/WSL trên máy Windows.

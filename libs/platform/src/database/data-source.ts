@@ -8,6 +8,7 @@ import { Orders1780000400000 } from "../../../../database/migrations/17800004000
 import { Jobs1780000500000 } from "../../../../database/migrations/1780000500000-jobs";
 import { TicketsAi1780000600000 } from "../../../../database/migrations/1780000600000-tickets-ai";
 import { RetentionIndexes1780000700000 } from "../../../../database/migrations/1780000700000-retention-indexes";
+import { EmailDeliveries1780000800000 } from "../../../../database/migrations/1780000800000-email-deliveries";
 
 export function createDataSource(url: string, schema = "public"): DataSource {
   if (!/^[a-z][a-z0-9_]{0,62}$/.test(schema))
@@ -27,6 +28,7 @@ export function createDataSource(url: string, schema = "public"): DataSource {
       Jobs1780000500000,
       TicketsAi1780000600000,
       RetentionIndexes1780000700000,
+      EmailDeliveries1780000800000,
     ],
     migrationsTransactionMode: "all",
     connectTimeoutMS: 3000,

@@ -332,6 +332,13 @@ export class JobsService {
         template: j.type,
         recipient: o.email,
         orderCode: o.code,
+        total: o.total,
+        discount: o.discount,
+        expiresAt: new Date(o.expires_at).toISOString(),
+        items: await this.source.query(
+          `SELECT name_snapshot AS name,quantity,line_total AS "lineTotal" FROM ${this.t("order_items")} WHERE order_id=$1 ORDER BY id`,
+          [o.id],
+        ),
       });
     } else if (j.type === "invoice.generate") {
       const o = await this.order(p.orderId);
@@ -351,7 +358,10 @@ export class JobsService {
         [o.id, content, createHash("sha256").update(content).digest("hex")],
       );
     } else if (j.type === "inventory.partner-sync") {
-      if (process.env.NODE_ENV === "production")
+      if (
+        process.env.NODE_ENV === "production" &&
+        process.env.PARTNER_SYNC_MODE !== "versioned-demo"
+      )
         throw new Error("PARTNER_MOCK_DISABLED_IN_PRODUCTION");
       await this.source.query(
         `INSERT INTO ${this.t("partner_inventory")}(product_id,version,available) SELECT product_id,version,on_hand-reserved FROM ${this.t("inventories")} WHERE product_id=$1 ON CONFLICT(product_id) DO UPDATE SET version=EXCLUDED.version,available=EXCLUDED.available,updated_at=now() WHERE ${this.t("partner_inventory")}.version<EXCLUDED.version`,
@@ -380,6 +390,9 @@ export class JobsService {
         await this.email.send(`${j.business_key}:${a.id}`, {
           recipient: a.email,
           template: "daily-revenue",
+          businessDate: p.date,
+          orderCount: r.count,
+          total: r.total,
           reportUrl: `/admin/reports/revenue/${p.date}`,
         });
     } else throw new PermanentJobError("UNSUPPORTED_JOB");

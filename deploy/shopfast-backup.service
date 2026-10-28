@@ -1,0 +1,9 @@
+[Unit]
+Description=ShopFast off-host PostgreSQL backup
+After=docker.service network-online.target
+Requires=docker.service
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /opt/shopfast/backup.sh
+UMask=0077
+TimeoutStartSec=900

@@ -214,6 +214,12 @@ export async function createApiApp(options: NestApplicationOptions = {}) {
   );
   app.use(json({ limit: "64kb" }));
   app.use(cookieParser());
+  // Only the private Compose Nginx network is trusted, never arbitrary Internet proxies.
+  if (process.env.TRUST_PROXY_CIDR)
+    app
+      .getHttpAdapter()
+      .getInstance()
+      .set("trust proxy", process.env.TRUST_PROXY_CIDR);
   app.setGlobalPrefix(environment.API_PREFIX);
   app.enableCors({ origin: environment.WEB_ORIGIN, credentials: true });
   app.useGlobalFilters(new ApiExceptionFilter());

@@ -28,6 +28,7 @@ import {
   AuthenticatedRequest,
 } from "../auth/auth.guards";
 import { AuthModule } from "../auth/auth.module";
+import { ResendEmailAdapter } from "./resend-email";
 import {
   DevelopmentEmailAdapter,
   HttpEmailAdapter,
@@ -40,12 +41,22 @@ export function createJobsService(
   const secret =
     process.env.INVOICE_SIGNING_SECRET || process.env.ACCESS_TOKEN_SECRET || "";
   const email =
-    process.env.EMAIL_PROVIDER_URL && process.env.EMAIL_PROVIDER_TOKEN
-      ? new HttpEmailAdapter(
-          process.env.EMAIL_PROVIDER_URL,
-          process.env.EMAIL_PROVIDER_TOKEN,
+    process.env.EMAIL_PROVIDER === "resend" &&
+    process.env.RESEND_API_KEY &&
+    process.env.EMAIL_FROM
+      ? new ResendEmailAdapter(
+          source,
+          schema,
+          process.env.RESEND_API_KEY,
+          process.env.EMAIL_FROM,
+          process.env.WEB_ORIGIN!,
         )
-      : new DevelopmentEmailAdapter(source, schema);
+      : process.env.EMAIL_PROVIDER_URL && process.env.EMAIL_PROVIDER_TOKEN
+        ? new HttpEmailAdapter(
+            process.env.EMAIL_PROVIDER_URL,
+            process.env.EMAIL_PROVIDER_TOKEN,
+          )
+        : new DevelopmentEmailAdapter(source, schema);
   return new JobsService(source, email, secret, schema);
 }
 @Injectable()
