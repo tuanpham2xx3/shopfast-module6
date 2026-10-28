@@ -120,6 +120,39 @@ await writeFile(
   JSON.stringify(receipts, null, 2),
 );
 const partnerCase = receipts.find((receipt) => receipt.caseId === "JOB-03");
+const swaggerTest = suites
+  .flatMap((suite) => suite.tests)
+  .find((test) => test.title.includes("F07 generates and serves Swagger"));
+await writeFile(
+  `harness/reports/receipts/${runId}-swagger.json`,
+  JSON.stringify(
+    {
+      runId,
+      caseId: "GATE-swagger-generated-live",
+      ...context,
+      executedAt,
+      status:
+        run.status === "PASS" && swaggerTest?.status === "passed"
+          ? "PASS"
+          : "BLOCKED",
+      exitCode: run.exitCode,
+      command: ["node", ...command],
+      assertions: [
+        {
+          name: "Actual test application serves generated Swagger UI and OpenAPI routes",
+          expected: "passing HTTP assertions",
+          actual: swaggerTest ?? null,
+          passed: run.status === "PASS" && swaggerTest?.status === "passed",
+        },
+      ],
+      artifacts: [artifact, ...(run.artifact ? [run.artifact] : [])],
+      scope:
+        "Non-production isolated test application; Swagger remains disabled in production by policy.",
+    },
+    null,
+    2,
+  ),
+);
 if (partnerCase) {
   const partnerAssertions = partnerCase.assertions.filter((assertion) =>
     assertion.name.includes("never overwrites a newer partner"),

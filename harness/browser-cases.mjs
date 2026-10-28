@@ -21,7 +21,14 @@ try {
           title: spec.title,
           ok: spec.ok,
           results: spec.tests.flatMap((t) =>
-            t.results.map((r) => ({ status: r.status, duration: r.duration })),
+            t.results.map((r) => ({
+              status: r.status,
+              duration: r.duration,
+              queueCounts:
+                r.attachments?.find(
+                  (attachment) => attachment.name === "queue-counts",
+                )?.body ?? null,
+            })),
           ),
           file: spec.file,
         });
@@ -81,6 +88,43 @@ const receipts = ["RT-04", "UI-01"].map((caseId) => ({
 await writeFile(
   `harness/reports/receipts/${runId}-browser.json`,
   JSON.stringify(receipts, null, 2),
+);
+let queueCounts = null;
+try {
+  queueCounts = JSON.parse(
+    Buffer.from(
+      browserTest?.results.at(-1)?.queueCounts ?? "",
+      "base64",
+    ).toString("utf8"),
+  );
+} catch {}
+const countsValid =
+  !!passed &&
+  queueCounts?.status === "ok" &&
+  ["waiting", "active", "completed", "failed"].every(
+    (state) =>
+      Number.isInteger(queueCounts.counts?.[state]) &&
+      queueCounts.counts[state] >= 0,
+  );
+await writeFile(
+  `harness/reports/receipts/${runId}-queue-dashboard.json`,
+  JSON.stringify(
+    {
+      ...receipts[1],
+      caseId: "GATE-queue-dashboard-counts",
+      status: countsValid ? "PASS" : "BLOCKED",
+      assertions: [
+        {
+          name: "Browser loads and displays actual Redis queue counts",
+          expected: "ok with numeric waiting/active/completed/failed",
+          actual: queueCounts,
+          passed: countsValid,
+        },
+      ],
+    },
+    null,
+    2,
+  ),
 );
 console.log(
   JSON.stringify({

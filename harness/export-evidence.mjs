@@ -3,6 +3,7 @@ import { readFile, writeFile, mkdir, copyFile } from "node:fs/promises";
 import { resolve, relative, isAbsolute } from "node:path";
 import { createHash } from "node:crypto";
 import { verifyArtifact } from "./evidence.mjs";
+import { format } from "prettier";
 const source = process.argv[2];
 if (!source)
   throw Error("Usage: node harness/export-evidence.mjs path-to-receipt.json");
@@ -64,15 +65,18 @@ for (const { artifact, bytes } of content) {
 }
 await writeFile(
   target + "/manifest.json",
-  JSON.stringify(
-    {
-      sourceReceipt: sourceRelative,
-      receipts,
-      artifacts: manifest,
-      note: "PNG reviewed separately before commit/publication; hash integrity does not prove assertion coverage.",
-    },
-    null,
-    2,
+  await format(
+    JSON.stringify(
+      {
+        sourceReceipt: sourceRelative,
+        receipts,
+        artifacts: manifest,
+        note: "PNG reviewed separately before commit/publication; hash integrity does not prove assertion coverage.",
+      },
+      null,
+      2,
+    ),
+    { parser: "json" },
   ),
 );
 console.log(

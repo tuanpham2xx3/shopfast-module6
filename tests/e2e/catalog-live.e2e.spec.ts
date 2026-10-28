@@ -363,6 +363,36 @@ test("UI-01 RT-04 real browser purchase, role operations and offline socket reco
       page.getByRole("heading", { name: "Quản trị ShopFast", exact: true }),
     ).toBeVisible();
     await expect.poll(() => page.evaluate(() => scrollY)).toBe(0);
+    if (process.env.TEST_REDIS_URL) {
+      const [queueResponse] = await Promise.all([
+        page.waitForResponse((response) =>
+          new URL(response.url()).pathname.endsWith("/admin/queues"),
+        ),
+        page
+          .getByRole("button", {
+            name: "Kiểm tra dịch vụ và queue",
+            exact: true,
+          })
+          .click(),
+      ]);
+      expect(queueResponse.ok()).toBe(true);
+      const queueSnapshot = (await queueResponse.json()).data.redisQueue;
+      expect(queueSnapshot.status).toBe("ok");
+      await test.info().attach("queue-counts", {
+        body: JSON.stringify(queueSnapshot),
+        contentType: "application/json",
+      });
+      for (const state of ["waiting", "active", "completed", "failed"]) {
+        expect(queueSnapshot.counts[state]).toEqual(expect.any(Number));
+        expect(queueSnapshot.counts[state]).toBeGreaterThanOrEqual(0);
+      }
+      await expect(
+        page.locator("pre").filter({ hasText: "redisQueue" }),
+      ).toContainText('"waiting"');
+      await expect(
+        page.locator("pre").filter({ hasText: "redisQueue" }),
+      ).toContainText('"failed"');
+    }
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,
