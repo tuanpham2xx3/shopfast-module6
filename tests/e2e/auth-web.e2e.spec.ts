@@ -31,6 +31,20 @@ test("preserves password input and theme preference on mobile", async ({
     .getByRole("button", { name: "Đã có tài khoản? Đăng nhập", exact: true })
     .click();
   await expect(password).toHaveAttribute("type", "password");
+  await page.route("**/api/v1/auth/login", (route) =>
+    route.fulfill({
+      status: 401,
+      contentType: "application/json",
+      body: JSON.stringify({
+        error: { message: "Email hoặc mật khẩu không đúng" },
+      }),
+    }),
+  );
+  await page.getByLabel("Email", { exact: true }).fill("invalid@example.test");
+  await page.getByRole("button", { name: "Đăng nhập", exact: true }).click();
+  await expect(page.getByRole("alert")).toHaveText(
+    "Email hoặc mật khẩu không đúng",
+  );
   await page
     .getByRole("button", { name: "Hiện mật khẩu", exact: true })
     .click();

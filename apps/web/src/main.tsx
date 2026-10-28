@@ -37,6 +37,7 @@ function App() {
   const [accessToken, setAccessToken] = useState("");
   const [user, setUser] = useState<User | null>(null);
   const [message, setMessage] = useState("");
+  const [messageError, setMessageError] = useState(false);
   const [busy, setBusy] = useState(false);
   const [screen, setScreen] = useState<
     "auth" | "catalog" | "tickets" | "admin"
@@ -92,6 +93,7 @@ function App() {
     event.preventDefault();
     setBusy(true);
     setMessage("");
+    setMessageError(false);
     const data = Object.fromEntries(new FormData(event.currentTarget));
     try {
       if (mode === "verify") {
@@ -117,6 +119,7 @@ function App() {
         }
       }
     } catch (e) {
+      setMessageError(true);
       setMessage((e as Error).message);
     } finally {
       setBusy(false);
@@ -125,12 +128,14 @@ function App() {
   async function logout() {
     setBusy(true);
     setMessage("");
+    setMessageError(false);
     try {
       await api("/auth/logout", { method: "POST" });
       setAccessToken("");
       setUser(null);
       setMode("login");
     } catch (e) {
+      setMessageError(true);
       setMessage((e as Error).message);
     } finally {
       setBusy(false);
@@ -139,6 +144,7 @@ function App() {
   async function resend() {
     if (!user) return;
     setBusy(true);
+    setMessageError(false);
     try {
       await api("/auth/verification/send", {
         method: "POST",
@@ -147,6 +153,7 @@ function App() {
       setMessage("Yêu cầu gửi mã đã được tiếp nhận.");
       setResendUntil(Date.now() + 60000);
     } catch (e) {
+      setMessageError(true);
       setMessage((e as Error).message);
     } finally {
       setBusy(false);
@@ -409,7 +416,7 @@ function App() {
                 </label>
               )}
               {message && (
-                <p className="message" role="status">
+                <p className="message" role={messageError ? "alert" : "status"}>
                   {message}
                 </p>
               )}
