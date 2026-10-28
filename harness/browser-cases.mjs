@@ -57,6 +57,8 @@ for (const path of [
     artifacts.push({ path, bytes: data.length, sha256: digest(data) });
   } catch {}
 }
+const finalContext = harnessContext();
+context.dirty ||= finalContext.dirty || finalContext.commit !== context.commit;
 const receipts = ["RT-04", "UI-01"].map((caseId) => ({
   runId,
   caseId,

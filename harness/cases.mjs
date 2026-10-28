@@ -51,6 +51,8 @@ const artifact = {
   bytes: bytes.length,
   sha256: digest(bytes),
 };
+const finalContext = harnessContext();
+context.dirty ||= finalContext.dirty || finalContext.commit !== context.commit;
 const receipts = [];
 for (const c of map.cases) {
   const assertions = [];
