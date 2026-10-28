@@ -10,11 +10,7 @@
       "executedAt": "2026-10-28T11:10:06.109Z",
       "status": "PASS",
       "exitCode": 0,
-      "command": [
-        "node",
-        "node_modules/@playwright/test/cli.js",
-        "test"
-      ],
+      "command": ["node", "node_modules/@playwright/test/cli.js", "test"],
       "assertions": [
         {
           "name": "UI-01 RT-04 real browser purchase, role operations and offline socket recovery",
@@ -70,11 +66,7 @@
       "executedAt": "2026-10-28T11:10:06.109Z",
       "status": "PASS",
       "exitCode": 0,
-      "command": [
-        "node",
-        "node_modules/@playwright/test/cli.js",
-        "test"
-      ],
+      "command": ["node", "node_modules/@playwright/test/cli.js", "test"],
       "assertions": [
         {
           "name": "UI-01 RT-04 real browser purchase, role operations and offline socket recovery",
