@@ -397,14 +397,18 @@ for (const remoteProfile of {
     });
   }
 }
+const finalContext = harnessContext();
+const sourceChanged =
+  dirty || finalContext.dirty || finalContext.commit !== commit;
 const result = {
   runId: `${Date.now()}-${profile}`,
   profile,
   commit,
-  dirty,
+  dirty: sourceChanged,
   configHash,
   executedAt: new Date().toISOString(),
-  status: aggregate(cases),
+  status: sourceChanged ? "BLOCKED" : aggregate(cases),
+  ...(sourceChanged ? { reason: "WORKTREE_CHANGED_DURING_EXECUTION" } : {}),
   cases,
 };
 await writeFile(

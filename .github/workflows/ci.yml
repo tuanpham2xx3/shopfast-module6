@@ -43,6 +43,8 @@ jobs:
       - run: npm ci
       - run: npm run harness:check
       - run: npm run harness:selftest
+      - name: Verify image secret scanner negative cases
+        run: python3 harness/image-secrets.py --self-test
       - name: Validate deployment scripts
         run: for script in deploy/*.sh; do bash -n "$script"; done
       - run: npx playwright install --with-deps chromium

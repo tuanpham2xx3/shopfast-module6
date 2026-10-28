@@ -257,7 +257,7 @@ try {
     shopfastGroupMemberCount: groupMemberCount,
     humanRolePolicies: humanPolicies,
     builderIdMfa:
-      "User-provided screenshots show prior registered TOTP; this API cannot attest current enforcement",
+      "Operator confirms TOTP and fresh-login MFA challenge on 28/10/2026; user attestation, not API proof of enforced policy",
     emailVerification:
       "User reports verified 28/10/2026; not independently attested by this API",
   };
