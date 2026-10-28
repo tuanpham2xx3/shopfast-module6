@@ -243,6 +243,7 @@ export function Catalog({
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [revision, setRevision] = useState(0);
+  const loaded = useRef(false);
   useEffect(() => {
     Promise.all([api<Taxonomy[]>("/categories"), api<Taxonomy[]>("/brands")])
       .then(([c, b]) => {
@@ -260,6 +261,7 @@ export function Catalog({
     )
       .then((result) => {
         if (active) {
+          loaded.current = true;
           setItems(result.items);
           setTotal(result.total);
         }
@@ -373,7 +375,7 @@ export function Catalog({
           </button>
         </p>
       )}
-      {loading ? (
+      {loading && !loaded.current ? (
         <div className="catalog-loading" role="status">
           <span>Đang tải sản phẩm…</span>
           <div className="product-grid" aria-hidden="true">
@@ -437,7 +439,6 @@ export function Catalog({
                         },
                         token,
                       );
-                      setRevision((v) => v + 1);
                       onCartChange();
                     } catch (e) {
                       setError((e as Error).message);

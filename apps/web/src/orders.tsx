@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { API, getAccessToken, restoreSession } from "./client";
 const mutationKeys = new Map<string, string>();
@@ -50,6 +50,7 @@ export function Orders({
 }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [cartLoading, setCartLoading] = useState(false);
+  const cartLoaded = useRef(false);
   const [cartError, setCartError] = useState("");
   const [orders, setOrders] = useState<Order[]>([]);
   const [selected, setSelected] = useState<Order | null>(null);
@@ -79,11 +80,14 @@ export function Orders({
         if (active) setError(e.message);
       });
     if (!staff && showCart) {
-      setCartLoading(true);
+      setCartLoading(!cartLoaded.current);
       setCartError("");
       api<{ items: CartItem[] }>("/cart", {}, token)
         .then((r) => {
-          if (active) setCart(r.items);
+          if (active) {
+            cartLoaded.current = true;
+            setCart(r.items);
+          }
         })
         .catch((e) => {
           if (active) setCartError(e.message);
@@ -114,7 +118,17 @@ export function Orders({
         const order = await api<Order>(`${prefix}/${selectedId}`, {}, token);
         if (active && order.version >= seen) {
           seen = order.version;
-          setSelected(order);
+          setSelected((current) => {
+            if (
+              current &&
+              current.id === order.id &&
+              current.version > order.version
+            )
+              return current;
+            return JSON.stringify(current) === JSON.stringify(order)
+              ? current
+              : order;
+          });
         }
       } catch (e) {
         if (active) setError((e as Error).message);

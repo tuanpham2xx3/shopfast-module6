@@ -1299,6 +1299,10 @@ pre {
   padding: 12px 0;
   font-size: 13px;
 }
+.cart-dropdown button[aria-disabled="true"] {
+  opacity: 0.55;
+  cursor: wait;
+}
 @media (max-width: 760px) {
   .cart-menu {
     position: static;

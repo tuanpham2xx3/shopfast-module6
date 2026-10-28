@@ -5,6 +5,9 @@ for (const width of [1280, 390]) {
   }, testInfo) => {
     await page.setViewportSize({ width, height: 844 });
     let quantity = 0;
+    let cartGate: Promise<void> | undefined;
+    let releaseCart: (() => void) | undefined;
+    let blockedReads = 0;
     const product = {
       id: "product-1",
       name: "Micro USB",
@@ -37,7 +40,11 @@ for (const width of [1280, 390]) {
       else if (path === "/cart/items/product-1") {
         if (route.request().method() === "DELETE") quantity = 0;
         else quantity = route.request().postDataJSON().quantity;
-      } else if (path === "/cart")
+      } else if (path === "/cart") {
+        if (cartGate) {
+          blockedReads++;
+          await cartGate;
+        }
         data = {
           items: quantity
             ? [
@@ -52,7 +59,7 @@ for (const width of [1280, 390]) {
               ]
             : [],
         };
-      else if (path?.startsWith("/orders")) data = { items: [], total: 0 };
+      } else if (path?.startsWith("/orders")) data = { items: [], total: 0 };
       await route.fulfill({ json: { data } });
     });
     await page.goto("/");
@@ -108,15 +115,41 @@ for (const width of [1280, 390]) {
     await expect(
       quickCart.getByText("Micro USB", { exact: true }),
     ).toBeVisible();
+    cartGate = new Promise<void>((resolve) => {
+      releaseCart = resolve;
+    });
+    const productNode = await quickCart
+      .getByText("Micro USB", { exact: true })
+      .elementHandle();
+    const cardNode = await page
+      .locator(".product-card")
+      .first()
+      .elementHandle();
     await quickCart
       .getByRole("button", { name: "Tăng số lượng Micro USB" })
       .click();
+    await expect.poll(() => blockedReads).toBeGreaterThanOrEqual(2);
+    await expect(
+      quickCart.getByText("Micro USB", { exact: true }),
+    ).toBeVisible();
+    await expect(quickCart.getByText("Đang tải giỏ hàng…")).toHaveCount(0);
+    await expect(
+      quickCart.getByRole("button", { name: "Tiến hành thanh toán" }),
+    ).toBeVisible();
+    await expect(cart).toBeVisible();
+    expect(await productNode!.evaluate((node) => node.isConnected)).toBe(true);
+    expect(await cardNode!.evaluate((node) => node.isConnected)).toBe(true);
+    cartGate = undefined;
+    releaseCart!();
     await expect(
       page.getByRole("button", { name: "Giỏ hàng, 2 sản phẩm", exact: true }),
     ).toBeVisible();
     await expect(
       quickCart.getByText("500.000 ₫", { exact: true }).last(),
     ).toBeVisible();
+    await expect(
+      quickCart.getByRole("button", { name: "Tăng số lượng Micro USB" }),
+    ).toBeFocused();
     await quickCart
       .getByRole("button", { name: "Giảm số lượng Micro USB" })
       .click();
