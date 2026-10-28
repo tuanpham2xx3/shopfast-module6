@@ -9,6 +9,7 @@ const profiles = [
   "deploy-rollback",
   "providers",
   "staging",
+  { name: "active-deploy-continuity", script: "harness/deploy-continuity.mjs" },
   "resilience",
   "backup-restore",
   "performance",

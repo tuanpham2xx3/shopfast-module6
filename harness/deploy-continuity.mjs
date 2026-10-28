@@ -11,7 +11,8 @@ import { digest } from "./evidence.mjs";
 import { randomUUID } from "node:crypto";
 const executionContext = harnessContext();
 const base = "https://shopfast.tuanpq.com",
-  candidate = process.env.HARNESS_CANDIDATE_SHA;
+  candidate =
+    process.env.HARNESS_CONTINUITY_SHA ?? process.env.HARNESS_CANDIDATE_SHA;
 assert(/^[a-f0-9]{40}$/.test(candidate ?? ""), "Built candidate SHA required");
 const sshArgs = [
   "-o",

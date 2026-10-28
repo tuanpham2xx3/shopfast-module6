@@ -18,6 +18,7 @@ export function harnessContext() {
         databaseConfigured: !!process.env.TEST_DATABASE_URL,
         redisConfigured: !!process.env.TEST_REDIS_URL,
         candidate: process.env.HARNESS_CANDIDATE_SHA ?? null,
+        continuityCandidate: process.env.HARNESS_CONTINUITY_SHA ?? null,
         credentials: createHash("sha256")
           .update(
             [
