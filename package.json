@@ -51,7 +51,7 @@
     "harness:browser-cases": "node harness/browser-cases.mjs",
     "harness:cloud-audit": "node harness/cloud-audit.mjs",
     "harness:deploy-continuity": "node harness/deploy-continuity.mjs",
-    "harness:selftest": "node --test harness/core.test.mjs harness/evidence.test.mjs harness/remote-evidence.test.mjs",
+    "harness:selftest": "node harness/selftest.mjs",
     "harness:platform-cases": "node harness/platform-cases.mjs",
     "harness:derive": "node harness/derive.mjs",
     "harness:check": "prettier --check \"harness/*.{mjs,cjs,json}\" && node harness/check-source.mjs"

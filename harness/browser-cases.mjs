@@ -1,5 +1,5 @@
 ﻿import "dotenv/config";
-import { readFile, writeFile, mkdir } from "node:fs/promises";
+import { readFile, writeFile, mkdir, stat } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
 import { runCommand } from "./core.mjs";
 import { harnessContext } from "./context.mjs";
@@ -9,10 +9,13 @@ const context = harnessContext(),
   executedAt = new Date().toISOString();
 await mkdir("harness/reports/receipts", { recursive: true });
 const command = ["node_modules/@playwright/test/cli.js", "test"];
+const runStartedAt = Date.now();
 const run = await runCommand(process.execPath, command, { timeoutMs: 900000 });
 const reportPath = "harness/reports/playwright-results.json";
 let tests = [];
 try {
+  if ((await stat(reportPath)).mtimeMs < runStartedAt)
+    throw new Error("Stale Playwright report");
   const report = JSON.parse(await readFile(reportPath, "utf8"));
   function walk(suites) {
     for (const s of suites) {

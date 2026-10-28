@@ -9,6 +9,8 @@ import { runCommand } from "./core.mjs";
 import { harnessContext } from "./context.mjs";
 import { digest } from "./evidence.mjs";
 import { randomUUID } from "node:crypto";
+import { fetchRespectingRateLimit } from "./http-retry.mjs";
+import { observeOrderSubscription } from "./continuity-observer.mjs";
 const executionContext = harnessContext();
 const base = "https://shopfast.tuanpq.com",
   candidate =
@@ -42,23 +44,37 @@ const browser = await chromium.launch(),
   context = await browser.newContext(),
   page = await context.newPage();
 let socket,
+  observer,
   polling = true,
   pollTask,
   deployStarted = false,
   restored = false;
 const samples = [],
   errors = [],
-  subscriptions = [];
+  subscriptions = [],
+  subscriptionAttempts = [];
 let deploy, rollback;
 const started = Date.now();
 try {
-  const login = await fetch(base + "/api/v1/auth/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Origin: base },
-    body: JSON.stringify({ email: fixture.email, password: fixture.password }),
-    signal: AbortSignal.timeout(15000),
-  });
-  assert(login.ok, "Continuity API login failed");
+  const login = await fetchRespectingRateLimit(
+    () =>
+      fetch(base + "/api/v1/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Origin: base },
+        body: JSON.stringify({
+          email: fixture.email,
+          password: fixture.password,
+        }),
+        signal: AbortSignal.timeout(15000),
+      }),
+    {
+      onWait: (delay) =>
+        console.log(
+          `Continuity login HTTP429: respecting Retry-After ${Math.ceil(delay / 1000)}s`,
+        ),
+    },
+  );
+  assert(login.ok, `Continuity API login HTTP${login.status}`);
   const token = (await login.json()).data.accessToken;
   const headers = { Authorization: `Bearer ${token}` };
   await page.goto(base);
@@ -82,19 +98,15 @@ try {
     reconnection: true,
     reconnectionDelay: 250,
     reconnectionDelayMax: 1000,
+    autoConnect: false,
   });
-  socket.on("connect", async () => {
-    try {
-      const ack = await socket
-        .timeout(5000)
-        .emitWithAck("order.subscribe", { orderId: fixture.orderId });
-      if (!ack.ok) errors.push("subscription denied");
-      else subscriptions.push({ at: Date.now(), version: ack.currentVersion });
-    } catch {
-      errors.push("subscribe timeout");
-    }
+  observer = observeOrderSubscription(socket, fixture.orderId, {
+    subscriptions,
+    errors,
+    attempts: subscriptionAttempts,
   });
-  await expect.poll(() => subscriptions.length).toBeGreaterThan(0);
+  socket.connect();
+  await expect.poll(observer.isFresh).toBe(true);
   const orderResponse = await fetch(
     base + `/api/v1/orders/${fixture.orderId}`,
     { headers },
@@ -179,9 +191,30 @@ try {
     );
     restored = restore.status === "PASS";
     if (!restored) errors.push("Failed to restore original release");
+    else {
+      try {
+        await expect.poll(observer.isFresh, { timeout: 45000 }).toBe(true);
+        await expect(
+          page
+            .getByLabel("Chi tiết đơn hàng")
+            .getByText("Đang theo dõi trực tiếp", { exact: true }),
+        ).toBeVisible({ timeout: 45000 });
+        await expect(
+          page
+            .getByLabel("Chi tiết đơn hàng")
+            .getByText("DELIVERED", { exact: true })
+            .first(),
+        ).toBeVisible();
+      } catch {
+        errors.push(
+          "Restored private subscription or browser order session did not recover",
+        );
+      }
+    }
   }
   polling = false;
   await pollTask;
+  observer?.stop();
   socket?.disconnect();
   await browser.close();
   const result = {
@@ -193,6 +226,7 @@ try {
     durationMs: Date.now() - started,
     samples,
     subscriptions,
+    subscriptionAttempts,
     errors,
     deploy,
     rollback,
