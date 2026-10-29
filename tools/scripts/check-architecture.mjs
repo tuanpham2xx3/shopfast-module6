@@ -26,6 +26,15 @@ async function inspect(folder) {
       true,
     );
     function visit(node) {
+      if (
+        file.includes("/http/") &&
+        ts.isCallExpression(node) &&
+        ts.isPropertyAccessExpression(node.expression) &&
+        ["query", "transaction", "createQueryBuilder"].includes(
+          node.expression.name.text,
+        )
+      )
+        violations.push(`${file}: HTTP adapters cannot query databases`);
       let specifier;
       if (ts.isImportDeclaration(node) || ts.isExportDeclaration(node))
         specifier = node.moduleSpecifier;
@@ -37,6 +46,8 @@ async function inspect(folder) {
         specifier = node.arguments[0];
       if (specifier && ts.isStringLiteral(specifier)) {
         const spec = specifier.text;
+        if (file.includes("/http/") && spec === "typeorm")
+          violations.push(`${file}: HTTP adapters cannot import TypeORM`);
         const target = spec.startsWith(".")
           ? portable(relative(root, resolve(root, dirname(file), spec)))
           : spec;

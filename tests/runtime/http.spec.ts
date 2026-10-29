@@ -1,14 +1,12 @@
 import { ExecutionContext } from "@nestjs/common";
 import { firstValueFrom, of } from "rxjs";
 import { DataSource } from "typeorm";
+import { RuntimeServices } from "../../libs/modules/runtime/src/composition/runtime.runtime";
+import { RuntimeRateInterceptor } from "../../libs/modules/runtime/src/http/runtime.interceptor";
 import {
   RateLimitError,
   RuntimeLimiter,
 } from "../../libs/modules/runtime/src/limiter";
-import {
-  RuntimeRateInterceptor,
-  RuntimeServices,
-} from "../../libs/modules/runtime/src/runtime.module";
 describe("HTTP runtime limiter adapter", () => {
   it("uses a conservative process fallback and fails closed for sensitive scopes", async () => {
     const source = new DataSource({ type: "postgres" });

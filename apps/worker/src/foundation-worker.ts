@@ -1,23 +1,23 @@
 import {
+  Injectable,
   Logger,
   OnApplicationShutdown,
   OnModuleInit,
-  Injectable,
 } from "@nestjs/common";
-import { createHash, randomUUID } from "node:crypto";
 import { Queue, Worker } from "bullmq";
 import Redis from "ioredis";
+import { createHash, randomUUID } from "node:crypto";
 import { DataSource } from "typeorm";
+import { createJobsService } from "../../../libs/modules/jobs/src/composition/jobs.runtime";
+import { JobsService } from "../../../libs/modules/jobs/src/jobs.service";
+import { RetentionService } from "../../../libs/modules/jobs/src/retention.service";
 import { createDataSource } from "../../../libs/platform/src/database/data-source";
+import { domainEvents } from "../../../libs/platform/src/domain-events";
 import {
-  publishOutboxBatch,
   OutboxEvent,
   deliverFakeEvent,
+  publishOutboxBatch,
 } from "../../../libs/platform/src/outbox/outbox";
-import { createJobsService } from "../../../libs/modules/jobs/src/jobs.module";
-import { JobsService } from "../../../libs/modules/jobs/src/jobs.service";
-import { domainEvents } from "../../../libs/platform/src/domain-events";
-import { RetentionService } from "../../../libs/modules/jobs/src/retention.service";
 export type OutboxSubscriber = (
   event: OutboxEvent,
   source: DataSource,

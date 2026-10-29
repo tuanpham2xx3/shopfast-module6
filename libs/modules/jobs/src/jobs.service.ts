@@ -5,12 +5,12 @@ import {
   timingSafeEqual,
 } from "node:crypto";
 import { existsSync } from "node:fs";
-import { DataSource } from "typeorm";
 import PDFDocument from "pdfkit";
+import { DataSource } from "typeorm";
 import { OutboxEvent } from "../../../platform/src/outbox/outbox";
 import { AiService } from "../../ai/src/ai.service";
-import { TicketsService } from "../../tickets/src/tickets.service";
 import { OrderService } from "../../orders/src/order.service";
+import { TicketsService } from "../../tickets/src/tickets.service";
 export function businessDate(at: Date) {
   return new Intl.DateTimeFormat("en-CA", {
     timeZone: "Asia/Bangkok",
@@ -451,6 +451,25 @@ export class JobsService {
       [id, userId],
     );
     return row?.content ?? null;
+  }
+  async failedPage(page: number) {
+    const items = await this.failed(page);
+    const [{ count }] = await this.source.query(
+      `SELECT count(*)::int count FROM ${this.t("failed_jobs")}`,
+    );
+    return { items, total: count, page, pageSize: 50 };
+  }
+  async revenueReport(date: string) {
+    const [row] = await this.source.query(
+      `SELECT csv FROM ${this.t("revenue_reports")} WHERE business_date=$1`,
+      [date],
+    );
+    return row;
+  }
+  async executionCounts() {
+    return this.source.query(
+      `SELECT status,count(*)::int count FROM ${this.t("job_executions")} GROUP BY status`,
+    );
   }
   async failed(page = 1) {
     return this.source.query(
