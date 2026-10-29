@@ -140,6 +140,12 @@ for (const width of [1280, 390]) {
       .click();
     await expect.poll(() => blockedReads).toBeGreaterThanOrEqual(2);
     await expect(
+      quickCart.getByRole("button", { name: "Tăng số lượng Micro USB" }),
+    ).toHaveCSS("cursor", "pointer");
+    await expect(
+      quickCart.getByText("Đang cập nhật giỏ hàng…", { exact: true }),
+    ).toBeVisible();
+    await expect(
       quickCart.getByText("Micro USB", { exact: true }),
     ).toBeVisible();
     await expect(quickCart.getByText("Đang tải giỏ hàng…")).toHaveCount(0);

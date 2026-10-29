@@ -1317,7 +1317,7 @@ pre {
 }
 .cart-dropdown button[aria-disabled="true"] {
   opacity: 0.55;
-  cursor: wait;
+  cursor: pointer;
 }
 @media (max-width: 760px) {
   .cart-menu {

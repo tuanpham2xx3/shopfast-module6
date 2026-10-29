@@ -271,7 +271,11 @@ export function CartDropdown({
                       )}
                     </strong>
                   </div>
-                  <small>Giá và ưu đãi được xác nhận khi đặt hàng.</small>
+                  <small role="status">
+                    {busy || loading
+                      ? "Đang cập nhật giỏ hàng…"
+                      : "Giá và ưu đãi được xác nhận khi đặt hàng."}
+                  </small>
                   <button
                     type="button"
                     className="cart-checkout"
