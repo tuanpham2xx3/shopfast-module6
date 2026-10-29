@@ -5,6 +5,7 @@ for (const width of [1280, 390]) {
   }, testInfo) => {
     await page.setViewportSize({ width, height: 844 });
     let quantity = 0;
+    let orderReads = 0;
     let cartGate: Promise<void> | undefined;
     let releaseCart: (() => void) | undefined;
     let blockedReads = 0;
@@ -60,7 +61,10 @@ for (const width of [1280, 390]) {
               ]
             : [],
         };
-      } else if (path?.startsWith("/orders")) data = { items: [], total: 0 };
+      } else if (path?.startsWith("/orders")) {
+        orderReads++;
+        data = { items: [], total: 0 };
+      }
       await route.fulfill({ json: { data } });
     });
     await page.goto("/");
@@ -68,6 +72,9 @@ for (const width of [1280, 390]) {
       page.getByRole("heading", { name: "Chào Popup Customer" }),
     ).toBeVisible();
     await page.getByRole("button", { name: "Cửa hàng", exact: true }).click();
+    await expect(
+      page.getByRole("heading", { name: "Đơn hàng của bạn", exact: true }),
+    ).toHaveCount(0);
     const trigger = page.getByRole("button", {
       name: "Xem Micro USB",
       exact: true,
@@ -110,6 +117,7 @@ for (const width of [1280, 390]) {
       exact: true,
     });
     await expect(cart).toBeVisible();
+    expect(orderReads).toBe(0);
     await cart.click();
     const quickCart = page.getByRole("region", { name: "Giỏ hàng nhanh" });
     await expect(quickCart).toBeVisible();
@@ -170,6 +178,9 @@ for (const width of [1280, 390]) {
       .getByRole("button", { name: "Tiến hành thanh toán" })
       .click();
     await expect(page.getByLabel("Người nhận")).toBeVisible();
+    await expect(
+      page.getByRole("navigation", { name: "Phân trang đơn hàng" }),
+    ).toHaveCount(0);
     await expect(page.getByLabel("Số lượng Micro USB")).toHaveValue("1");
     await page.getByLabel("Số lượng Micro USB").fill("2");
     await page.getByLabel("Người nhận").click();
