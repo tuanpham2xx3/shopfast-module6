@@ -67,7 +67,7 @@ for (const width of [1280, 390]) {
       }
       await route.fulfill({ json: { data } });
     });
-    await page.goto("/");
+    await page.goto("/account");
     await expect(
       page.getByRole("heading", { name: "Chào Popup Customer" }),
     ).toBeVisible();

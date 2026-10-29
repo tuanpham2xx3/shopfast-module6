@@ -342,23 +342,18 @@ try {
       if (r.status() >= 400 && /\/assets\//.test(r.url()))
         browserErrors.push("Frontend asset HTTP error");
     });
-    const document = await page.goto(base);
+    const document = await page.goto(new URL("/login", base).href);
     assert(document?.ok(), "Frontend document must return success");
     await expect(
       page.getByRole("heading", { name: "Tạo tài khoản", exact: true }),
     ).toBeVisible();
-    await page
-      .getByRole("button", { name: "Đã có tài khoản? Đăng nhập", exact: true })
-      .click();
     await page.getByLabel("Email", { exact: true }).fill(email);
     await page.getByLabel("Mật khẩu", { exact: true }).fill(password);
     await submitBrowserLogin(page);
     await expect(
       page.getByRole("button", { name: "Đăng xuất", exact: true }),
     ).toBeVisible();
-    await page
-      .getByRole("button", { name: "Khám phá sản phẩm", exact: true })
-      .click();
+    await page.getByRole("button", { name: "Đơn hàng", exact: true }).click();
     await page.getByRole("button").filter({ hasText: order.code }).click();
     await expect(
       page.getByRole("heading", { name: `Đơn ${order.code}`, exact: true }),
@@ -366,7 +361,7 @@ try {
     await expect(
       page
         .getByLabel("Chi tiết đơn hàng")
-        .getByText("DELIVERED", { exact: true })
+        .getByText("Đã giao", { exact: true })
         .first(),
     ).toBeVisible();
     assert.deepEqual(browserErrors, []);

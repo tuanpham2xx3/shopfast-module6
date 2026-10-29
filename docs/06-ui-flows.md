@@ -22,7 +22,7 @@ UI phục vụ hoàn thành nghiệp vụ và minh họa tính năng; không xâ
 
 Route guard chỉ hỗ trợ trải nghiệm, mọi quyền bắt buộc kiểm tra lại ở server. Menu ẩn theo role; URL trực tiếp sai quyền có trang 403. Unknown route có 404.
 
-Triển khai 29/10/2026 dùng React Router với BrowserRouter; URL là nguồn chọn màn hình, không còn state `screen` độc lập. `/` giữ trang giới thiệu/đăng ký và lời chào khi đã đăng nhập; `/account` là tài khoản riêng. `/cart` sửa giỏ, `/checkout` có form địa chỉ; `/orders` và `/staff/orders` là lịch sử/xử lý đơn riêng. Menu có lối tắt đơn hàng và kho theo role. Admin tách catalog, promotions và operations thành ba URL và nội dung riêng.
+Triển khai 29/10/2026 dùng React Router với BrowserRouter; URL là nguồn chọn màn hình, không còn state `screen` độc lập. `/` chuyển tới `/products`; đăng nhập, đăng ký và tài khoản dùng URL riêng. `/cart` sửa giỏ, `/checkout` có form địa chỉ; `/orders` và `/staff/orders` là lịch sử/xử lý đơn riêng. Menu có lối tắt đơn hàng và kho theo role. Admin tách catalog, promotions và operations thành ba URL và nội dung riêng.
 
 Chi tiết sản phẩm giữ dạng popup tại `/products/:id`; mở trực tiếp/refresh vẫn lấy đúng sản phẩm qua API. Popup mở từ catalog đóng bằng Back; truy cập trực tiếp đóng về catalog. Query categoryId/brandId/minPrice/maxPrice/sort/page của catalog nằm trong URL và khôi phục khi refresh hoặc Back/Forward. Chi tiết đơn/ticket được tải từ ID trên URL, không phụ thuộc phải bấm từ danh sách trước.
 
@@ -67,3 +67,11 @@ Khi giỏ đang đồng bộ sau thao tác, giữ con trỏ bình thường trê
 Loading thay nội dung chỉ dùng ở lần tải đầu. Khi đồng bộ lại sau thao tác hoặc polling, giữ DOM/dữ liệu hiện tại, vị trí cuộn, draft và focus; cập nhật dữ liệu từ response thành công. Badge không xóa tạm lúc refetch. Dropdown giữ danh sách/tạm tính khi tải nền, chặn mutation lặp và checkout trong lúc đồng bộ. Thêm giỏ không refetch catalog vì chưa thay đổi tồn kho. App chỉ chạy timer mỗi giây khi có countdown thực sự; response đơn giống hệt hoặc version cũ không ghi đè state mới.
 
 Mỗi màn hình có loading, empty, validation error, dependency error và retry phù hợp. 429 hiển thị countdown từ Retry-After. 401 thử refresh một lần, thất bại về login; không tạo vòng lặp refresh. Mọi form có label, keyboard focus, disabled state và thông báo server dễ hiểu. Không hiển thị stack trace hoặc chi tiết SDK cho người dùng.
+
+## 6. Giao diện gọn (29/10/2026)
+
+Trang chủ mở danh mục, form auth một cột và không có mảng marketing. Theme dùng icon có accessible name. Catalog gom thao tác thành một hàng, metadata SKU/thương hiệu/credit đầy đủ nằm ở popup, một link credit chung ở cuối; bộ lọc thu gọn trên mobile và mở lại được bằng bàn phím. Phân trang chỉ hiện khi có nhiều trang.
+
+Checkout chỉ hiển thị giỏ/form thanh toán, chi tiết đơn không lặp danh sách/lọc bên trên. Trạng thái đơn/ticket/thanh toán/role hiển thị tiếng Việt nhưng mọi value gửi API giữ enum gốc. Form tạo ticket mở khi yêu cầu, có nút hủy; chi tiết có lối về danh sách. AI vẫn là bản nháp cần review, proposal cần Confirm/Reject và không tự gửi.
+
+Operations hiển thị trạng thái dịch vụ và số lượng queue bằng số liệu API, JSON chuyển vào disclosure Chi tiết kỹ thuật. Chưa kiểm tra/lỗi dùng nhãn rõ và dấu —, không giả thành số 0 hoặc success. Circuit Gemini CLOSED chỉ có nghĩa cho phép gửi yêu cầu, không tuyên bố provider đã phản hồi. Tra cứu đơn trong hỗ trợ hiển thị mã/trạng thái trước, metadata kỹ thuật mở thêm khi cần.

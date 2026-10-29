@@ -1,5 +1,18 @@
 # 15 — Cải thiện UI/UX ShopFast
 
+## Lượt dọn giao diện 29/10/2026
+
+Yêu cầu mới: giao diện bớt thông tin thừa và thao tác rõ hơn. Audit trên bản deploy `697e40aadcce5fc4e196c1672c2666ffbca6292c` bằng public screenshots và đăng nhập thật bốn role trước khi sửa.
+
+- Trang chủ vào thẳng danh mục. Auth gọn một cột, bỏ hero và danh sách lời quảng bá; tài khoản giữ thông tin cần thiết và một CTA xem sản phẩm. Theme dùng icon có tên truy cập đầy đủ.
+- Card sản phẩm giảm chiều cao ảnh, gom hành động thành một hàng, rút ngắn nhãn. Không lặp SKU/brand/credit ở từng card; SKU/brand và credit vẫn có trong popup, footer catalog có nguồn ảnh chung. Ẩn pagination một trang. Bộ lọc mặc định thu gọn trên mobile, mở được bằng keyboard và giữ query trên URL.
+- Giỏ/checkout không lặp lịch sử đơn. Chi tiết đơn không lặp bộ lọc/danh sách đơn bên trên. Nhãn trạng thái, thanh toán, role và ticket hiển thị tiếng Việt; enum/value API, transaction và idempotency không đổi.
+- Ticket tạo mới theo yêu cầu thay vì form trống luôn mở, có hủy và lối về danh sách. AI vẫn là bản nháp cần review; proposal Confirm/Reject, ownership và human confirmation giữ nguyên.
+- Admin operations có trạng thái dịch vụ và queue counts theo API. Chưa kiểm tra/lỗi không giả thành số 0. JSON nằm trong Chi tiết kỹ thuật. Circuit Gemini đóng không được coi là bằng chứng provider khỏe. Tra cứu đơn trong support có tóm tắt dễ đọc trước metadata.
+- Harness login đi trực tiếp `/login`; lịch sử đơn dùng route riêng, assertions trạng thái theo nhãn hiển thị mới. Backend payload/assertions về số liệu queue vẫn giữ.
+
+Ảnh trước thay đổi: [auth mobile](evidence/2026-10-29-ui-before-auth.png), [catalog desktop](evidence/2026-10-29-ui-before-store.png). Evidence kiểm tra mới được lưu riêng, không gán lại số liệu nghiệm thu cũ dưới đây cho lượt này.
+
 Ngày28/10/2026. Yêu cầu: làm giao diện đẹp, đầy đủ hơn và tải ảnh còn thiếu về dự án.
 
 ## Audit và hướng thiết kế

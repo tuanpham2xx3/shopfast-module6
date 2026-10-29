@@ -19,7 +19,7 @@ type Definition = {
   panel?: string;
 };
 export const appRoutes: Definition[] = [
-  { path: "/", screen: "auth" },
+  { path: "/", screen: "catalog" },
   { path: "/login", screen: "auth", mode: "login" },
   { path: "/register", screen: "auth", mode: "register" },
   {

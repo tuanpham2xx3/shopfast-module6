@@ -31,10 +31,12 @@ function ProductMedia({
   name,
   url,
   sku,
+  credit = false,
 }: {
   name: string;
   url: string;
   sku: string;
+  credit?: boolean;
 }) {
   const [failed, setFailed] = useState(false);
   useEffect(() => setFailed(false), [url]);
@@ -93,7 +95,7 @@ function ProductMedia({
           </div>
         )}
       </div>
-      {source && (
+      {source && credit && (
         <a
           className="media-note"
           href="/images/products/credits.html"
@@ -181,6 +183,7 @@ function ProductDetailDialog({
             name={product.name}
             url={product.imageUrl}
             sku={product.sku}
+            credit
           />
         </div>
         <div>
@@ -245,6 +248,9 @@ export function Catalog({
   const [categories, setCategories] = useState<Taxonomy[]>([]);
   const [brands, setBrands] = useState<Taxonomy[]>([]);
   const [search, setSearch] = useSearchParams();
+  const [filtersOpen, setFiltersOpen] = useState(
+    () => matchMedia("(min-width: 761px)").matches,
+  );
   const parsedPage = Number(search.get("page") ?? 1);
   const page =
     Number.isSafeInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
@@ -255,6 +261,7 @@ export function Catalog({
     const params = new URLSearchParams(search);
     params.set("page", String(next));
     setSearch(params);
+    if (matchMedia("(max-width: 760px)").matches) setFiltersOpen(false);
   };
   const [total, setTotal] = useState(0);
   const [selected, setSelected] = useState<Product | null>(null);
@@ -330,6 +337,7 @@ export function Catalog({
     });
     params.set("page", "1");
     setSearch(params);
+    if (matchMedia("(max-width: 760px)").matches) setFiltersOpen(false);
   }
   async function adjust(event: FormEvent<HTMLFormElement>, item: Stock) {
     event.preventDefault();
@@ -363,71 +371,83 @@ export function Catalog({
         <>
           <header className="store-heading">
             <div>
-              <p className="eyebrow">Bộ sưu tập</p>
-              <h2 id="catalog-title">Chọn món bạn cần.</h2>
+              <h2 id="catalog-title">Sản phẩm</h2>
             </div>
             <span className="count-badge">{total} sản phẩm</span>
           </header>
-          <form
-            key={`${query}:${categories.length}:${brands.length}`}
-            className="filters"
-            onSubmit={filter}
+          <details
+            className="filter-panel"
+            open={filtersOpen}
+            onToggle={(event) => setFiltersOpen(event.currentTarget.open)}
           >
-            <label>
-              Danh mục
-              <select
-                name="categoryId"
-                defaultValue={search.get("categoryId") ?? ""}
-              >
-                <option value="">Tất cả</option>
-                {categories.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Thương hiệu
-              <select name="brandId" defaultValue={search.get("brandId") ?? ""}>
-                <option value="">Tất cả</option>
-                {brands.map((b) => (
-                  <option key={b.id} value={b.id}>
-                    {b.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Giá từ
-              <input
-                name="minPrice"
-                type="number"
-                min="0"
-                step="1"
-                defaultValue={search.get("minPrice") ?? ""}
-              />
-            </label>
-            <label>
-              Giá đến
-              <input
-                name="maxPrice"
-                type="number"
-                min="0"
-                step="1"
-                defaultValue={search.get("maxPrice") ?? ""}
-              />
-            </label>
-            <label>
-              Sắp xếp
-              <select name="sort" defaultValue={search.get("sort") ?? "newest"}>
-                <option value="newest">Mới nhất</option>
-                <option value="price_asc">Giá tăng dần</option>
-                <option value="price_desc">Giá giảm dần</option>
-              </select>
-            </label>
-            <button>Lọc</button>
-          </form>
+            <summary>Bộ lọc và sắp xếp</summary>
+            <form
+              key={`${query}:${categories.length}:${brands.length}`}
+              className="filters"
+              onSubmit={filter}
+            >
+              <label>
+                Danh mục
+                <select
+                  name="categoryId"
+                  defaultValue={search.get("categoryId") ?? ""}
+                >
+                  <option value="">Tất cả</option>
+                  {categories.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Thương hiệu
+                <select
+                  name="brandId"
+                  defaultValue={search.get("brandId") ?? ""}
+                >
+                  <option value="">Tất cả</option>
+                  {brands.map((b) => (
+                    <option key={b.id} value={b.id}>
+                      {b.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Giá từ
+                <input
+                  name="minPrice"
+                  type="number"
+                  min="0"
+                  step="1"
+                  defaultValue={search.get("minPrice") ?? ""}
+                />
+              </label>
+              <label>
+                Giá đến
+                <input
+                  name="maxPrice"
+                  type="number"
+                  min="0"
+                  step="1"
+                  defaultValue={search.get("maxPrice") ?? ""}
+                />
+              </label>
+              <label>
+                Sắp xếp
+                <select
+                  name="sort"
+                  defaultValue={search.get("sort") ?? "newest"}
+                >
+                  <option value="newest">Mới nhất</option>
+                  <option value="price_asc">Giá tăng dần</option>
+                  <option value="price_desc">Giá giảm dần</option>
+                </select>
+              </label>
+              <button>Lọc</button>
+            </form>
+          </details>
           {error && (
             <p role="alert">
               {error}{" "}
@@ -463,9 +483,6 @@ export function Catalog({
                     url={item.imageUrl}
                     sku={item.sku}
                   />
-                  <p className="product-meta">
-                    {item.brand.name} / {item.sku}
-                  </p>
                   <h3>{item.name}</h3>
                   <p className="product-price">
                     {item.price.toLocaleString("vi-VN")} ₫
@@ -477,58 +494,74 @@ export function Catalog({
                       ? `Còn ${item.available} sản phẩm`
                       : "Tạm hết hàng"}
                   </p>
-                  <button
-                    type="button"
-                    className="switch"
-                    aria-haspopup="dialog"
-                    onClick={() => {
-                      setSelected(item);
-                      onOpenProduct(item.id);
-                    }}
-                  >
-                    Xem {item.name}
-                  </button>
-                  {customer && (
+                  <div className="product-actions">
                     <button
-                      disabled={item.available < 1}
-                      onClick={async () => {
-                        try {
-                          await api(
-                            "/cart/items",
-                            {
-                              method: "POST",
-                              body: JSON.stringify({
-                                productId: item.id,
-                                quantity: 1,
-                              }),
-                            },
-                            token,
-                          );
-                          onCartChange();
-                        } catch (e) {
-                          setError((e as Error).message);
-                        }
+                      type="button"
+                      className="switch product-detail-link"
+                      aria-label={`Xem ${item.name}`}
+                      aria-haspopup="dialog"
+                      onClick={() => {
+                        setSelected(item);
+                        onOpenProduct(item.id);
                       }}
                     >
-                      Thêm {item.name} vào giỏ
+                      Xem chi tiết
                     </button>
-                  )}
+                    {customer && (
+                      <button
+                        disabled={item.available < 1}
+                        aria-label={`Thêm ${item.name} vào giỏ`}
+                        onClick={async () => {
+                          try {
+                            await api(
+                              "/cart/items",
+                              {
+                                method: "POST",
+                                body: JSON.stringify({
+                                  productId: item.id,
+                                  quantity: 1,
+                                }),
+                              },
+                              token,
+                            );
+                            onCartChange();
+                          } catch (e) {
+                            setError((e as Error).message);
+                          }
+                        }}
+                      >
+                        Thêm vào giỏ
+                      </button>
+                    )}
+                  </div>
                 </article>
               ))}
             </div>
           )}
-          <nav className="pagination" aria-label="Phân trang">
-            <button disabled={page === 1} onClick={() => setPage(page - 1)}>
-              Trang trước
-            </button>
-            <span>Trang {page}</span>
-            <button
-              disabled={page * 12 >= total}
-              onClick={() => setPage(page + 1)}
+          {total > 12 && (
+            <nav className="pagination" aria-label="Phân trang">
+              <button disabled={page === 1} onClick={() => setPage(page - 1)}>
+                Trang trước
+              </button>
+              <span>Trang {page}</span>
+              <button
+                disabled={page * 12 >= total}
+                onClick={() => setPage(page + 1)}
+              >
+                Trang sau
+              </button>
+            </nav>
+          )}
+          <p className="catalog-credit">
+            Ảnh dùng để minh họa sản phẩm.{" "}
+            <a
+              href="/images/products/credits.html"
+              target="_blank"
+              rel="noreferrer"
             >
-              Trang sau
-            </button>
-          </nav>
+              Nguồn ảnh
+            </a>
+          </p>
           {detailError && (
             <p role="alert">Không thể mở sản phẩm: {detailError}</p>
           )}

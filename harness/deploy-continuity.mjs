@@ -77,16 +77,11 @@ try {
   assert(login.ok, `Continuity API login HTTP${login.status}`);
   const token = (await login.json()).data.accessToken;
   const headers = { Authorization: `Bearer ${token}` };
-  await page.goto(base);
-  await page
-    .getByRole("button", { name: "Đã có tài khoản? Đăng nhập", exact: true })
-    .click();
+  await page.goto(new URL("/login", base).href);
   await page.getByLabel("Email", { exact: true }).fill(fixture.email);
   await page.getByLabel("Mật khẩu", { exact: true }).fill(fixture.password);
   await submitBrowserLogin(page);
-  await page
-    .getByRole("button", { name: "Khám phá sản phẩm", exact: true })
-    .click();
+  await page.getByRole("button", { name: "Đơn hàng", exact: true }).click();
   await page.getByRole("button").filter({ hasText: fixture.orderCode }).click();
   const detail = page.getByLabel("Chi tiết đơn hàng");
   await expect(
@@ -158,14 +153,12 @@ try {
     detail.getByText("Đang theo dõi trực tiếp", { exact: true }),
   ).toBeVisible({ timeout: 45000 });
   await page.reload();
-  await page
-    .getByRole("button", { name: "Khám phá sản phẩm", exact: true })
-    .click();
+  await page.getByRole("button", { name: "Đơn hàng", exact: true }).click();
   await page.getByRole("button").filter({ hasText: fixture.orderCode }).click();
   await expect(
     page
       .getByLabel("Chi tiết đơn hàng")
-      .getByText("DELIVERED", { exact: true })
+      .getByText("Đã giao", { exact: true })
       .first(),
   ).toBeVisible();
   await page.screenshot({
@@ -202,7 +195,7 @@ try {
         await expect(
           page
             .getByLabel("Chi tiết đơn hàng")
-            .getByText("DELIVERED", { exact: true })
+            .getByText("Đã giao", { exact: true })
             .first(),
         ).toBeVisible();
       } catch {
