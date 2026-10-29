@@ -6,7 +6,7 @@ import {
   TicketsService,
 } from "../../libs/modules/tickets/src/tickets.service";
 import { AiService } from "../../libs/modules/ai/src/ai.service";
-import { CatalogService } from "../../libs/modules/catalog/src/catalog.service";
+import { CatalogService } from "../../libs/modules/catalog/src/application/catalog.service";
 import {
   GeminiProvider,
   Part,

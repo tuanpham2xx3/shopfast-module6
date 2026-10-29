@@ -1,4 +1,4 @@
-import { CatalogService } from "../../libs/modules/catalog/src/catalog.service";
+import { CatalogService } from "../../libs/modules/catalog/src/application/catalog.service";
 import { DataSource } from "typeorm";
 import { createHash } from "node:crypto";
 import { CatalogCache } from "../../libs/modules/runtime/src/catalog-cache";

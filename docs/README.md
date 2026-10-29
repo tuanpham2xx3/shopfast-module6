@@ -39,7 +39,7 @@ Nguồn yêu cầu: `../Module 06 – Software Requirement Specification (SRS).d
 
 ## Đối chiếu gần nhất
 
-- [Plan chuẩn hóa cấu trúc và phân tầng](21-repository-refactor-plan.md): các đợt R0–R6, chưa triển khai refactor.
+- [Plan chuẩn hóa cấu trúc và phân tầng](21-repository-refactor-plan.md): R0/R1 hoàn tất, R2 đang triển khai; các đợt còn lại chưa hoàn tất.
 
 - [Bàn giao và trạng thái nghiệm thu hiện tại](20-delivery-status.md).
 

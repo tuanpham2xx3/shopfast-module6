@@ -1,6 +1,6 @@
 # 21 — Kế hoạch chuẩn hóa cấu trúc và phân tầng
 
-Ngày lập: 29/10/2026. Trạng thái: **PLAN — chưa triển khai refactor**.
+Ngày lập: 29/10/2026. Trạng thái: **ĐANG TRIỂN KHAI — R0/R1 hoàn tất, R2 đang thực hiện**.
 
 ## Mục tiêu và baseline
 
@@ -119,9 +119,9 @@ Nếu đợt lỗi: dừng ở branch/PR đó, sửa hoặc revert commit đợt
 ## Tiến độ
 
 - [x] Audit cấu trúc hiện tại và lập plan.
-- [ ] R0 baseline và mapping.
-- [ ] R1 HTTP/wiring.
-- [ ] R2 persistence theo module.
+- [x] R0 baseline và mapping — [evidence](evidence/2026-10-29-structure-r0.md).
+- [x] R1 HTTP/wiring — [evidence](evidence/2026-10-29-structure-r1.md), commit `de7ef77`.
+- [ ] R2 persistence theo module — [Auth/Catalog đã kiểm chứng](evidence/2026-10-29-structure-r2-auth-catalog.md); orders, tickets/AI, jobs/retention chưa thực hiện.
 - [ ] R3 frontend theo feature.
 - [ ] R4 harness.
 - [ ] R5 deploy.

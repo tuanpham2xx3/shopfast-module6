@@ -4,8 +4,8 @@ import {
   ServiceUnavailableException,
 } from "@nestjs/common";
 import { DataSource } from "typeorm";
-import { createDataSource } from "../../../platform/src/database/data-source";
-import { AuthService } from "./auth.service";
+import { createDataSource } from "../../../../platform/src/database/data-source";
+import { AuthService } from "../application/auth.service";
 
 @Injectable()
 export class AuthRuntime implements OnApplicationShutdown {

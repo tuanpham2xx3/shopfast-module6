@@ -8,8 +8,8 @@ import {
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { Request } from "express";
-import { PublicUser } from "./auth.service";
-import { AuthRuntime } from "./auth.runtime";
+import { PublicUser } from "../auth.contracts";
+import { AuthRuntime } from "../composition/auth.runtime";
 
 export type AuthenticatedRequest = Request & { user?: PublicUser };
 export const Roles = (...roles: string[]) => SetMetadata("roles", roles);

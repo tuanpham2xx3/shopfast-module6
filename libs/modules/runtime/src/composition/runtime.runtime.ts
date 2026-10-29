@@ -6,7 +6,7 @@ import {
 import Redis from "ioredis";
 import { DataSource } from "typeorm";
 import { createDataSource } from "../../../../platform/src/database/data-source";
-import { AuthService } from "../../../auth/src/auth.service";
+import { AuthService } from "../../../auth/src/application/auth.service";
 import { CatalogCache } from "../catalog-cache";
 import { RuntimeLimiter } from "../limiter";
 

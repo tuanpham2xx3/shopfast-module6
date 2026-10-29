@@ -1,50 +1,23 @@
+import {
+  AuthError,
+  Options,
+  UserRow,
+  PublicUser,
+  AuthResult,
+} from "../auth.contracts";
+import { AuthRepository } from "../persistence/auth.repository";
 import { createHash, randomBytes, randomInt, randomUUID } from "node:crypto";
 import * as argon2 from "argon2";
 import * as jwt from "jsonwebtoken";
 import { DataSource, EntityManager } from "typeorm";
-import { enqueueOutbox } from "../../../platform/src/outbox/outbox";
-import { domainEvents } from "../../../platform/src/domain-events";
+import { enqueueOutbox } from "../../../../platform/src/outbox/outbox";
+import { domainEvents } from "../../../../platform/src/domain-events";
 
 const DUMMY_HASH =
   "$argon2id$v=19$m=65536,t=3,p=4$u4tn5/QBkajPFwbV7vg+fw$1RGvrL5mH3lKeiXS1ZEx5Ji+x5lLmXyIj8emT0XhWd4";
-export class AuthError extends Error {
-  constructor(
-    public readonly code: string,
-    public readonly retryAfter?: number,
-  ) {
-    super(code);
-  }
-}
-interface Options {
-  accessTokenSecret: string;
-  schema?: string;
-  codeGenerator?: () => string;
-}
-interface UserRow {
-  id: string;
-  email: string;
-  password_hash: string;
-  display_name: string;
-  role: string;
-  status: string;
-  email_verified_at: Date | null;
-}
-export interface PublicUser {
-  id: string;
-  email: string;
-  displayName: string;
-  role: string;
-  verified: boolean;
-}
-export interface AuthResult {
-  accessToken: string;
-  expiresIn: number;
-  refreshToken: string;
-  user: PublicUser;
-  verificationRequired?: boolean;
-}
 
 export class AuthService {
+  private readonly repository: AuthRepository;
   private readonly schema: string;
   private readonly generateCode: () => string;
   constructor(
@@ -52,6 +25,7 @@ export class AuthService {
     private readonly options: Options,
   ) {
     this.schema = options.schema ?? "public";
+    this.repository = new AuthRepository(this.schema);
     if (!/^[a-z][a-z0-9_]{0,62}$/.test(this.schema))
       throw new Error("Invalid auth schema");
     if (options.accessTokenSecret.length < 32)
@@ -62,9 +36,7 @@ export class AuthService {
       options.codeGenerator ??
       (() => randomInt(0, 1_000_000).toString().padStart(6, "0"));
   }
-  private table(name: string) {
-    return `"${this.schema}".${name}`;
-  }
+
   private hash(value: string) {
     return createHash("sha256").update(value).digest("hex");
   }
@@ -107,10 +79,12 @@ export class AuthService {
   ): Promise<AuthResult> {
     const sessionId = randomUUID();
     const refreshToken = randomBytes(32).toString("base64url");
-    await manager.query(
-      `INSERT INTO ${this.table("auth_sessions")} (id,user_id,token_family_id,refresh_hash,expires_at) VALUES ($1,$2,$3,$4,now()+interval '7 days')`,
-      [sessionId, row.id, randomUUID(), this.hash(refreshToken)],
-    );
+    await this.repository.insertSession(manager, [
+      sessionId,
+      row.id,
+      randomUUID(),
+      this.hash(refreshToken),
+    ]);
     return {
       accessToken: this.access(row, sessionId),
       expiresIn: 900,
@@ -139,19 +113,18 @@ export class AuthService {
           status: "ACTIVE",
           email_verified_at: null,
         };
-        await manager.query(
-          `INSERT INTO ${this.table("users")} (id,email,password_hash,display_name,role) VALUES ($1,$2,$3,$4,'CUSTOMER')`,
-          [user.id, user.email, user.password_hash, user.display_name],
-        );
+        await this.repository.insertUser(manager, [
+          user.id,
+          user.email,
+          user.password_hash,
+          user.display_name,
+        ]);
         const codeId = randomUUID();
-        await manager.query(
-          `INSERT INTO ${this.table("verification_codes")} (id,user_id,code_hash,expires_at) VALUES ($1,$2,$3,now()+interval '10 minutes')`,
-          [
-            codeId,
-            user.id,
-            this.hash(`${user.id}:${code}:${this.options.accessTokenSecret}`),
-          ],
-        );
+        await this.repository.insertVerification(manager, [
+          codeId,
+          user.id,
+          this.hash(`${user.id}:${code}:${this.options.accessTokenSecret}`),
+        ]);
         await enqueueOutbox(
           manager,
           {
@@ -180,22 +153,20 @@ export class AuthService {
   ): Promise<PublicUser> {
     const claims = this.readAccess(accessToken);
     const result = await this.source.transaction(async (manager) => {
-      const [session] = await manager.query(
-        `SELECT id FROM ${this.table("auth_sessions")} WHERE id=$1 AND user_id=$2 AND revoked_at IS NULL AND expires_at>now() FOR UPDATE`,
-        [claims.sid, claims.sub],
-      );
+      const [session] = await this.repository.lockActiveSession(manager, [
+        claims.sid,
+        claims.sub,
+      ]);
       if (!session) throw new AuthError("INVALID_ACCESS_TOKEN");
-      const [user]: UserRow[] = await manager.query(
-        `SELECT * FROM ${this.table("users")} WHERE id=$1 FOR UPDATE`,
-        [claims.sub],
-      );
+      const [user]: UserRow[] = await this.repository.lockUser(manager, [
+        claims.sub,
+      ]);
       if (!user || user.status !== "ACTIVE")
         throw new AuthError("INVALID_ACCESS_TOKEN");
       if (user.email_verified_at) return null;
-      const [record] = await manager.query(
-        `SELECT * FROM ${this.table("verification_codes")} WHERE user_id=$1 AND consumed_at IS NULL ORDER BY created_at DESC LIMIT 1 FOR UPDATE`,
-        [user.id],
-      );
+      const [record] = await this.repository.lockLatestVerification(manager, [
+        user.id,
+      ]);
       const valid =
         record &&
         record.attempts < 5 &&
@@ -204,34 +175,25 @@ export class AuthService {
           this.hash(`${user.id}:${code}:${this.options.accessTokenSecret}`);
       if (!valid) {
         if (record && record.attempts < 5)
-          await manager.query(
-            `UPDATE ${this.table("verification_codes")} SET attempts=attempts+1 WHERE id=$1`,
-            [record.id],
-          );
+          await this.repository.incrementVerificationAttempts(manager, [
+            record.id,
+          ]);
         return null;
       }
-      await manager.query(
-        `UPDATE ${this.table("verification_codes")} SET consumed_at=now() WHERE id=$1`,
-        [record.id],
-      );
-      await manager.query(
-        `UPDATE ${this.table("users")} SET email_verified_at=now(),updated_at=now() WHERE id=$1`,
-        [user.id],
-      );
-      const [updated]: UserRow[] = await manager.query(
-        `SELECT * FROM ${this.table("users")} WHERE id=$1`,
-        [user.id],
-      );
+      await this.repository.consumeVerification(manager, [record.id]);
+      await this.repository.verifyUserEmail(manager, [user.id]);
+      const [updated]: UserRow[] = await this.repository.userById(manager, [
+        user.id,
+      ]);
       return updated;
     });
     if (!result) throw new AuthError("INVALID_VERIFICATION_CODE");
     return this.publicUser(result);
   }
   async login(rawEmail: string, password: string): Promise<AuthResult> {
-    const [user]: UserRow[] = await this.source.query(
-      `SELECT * FROM ${this.table("users")} WHERE email=$1`,
-      [rawEmail.trim().toLowerCase()],
-    );
+    const [user]: UserRow[] = await this.repository.userByEmail(this.source, [
+      rawEmail.trim().toLowerCase(),
+    ]);
     const correct = await argon2.verify(
       user?.password_hash ?? DUMMY_HASH,
       password,
@@ -245,10 +207,9 @@ export class AuthService {
   async refresh(refreshToken: string): Promise<AuthResult> {
     const tokenHash = this.hash(refreshToken);
     const outcome = await this.source.transaction(async (manager) => {
-      const [session] = await manager.query(
-        `SELECT s.*,u.email,u.password_hash,u.display_name,u.role,u.status,u.email_verified_at FROM ${this.table("auth_sessions")} s JOIN ${this.table("users")} u ON u.id=s.user_id WHERE s.refresh_hash=$1 FOR UPDATE OF s`,
-        [tokenHash],
-      );
+      const [session] = await this.repository.lockRefreshSession(manager, [
+        tokenHash,
+      ]);
       if (session) {
         if (
           session.revoked_at ||
@@ -257,14 +218,16 @@ export class AuthService {
         )
           return { kind: "invalid" as const };
         const nextToken = randomBytes(32).toString("base64url");
-        await manager.query(
-          `INSERT INTO ${this.table("refresh_token_history")} (id,session_id,token_hash,expires_at) VALUES ($1,$2,$3,$4)`,
-          [randomUUID(), session.id, tokenHash, session.expires_at],
-        );
-        await manager.query(
-          `UPDATE ${this.table("auth_sessions")} SET refresh_hash=$1,updated_at=now() WHERE id=$2`,
-          [this.hash(nextToken), session.id],
-        );
+        await this.repository.rememberRefreshToken(manager, [
+          randomUUID(),
+          session.id,
+          tokenHash,
+          session.expires_at,
+        ]);
+        await this.repository.rotateRefreshToken(manager, [
+          this.hash(nextToken),
+          session.id,
+        ]);
         return {
           kind: "ok" as const,
           value: {
@@ -278,15 +241,11 @@ export class AuthService {
           },
         };
       }
-      const [used] = await manager.query(
-        `SELECT s.token_family_id FROM ${this.table("refresh_token_history")} h JOIN ${this.table("auth_sessions")} s ON s.id=h.session_id WHERE h.token_hash=$1 FOR UPDATE OF s`,
-        [tokenHash],
-      );
+      const [used] = await this.repository.lockReusedTokenFamily(manager, [
+        tokenHash,
+      ]);
       if (!used) return { kind: "invalid" as const };
-      await manager.query(
-        `UPDATE ${this.table("auth_sessions")} SET revoked_at=COALESCE(revoked_at,now()),updated_at=now() WHERE token_family_id=$1`,
-        [used.token_family_id],
-      );
+      await this.repository.revokeTokenFamily(manager, [used.token_family_id]);
       return { kind: "reused" as const };
     });
     if (outcome.kind === "reused") throw new AuthError("REFRESH_TOKEN_REUSED");
@@ -297,8 +256,8 @@ export class AuthService {
 
   async currentUser(accessToken: string): Promise<PublicUser> {
     const claims = this.readAccess(accessToken);
-    const [user]: UserRow[] = await this.source.query(
-      `SELECT u.* FROM ${this.table("users")} u JOIN ${this.table("auth_sessions")} s ON s.user_id=u.id WHERE u.id=$1 AND s.id=$2 AND u.status='ACTIVE' AND s.revoked_at IS NULL AND s.expires_at>now()`,
+    const [user]: UserRow[] = await this.repository.activePrincipal(
+      this.source,
       [claims.sub, claims.sid],
     );
     if (!user) throw new AuthError("INVALID_ACCESS_TOKEN");
@@ -306,10 +265,9 @@ export class AuthService {
   }
 
   async logout(refreshToken: string): Promise<void> {
-    const [rows] = await this.source.query(
-      `UPDATE ${this.table("auth_sessions")} SET revoked_at=COALESCE(revoked_at,now()),updated_at=now() WHERE refresh_hash=$1 RETURNING id`,
-      [this.hash(refreshToken)],
-    );
+    const [rows] = await this.repository.revokeRefreshSession(this.source, [
+      this.hash(refreshToken),
+    ]);
     for (const session of rows)
       domainEvents.emit("session.revoked", session.id);
   }
@@ -326,51 +284,41 @@ export class AuthService {
       ];
       for (const entry of limits) {
         const subject = this.hash(entry.subject);
-        await manager.query(
-          `SELECT pg_advisory_xact_lock(hashtextextended($1,0))`,
-          [`${this.schema}:${entry.scope}:${subject}`],
-        );
-        const [usage] = await manager.query(
-          `SELECT COALESCE(sum(count),0)::int count, GREATEST(1,ceil(extract(epoch FROM min(window_start)+interval '15 minutes'-clock_timestamp())))::int retry_after FROM ${this.table("security_counters")} WHERE scope=$1 AND subject_hash=$2 AND window_start>clock_timestamp()-interval '15 minutes'`,
-          [entry.scope, subject],
-        );
+        await this.repository.lockVerificationThrottle(manager, [
+          `${this.schema}:${entry.scope}:${subject}`,
+        ]);
+        const [usage] = await this.repository.verificationThrottle(manager, [
+          entry.scope,
+          subject,
+        ]);
         if (usage.count >= entry.limit)
           throw new AuthError("RATE_LIMITED", usage.retry_after);
-        await manager.query(
-          `INSERT INTO ${this.table("security_counters")} (scope,subject_hash,count) VALUES ($1,$2,1)`,
-          [entry.scope, subject],
-        );
+        await this.repository.insertVerificationCounter(manager, [
+          entry.scope,
+          subject,
+        ]);
       }
-      await manager.query(
-        `DELETE FROM ${this.table("security_counters")} WHERE window_start<clock_timestamp()-interval '30 minutes'`,
-      );
+      await this.repository.pruneVerificationCounters(manager, []);
     });
     await this.source.transaction(async (manager) => {
-      const [user]: UserRow[] = await manager.query(
-        `SELECT * FROM ${this.table("users")} WHERE email=$1 FOR UPDATE`,
+      const [user]: UserRow[] = await this.repository.lockVerificationUser(
+        manager,
         [email],
       );
       if (!user || user.email_verified_at || user.status !== "ACTIVE") return;
-      const [latest] = await manager.query(
-        `SELECT * FROM ${this.table("verification_codes")} WHERE user_id=$1 ORDER BY created_at DESC LIMIT 1 FOR UPDATE`,
-        [user.id],
-      );
+      const [latest] = await this.repository.latestVerification(manager, [
+        user.id,
+      ]);
       if (latest && Date.now() - new Date(latest.created_at).getTime() < 60_000)
         return;
-      await manager.query(
-        `UPDATE ${this.table("verification_codes")} SET consumed_at=COALESCE(consumed_at,now()) WHERE user_id=$1`,
-        [user.id],
-      );
+      await this.repository.consumeOldVerifications(manager, [user.id]);
       const code = this.generateCode();
       const codeId = randomUUID();
-      await manager.query(
-        `INSERT INTO ${this.table("verification_codes")} (id,user_id,code_hash,expires_at) VALUES ($1,$2,$3,now()+interval '10 minutes')`,
-        [
-          codeId,
-          user.id,
-          this.hash(`${user.id}:${code}:${this.options.accessTokenSecret}`),
-        ],
-      );
+      await this.repository.insertNewVerification(manager, [
+        codeId,
+        user.id,
+        this.hash(`${user.id}:${code}:${this.options.accessTokenSecret}`),
+      ]);
       await enqueueOutbox(
         manager,
         {

@@ -14,7 +14,7 @@ import {
   domainEvents,
   OrderStatusEvent,
 } from "../../../../platform/src/domain-events";
-import { AuthRuntime } from "../../../auth/src/auth.runtime";
+import { AuthRuntime } from "../../../auth/src/composition/auth.runtime";
 
 @Injectable()
 export class OrderRealtime

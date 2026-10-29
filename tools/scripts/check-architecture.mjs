@@ -27,6 +27,13 @@ async function inspect(folder) {
     );
     function visit(node) {
       if (
+        file.includes("/application/") &&
+        ts.isCallExpression(node) &&
+        ts.isPropertyAccessExpression(node.expression) &&
+        ["query", "createQueryBuilder"].includes(node.expression.name.text)
+      )
+        violations.push(`${file}: application must use persistence adapters`);
+      if (
         file.includes("/http/") &&
         ts.isCallExpression(node) &&
         ts.isPropertyAccessExpression(node.expression) &&
@@ -53,19 +60,22 @@ async function inspect(folder) {
           : spec;
         const inBackend = /^(libs|apps\/(api|worker))\//.test(file);
         const message =
-          file.startsWith("libs/") &&
-          /^(apps|tests|scripts|harness|tools)\//.test(target)
-            ? "libraries cannot depend on application composition, tests or tooling"
-            : file.startsWith("libs/platform/") &&
-                (target.startsWith("libs/modules/") ||
-                  spec.startsWith("@shopfast/modules"))
-              ? "platform cannot depend on business modules"
-              : file.startsWith("apps/web/") &&
-                  /^(libs|apps\/(api|worker)|database)\//.test(target)
-                ? "browser cannot import backend implementation"
-                : inBackend && target.startsWith("apps/web/")
-                  ? "backend cannot import browser implementation"
-                  : null;
+          file.includes("/persistence/") &&
+          /\/(application|http|composition)\//.test(target)
+            ? "persistence cannot depend on application, HTTP or composition"
+            : file.startsWith("libs/") &&
+                /^(apps|tests|scripts|harness|tools)\//.test(target)
+              ? "libraries cannot depend on application composition, tests or tooling"
+              : file.startsWith("libs/platform/") &&
+                  (target.startsWith("libs/modules/") ||
+                    spec.startsWith("@shopfast/modules"))
+                ? "platform cannot depend on business modules"
+                : file.startsWith("apps/web/") &&
+                    /^(libs|apps\/(api|worker)|database)\//.test(target)
+                  ? "browser cannot import backend implementation"
+                  : inBackend && target.startsWith("apps/web/")
+                    ? "backend cannot import browser implementation"
+                    : null;
         if (message) violations.push(`${file}: ${spec}: ${message}`);
       }
       ts.forEachChild(node, visit);

@@ -13,7 +13,7 @@ import {
   GeminiProvider,
   ProviderRequest,
 } from "../libs/modules/ai/src/gemini.provider";
-import { CatalogService } from "../libs/modules/catalog/src/catalog.service";
+import { CatalogService } from "../libs/modules/catalog/src/application/catalog.service";
 
 async function main() {
   assert(

@@ -5,7 +5,7 @@ import {
   AuthenticatedRequest,
   RolesGuard,
   VerifiedGuard,
-} from "../../libs/modules/auth/src/auth.guards";
+} from "../../libs/modules/auth/src/http/auth.guards";
 
 function context(request: Partial<AuthenticatedRequest>): ExecutionContext {
   return {

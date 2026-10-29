@@ -16,7 +16,7 @@ import {
   Roles,
   RolesGuard,
   VerifiedGuard,
-} from "../../../auth/src/auth.guards";
+} from "../../../auth/src/http/auth.guards";
 import { CatalogRuntime } from "../composition/catalog.runtime";
 import {
   AdjustmentDto,

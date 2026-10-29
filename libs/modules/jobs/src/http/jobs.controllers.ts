@@ -18,7 +18,7 @@ import {
   Roles,
   RolesGuard,
   VerifiedGuard,
-} from "../../../auth/src/auth.guards";
+} from "../../../auth/src/http/auth.guards";
 import { JobsRuntime, queueSnapshot } from "../composition/jobs.runtime";
 
 @Controller("orders")

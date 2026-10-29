@@ -10,8 +10,8 @@ import {
 } from "@nestjs/common";
 import { Request, Response } from "express";
 import { RuntimeServices } from "../../../runtime/src/composition/runtime.runtime";
-import { AuthRuntime } from "../auth.runtime";
-import { AuthError, AuthResult } from "../auth.service";
+import { AuthRuntime } from "../composition/auth.runtime";
+import { AuthError, AuthResult } from "../auth.contracts";
 import {
   ConfirmDto,
   LoginDto,

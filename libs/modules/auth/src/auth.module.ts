@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { RuntimeModule } from "../../runtime/src/runtime.module";
-import { AccessGuard, RolesGuard, VerifiedGuard } from "./auth.guards";
-import { AuthRuntime } from "./auth.runtime";
+import { AccessGuard, RolesGuard, VerifiedGuard } from "./http/auth.guards";
+import { AuthRuntime } from "./composition/auth.runtime";
 import { AuthController } from "./http/auth.controllers";
 
 @Module({

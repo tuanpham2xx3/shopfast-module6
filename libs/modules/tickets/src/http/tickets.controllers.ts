@@ -17,7 +17,7 @@ import {
   Roles,
   RolesGuard,
   VerifiedGuard,
-} from "../../../auth/src/auth.guards";
+} from "../../../auth/src/http/auth.guards";
 import { TicketsRuntime } from "../composition/tickets.runtime";
 import {
   AiMessageDto,

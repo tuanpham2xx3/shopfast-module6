@@ -18,7 +18,7 @@ import {
   Roles,
   RolesGuard,
   VerifiedGuard,
-} from "../../../auth/src/auth.guards";
+} from "../../../auth/src/http/auth.guards";
 import { RuntimeServices } from "../../../runtime/src/composition/runtime.runtime";
 import { OrderRuntime } from "../composition/orders.runtime";
 import {

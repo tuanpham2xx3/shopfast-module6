@@ -5,7 +5,7 @@ const {
 } = require("/app/dist-tools/libs/platform/src/database/data-source.js");
 const {
   CatalogService,
-} = require("/app/dist-tools/libs/modules/catalog/src/catalog.service.js");
+} = require("/app/dist-tools/libs/modules/catalog/src/application/catalog.service.js");
 const {
   CatalogCache,
 } = require("/app/dist-tools/libs/modules/runtime/src/catalog-cache.js");
