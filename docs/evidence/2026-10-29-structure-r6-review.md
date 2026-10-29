@@ -20,3 +20,7 @@ Staging baseline đã thực thi phát hiện assertion `/login` chờ tiêu đ�
 - Evidence lịch sử không di chuyển. Refactor không đóng các gate SRS provider/IAM/human QA khác bằng suy luận.
 
 Logs ignored `.secrets/structure-review-*.log`, `.secrets/structure-staging-before*.log`. CI Linux và production evidence được bổ sung theo SHA sau release.
+
+## CI phát hiện fixture auth thiếu mock
+
+CI `40874907101` và `40875297199` thất bại tại test UI đăng ký/xác minh: token giả `access-token` được dùng cho request giỏ hàng chạy nền nhưng fixture chỉ mock auth, nên backend thật trả 401 và session bị xóa. Reproduce local bằng cách chờ response cart rồi assert success: RED nhận false. Bổ sung fixture cart rỗng và giữ bước chờ response; chạy hai ca auth lặp ba lần GREEN 6/6 trong 16.3 giây. Không thay xử lý 401 trong sản phẩm, không bỏ assertion và không tăng timeout. CI mới phải chạy lại đầy đủ trước merge.
