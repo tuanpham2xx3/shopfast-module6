@@ -1,6 +1,6 @@
 # 21 — Kế hoạch chuẩn hóa cấu trúc và phân tầng
 
-Ngày lập: 29/10/2026. Trạng thái: **ĐANG TRIỂN KHAI — R0/R1 hoàn tất, R2 đang thực hiện**.
+Ngày lập: 29/10/2026. Trạng thái: **R0–R5 đã triển khai và kiểm tra local/VPS config; R6 đang review/CI/deploy**.
 
 ## Mục tiêu và baseline
 
@@ -121,8 +121,8 @@ Nếu đợt lỗi: dừng ở branch/PR đó, sửa hoặc revert commit đợt
 - [x] Audit cấu trúc hiện tại và lập plan.
 - [x] R0 baseline và mapping — [evidence](evidence/2026-10-29-structure-r0.md).
 - [x] R1 HTTP/wiring — [evidence](evidence/2026-10-29-structure-r1.md), commit `de7ef77`.
-- [ ] R2 persistence theo module — [Auth/Catalog đã kiểm chứng](evidence/2026-10-29-structure-r2-auth-catalog.md); orders, tickets/AI, jobs/retention chưa thực hiện.
-- [ ] R3 frontend theo feature.
-- [ ] R4 harness.
-- [ ] R5 deploy.
+- [x] R2 persistence theo module — [Auth/Catalog](evidence/2026-10-29-structure-r2-auth-catalog.md), [các domain còn lại](evidence/2026-10-29-structure-r2-domains.md).
+- [x] R3 frontend theo feature — [evidence và screenshot](evidence/2026-10-29-structure-r3-web.md).
+- [x] R4 harness — [evidence](evidence/2026-10-29-structure-r4-r5.md).
+- [x] R5 deploy source/config — [evidence](evidence/2026-10-29-structure-r4-r5.md); production rehearsal ở R6.
 - [ ] R6 kiểm chứng và bàn giao.
