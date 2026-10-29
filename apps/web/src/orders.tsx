@@ -544,21 +544,23 @@ export function Orders({
           ))
         )}
       </div>
-      <nav className="pagination">
-        <button
-          disabled={orderPage === 1}
-          onClick={() => setOrderPage((p) => p - 1)}
-        >
-          Đơn trước
-        </button>
-        <span>Trang {orderPage}</span>
-        <button
-          disabled={orderPage * 20 >= orderTotal}
-          onClick={() => setOrderPage((p) => p + 1)}
-        >
-          Đơn sau
-        </button>
-      </nav>
+      {orderTotal > 20 && (
+        <nav className="pagination" aria-label="Phân trang đơn hàng">
+          <button
+            disabled={orderPage === 1}
+            onClick={() => setOrderPage((p) => p - 1)}
+          >
+            Đơn trước
+          </button>
+          <span>Trang {orderPage}</span>
+          <button
+            disabled={orderPage * 20 >= orderTotal}
+            onClick={() => setOrderPage((p) => p + 1)}
+          >
+            Đơn sau
+          </button>
+        </nav>
+      )}
       {selected && (
         <section className="product-detail" aria-label="Chi tiết đơn hàng">
           <h3>Đơn {selected.code}</h3>

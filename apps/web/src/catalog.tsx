@@ -1,6 +1,5 @@
 import { FormEvent, useEffect, useId, useRef, useState } from "react";
-import { Orders } from "./orders";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 type Product = {
   id: string;
@@ -242,7 +241,6 @@ export function Catalog({
   inventoryOnly?: boolean;
 }) {
   const [items, setItems] = useState<Product[]>([]);
-  const navigate = useNavigate();
   const [stock, setStock] = useState<Stock[]>([]);
   const [categories, setCategories] = useState<Taxonomy[]>([]);
   const [brands, setBrands] = useState<Taxonomy[]>([]);
@@ -575,18 +573,6 @@ export function Catalog({
             </form>
           ))}
         </section>
-      )}
-      {!inventoryOnly && (customer || staff) && (
-        <Orders
-          api={api}
-          token={token}
-          staff={staff}
-          showCart={false}
-          basePath={staff ? "/staff/orders" : "/orders"}
-          onNavigate={(path) => navigate(path)}
-          revision={revision}
-          onChange={() => setRevision((v) => v + 1)}
-        />
       )}
     </section>
   );
