@@ -24,11 +24,11 @@ Branch `feat/ui-cleanup`; baseline `697e40aadcce5fc4e196c1672c2666ffbca6292c`.
 
 Đã mở và xem ảnh auth mobile, catalog mobile, operations desktop và detail đơn mobile. Bản sau dưới đây là screenshot từ API fixture/synthetic data; bản trước là public production, không coi số lượng/giá fixture là số liệu production.
 
-| Khu vực | Trước | Sau |
-| --- | --- | --- |
-| Auth | [Mobile](2026-10-29-ui-before-auth.png) | [Mobile](2026-10-29-ui-clean-auth.png) |
-| Catalog | [Desktop](2026-10-29-ui-before-store.png) | [Mobile](2026-10-29-ui-clean-store.png) |
-| Operations | Audit production trong harness/reports, không commit dữ liệu tài khoản | [Desktop](2026-10-29-ui-clean-operations.png) |
-| Chi tiết đơn | List và filter lặp bên trên | [Mobile](2026-10-29-ui-clean-order.png) |
+| Khu vực      | Trước                                                                  | Sau                                           |
+| ------------ | ---------------------------------------------------------------------- | --------------------------------------------- |
+| Auth         | [Mobile](2026-10-29-ui-before-auth.png)                                | [Mobile](2026-10-29-ui-clean-auth.png)        |
+| Catalog      | [Desktop](2026-10-29-ui-before-store.png)                              | [Mobile](2026-10-29-ui-clean-store.png)       |
+| Operations   | Audit production trong harness/reports, không commit dữ liệu tài khoản | [Desktop](2026-10-29-ui-clean-operations.png) |
+| Chi tiết đơn | List và filter lặp bên trên                                            | [Mobile](2026-10-29-ui-clean-order.png)       |
 
 Không thay backend transaction, database, API, Redis/Gemini/email configuration. Full provider/performance/restore harness không chạy lại trong lượt UI này; kết quả cũ không gán cho source mới. CI và production smoke chỉ đánh đạt sau khi thực thi.
