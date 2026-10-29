@@ -1,6 +1,6 @@
 # 21 — Kế hoạch chuẩn hóa cấu trúc và phân tầng
 
-Ngày lập: 29/10/2026. Trạng thái: **R0–R5 đã triển khai và kiểm tra local/VPS config; R6 đang review/CI/deploy**.
+Ngày lập: 29/10/2026. Trạng thái: **R0–R6 hoàn tất và deploy release `ffcb599` — [nghiệm thu](evidence/2026-10-29-structure-production.md)**.
 
 ## Mục tiêu và baseline
 
@@ -125,4 +125,4 @@ Nếu đợt lỗi: dừng ở branch/PR đó, sửa hoặc revert commit đợt
 - [x] R3 frontend theo feature — [evidence và screenshot](evidence/2026-10-29-structure-r3-web.md).
 - [x] R4 harness — [evidence](evidence/2026-10-29-structure-r4-r5.md).
 - [x] R5 deploy source/config — [evidence](evidence/2026-10-29-structure-r4-r5.md); production rehearsal ở R6.
-- [ ] R6 kiểm chứng và bàn giao.
+- [x] R6 kiểm chứng và bàn giao — [CI, production smoke, continuity/rollback và S3 restore](evidence/2026-10-29-structure-production.md).

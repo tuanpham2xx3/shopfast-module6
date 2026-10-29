@@ -39,7 +39,7 @@ Nguồn yêu cầu: `../Module 06 – Software Requirement Specification (SRS).d
 
 ## Đối chiếu gần nhất
 
-- [Plan chuẩn hóa cấu trúc và phân tầng](21-repository-refactor-plan.md): source R0–R5 đã triển khai; R6 theo dõi review, CI và release verification.
+- [Plan chuẩn hóa cấu trúc và phân tầng](21-repository-refactor-plan.md): R0–R6 hoàn tất, [release và evidence](evidence/2026-10-29-structure-production.md) theo SHA `ffcb599`.
 
 - [Bàn giao và trạng thái nghiệm thu hiện tại](20-delivery-status.md).
 

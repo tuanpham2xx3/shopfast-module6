@@ -1,0 +1,156 @@
+{
+  "executedAt": "2026-10-29T13:03:08.445Z",
+  "target": "https://shopfast.tuanpq.com",
+  "release": {
+    "commit": "ffcb599805ce937654ef22958f392fd74e11ba55",
+    "appImageId": "sha256:42d32a5768af99987414b37164fb15d10553f8b2feaec91404ce63aa93f4920d",
+    "durationSeconds": 9,
+    "previous": "f252c86a20b28c90a754a15a500f7ea43ab655e2"
+  },
+  "ci": {
+    "pr": 22,
+    "prChecks": 40876033333,
+    "mainChecks": 40876826169,
+    "docs": 40876826364,
+    "release": 40876826276,
+    "sourceCommit": "ffcb599805ce937654ef22958f392fd74e11ba55",
+    "status": "PASS",
+    "unitContractTests": 68,
+    "integrationTests": 69,
+    "browserTests": 19,
+    "harnessSelfTests": 22,
+    "architectureFixtures": 6,
+    "unitLineCoverage": 60.54,
+    "combinedLineCoverage": 87.05
+  },
+  "staging": {
+    "status": "PASS",
+    "checks": [
+      "AUTH-register-secure-cookie",
+      "AUTH-worker-live-email-OTP-confirmation",
+      "ORD-checkout-idempotency",
+      "ORD-delivery-and-private-socket-events",
+      "JOB-worker-invoice-PDF",
+      "TKT-customer-support-claim-reply",
+      "AI-production-Gemini-two-tools-replay-no-auto-reply",
+      "RBAC-customer-denied-admin",
+      "UI-real-customer-login-delivered-order-and-assets",
+      "UI-HTTPS-mobile-no-overflow"
+    ],
+    "aiAttempts": [
+      {
+        "attempt": 1,
+        "status": "UNAVAILABLE"
+      },
+      {
+        "attempt": 2,
+        "status": "OK"
+      }
+    ]
+  },
+  "roles": {
+    "status": "PASS",
+    "checks": [
+      "customer real login and workspace render",
+      "warehouse real login and workspace render",
+      "support real login and workspace render",
+      "admin real login and workspace render"
+    ]
+  },
+  "runtime": {
+    "status": "PASS",
+    "passed": 15,
+    "total": 15
+  },
+  "scheduler": {
+    "status": "PASS",
+    "assertions": [
+      {
+        "name": "production worker entrypoint and schedule hooks",
+        "expected": "running exact source release, worker main command, 250ms timer/15s catch-up polling, 30m reminder and Bangkok daily hook",
+        "actual": {
+          "release": "ffcb599805ce937654ef22958f392fd74e11ba55",
+          "running": "true",
+          "command": ["node", "dist/apps/worker/src/main.js"],
+          "compiled": {
+            "timer": true,
+            "catchUpPolling": true,
+            "reminder30Minutes": true,
+            "bangkokDaily": true
+          }
+        },
+        "passed": true
+      },
+      {
+        "name": "JOB-05 real PostgreSQL controlled-clock acceptance",
+        "expected": "same clean source/config with passing assertions and intact artifacts",
+        "actual": {
+          "runId": "7d1c26ae-22b1-462a-ae7f-ff29c4327110",
+          "executedAt": "2026-10-29T12:56:13.367Z",
+          "status": "PASS"
+        },
+        "passed": true
+      },
+      {
+        "name": "JOB-06 real PostgreSQL controlled-clock acceptance",
+        "expected": "same clean source/config with passing assertions and intact artifacts",
+        "actual": {
+          "runId": "7d1c26ae-22b1-462a-ae7f-ff29c4327110",
+          "executedAt": "2026-10-29T12:56:13.367Z",
+          "status": "PASS"
+        },
+        "passed": true
+      }
+    ]
+  },
+  "continuity": {
+    "status": "PASS",
+    "original": "ffcb599805ce937654ef22958f392fd74e11ba55",
+    "candidate": "f252c86a20b28c90a754a15a500f7ea43ab655e2",
+    "restored": true,
+    "durationMs": 158971,
+    "observations": 57,
+    "socketSubscriptions": 3,
+    "errors": []
+  },
+  "workerRecovery": {
+    "status": "PASS",
+    "executedAt": "2026-10-29T12:56:53.825Z",
+    "checks": [
+      "real worker process SIGKILL after accepted side effect",
+      "expired lease reclaimed by restarted process",
+      "one delivery despite two attempts",
+      "durable execution succeeded"
+    ],
+    "provider": "deterministic PostgreSQL-backed test sink, not Resend live"
+  },
+  "redisRecovery": {
+    "status": "PASS",
+    "executedAt": "2026-10-29T12:56:55.716Z",
+    "checks": [
+      "warm real Redis cache",
+      "price mutation while Redis process stopped",
+      "DB fallback serves new price",
+      "restart and targeted invalidation before cache resumes"
+    ]
+  },
+  "restore": {
+    "status": "PASS",
+    "durationSeconds": 7,
+    "checksumVerified": true,
+    "isolatedDatabase": true,
+    "tableCountsMatched": true,
+    "restoredLogin": true,
+    "restoredOrderRead": true,
+    "invoicePdfAndChecksum": true
+  },
+  "ui": {
+    "status": "PASS",
+    "scope": "public and real customer/admin, desktop/mobile; fresh execution .secrets/structure-ui-after.log"
+  },
+  "limits": [
+    "Gemini first staging turn UNAVAILABLE; second independent read-only turn OK, both retained.",
+    "Historical published bundle intentionally incompatible with changed source; its previous SHA is never relabeled.",
+    "This closes the repository refactor plan, not unrelated outstanding SRS/IAM/human acceptance gates."
+  ]
+}
