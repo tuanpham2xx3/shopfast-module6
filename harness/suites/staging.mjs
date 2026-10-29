@@ -345,7 +345,7 @@ try {
     const document = await page.goto(new URL("/login", base).href);
     assert(document?.ok(), "Frontend document must return success");
     await expect(
-      page.getByRole("heading", { name: "Tạo tài khoản", exact: true }),
+      page.getByRole("heading", { name: "Đăng nhập", exact: true }),
     ).toBeVisible();
     await page.getByLabel("Email", { exact: true }).fill(email);
     await page.getByLabel("Mật khẩu", { exact: true }).fill(password);

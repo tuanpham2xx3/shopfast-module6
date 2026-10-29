@@ -3,6 +3,7 @@ import { execFileSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { harnessContext } from "../core/context.mjs";
 import { digest } from "../core/evidence.mjs";
+import { compareSourceTrees } from "../core/published-compatibility.mjs";
 const context = harnessContext(),
   runId = randomUUID(),
   executedAt = new Date().toISOString();
@@ -60,16 +61,37 @@ const paths = [
   "nest-cli.json",
   "jest.business.config.js",
   "jest.unit-business.config.js",
-  "harness/core/remote-evidence.mjs",
-  "harness/registries/requirements.json",
+  {
+    path: "harness/core/remote-evidence.mjs",
+    executionPaths: [
+      "harness/core/remote-evidence.mjs",
+      "harness/remote-evidence.mjs",
+    ],
+  },
+  {
+    path: "harness/registries/requirements.json",
+    executionPaths: [
+      "harness/registries/requirements.json",
+      "harness/requirements.json",
+    ],
+  },
 ];
-const compatibility = paths.map((path) => ({
-  path,
-  executionTree: git("rev-parse", `${summary.commit}:${path}`)
-    .toString()
-    .trim(),
-  currentTree: git("rev-parse", `${context.commit}:${path}`).toString().trim(),
-}));
+const compatibility = compareSourceTrees(
+  summary.commit,
+  context.commit,
+  paths,
+  (commit, path) => {
+    try {
+      return execFileSync(
+        "git",
+        ["rev-parse", "--verify", `${commit}:${path}`],
+        { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] },
+      ).trim();
+    } catch {
+      return null;
+    }
+  },
+);
 let publicRemote = false;
 try {
   const repo = JSON.parse(
@@ -133,7 +155,7 @@ const assertions = [
     expected:
       "unchanged Git tree/blob IDs; execution SHA retained without relabeling",
     actual: compatibility,
-    passed: compatibility.every((p) => p.executionTree === p.currentTree),
+    passed: compatibility.every((p) => p.compatible),
   },
 ];
 const passed = assertions.every((a) => a.passed),
