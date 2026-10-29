@@ -1,0 +1,28 @@
+{
+  "releaseCommit": "f252c86a20b28c90a754a15a500f7ea43ab655e2",
+  "pr": "https://github.com/tuanpham2xx3/shopfast-module6/pull/21",
+  "ci": "https://github.com/tuanpham2xx3/shopfast-module6/actions/runs/40815770557",
+  "release": "https://github.com/tuanpham2xx3/shopfast-module6/actions/runs/40816349337",
+  "ui": {
+    "status": "PASS",
+    "checkedAt": "2026-10-29T04:14:51.467Z",
+    "target": "https://shopfast.tuanpq.com",
+    "checks": [
+      "real public home/catalog/auth cleanup and loaded images",
+      "real customer compact actions, visible mobile cart, translated orders and ticket composer without writes",
+      "real admin queue counts match API, structured responsive summary, metadata disclosure"
+    ],
+    "note": "Read-only production UI checks; no cart/order/ticket mutations, emails or Gemini generate calls"
+  },
+  "roles": {
+    "status": "PASS",
+    "executedAt": "2026-10-29T04:15:44.983Z",
+    "target": "https://shopfast.tuanpq.com",
+    "checks": [
+      "customer real login and workspace render",
+      "warehouse real login and workspace render",
+      "support real login and workspace render",
+      "admin real login and workspace render"
+    ]
+  }
+}
