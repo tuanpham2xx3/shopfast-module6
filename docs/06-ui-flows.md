@@ -62,6 +62,8 @@ AI unavailable vẫn đọc ticket, tra đơn thủ công trong context được
 
 ## 5. Trạng thái dùng chung
 
+Khi giỏ đang đồng bộ sau thao tác, giữ con trỏ bình thường trên nút và báo “Đang cập nhật giỏ hàng…” tại dòng ghi chú sẵn có; không dùng `cursor: wait`. Vẫn chặn thao tác lặp và giữ focus/danh sách.
+
 Loading thay nội dung chỉ dùng ở lần tải đầu. Khi đồng bộ lại sau thao tác hoặc polling, giữ DOM/dữ liệu hiện tại, vị trí cuộn, draft và focus; cập nhật dữ liệu từ response thành công. Badge không xóa tạm lúc refetch. Dropdown giữ danh sách/tạm tính khi tải nền, chặn mutation lặp và checkout trong lúc đồng bộ. Thêm giỏ không refetch catalog vì chưa thay đổi tồn kho. App chỉ chạy timer mỗi giây khi có countdown thực sự; response đơn giống hệt hoặc version cũ không ghi đè state mới.
 
 Mỗi màn hình có loading, empty, validation error, dependency error và retry phù hợp. 429 hiển thị countdown từ Retry-After. 401 thử refresh một lần, thất bại về login; không tạo vòng lặp refresh. Mọi form có label, keyboard focus, disabled state và thông báo server dễ hiểu. Không hiển thị stack trace hoặc chi tiết SDK cho người dùng.
