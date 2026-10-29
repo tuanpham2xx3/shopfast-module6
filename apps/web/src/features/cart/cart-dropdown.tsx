@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState } from "react";
-import { api } from "./client";
+import { api } from "../../shared/api/client";
 
 type Item = {
   productId: string;

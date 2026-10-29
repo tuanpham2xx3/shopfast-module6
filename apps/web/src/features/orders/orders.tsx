@@ -1,7 +1,7 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
-import { API, getAccessToken, restoreSession } from "./client";
-import { displayLabel } from "./presentation";
+import { API, getAccessToken, restoreSession } from "../../shared/api/client";
+import { displayLabel } from "../../shared/presentation/labels";
 const mutationKeys = new Map<string, string>();
 function mutationKey(identity: string) {
   let key = mutationKeys.get(identity);

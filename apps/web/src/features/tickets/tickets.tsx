@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState } from "react";
-import { displayLabel } from "./presentation";
+import { displayLabel } from "../../shared/presentation/labels";
 type Api = <T>(
   path: string,
   options?: RequestInit,
