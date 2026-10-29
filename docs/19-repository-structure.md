@@ -1,5 +1,7 @@
 # 19 — Cấu trúc repository và ranh giới phụ thuộc
 
+Bố cục dưới đây mô tả hiện trạng. [Plan chuẩn hóa tiếp theo](21-repository-refactor-plan.md) tách HTTP/application/persistence và nhóm frontend, harness, deploy; chưa được coi là cấu trúc đã triển khai.
+
 ## Bố cục
 
 ```text
