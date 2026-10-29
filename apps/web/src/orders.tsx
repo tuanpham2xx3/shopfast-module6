@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { API, getAccessToken, restoreSession } from "./client";
+import { displayLabel } from "./presentation";
 const mutationKeys = new Map<string, string>();
 function mutationKey(identity: string) {
   let key = mutationKeys.get(identity);
@@ -70,6 +71,20 @@ export function Orders({
   const [orderTotal, setOrderTotal] = useState(0);
   const [statusFilter, setStatusFilter] = useState("");
   const selectedId = selected?.id;
+  const nextStatus = selected
+    ? (
+        {
+          CONFIRMED: "PROCESSING",
+          PROCESSING: "SHIPPING",
+          SHIPPING: "DELIVERED",
+        } as Record<string, string>
+      )[selected.status]
+    : undefined;
+  const nextAction = {
+    PROCESSING: "Bắt đầu chuẩn bị",
+    SHIPPING: "Bàn giao vận chuyển",
+    DELIVERED: "Xác nhận đã giao",
+  } as Record<string, string>;
   const prefix = staff ? "/staff/orders" : "/orders";
   useEffect(() => {
     if (!onNavigate) return;
@@ -399,11 +414,15 @@ export function Orders({
   return (
     <section className="orders-panel">
       <h2>
-        {staff
-          ? "Xử lý đơn hàng"
-          : showCart
-            ? "Giỏ hàng và đơn của bạn"
-            : "Đơn hàng của bạn"}
+        {routeId
+          ? "Chi tiết đơn hàng"
+          : staff
+            ? "Xử lý đơn hàng"
+            : showCart
+              ? checkoutEnabled
+                ? "Thanh toán"
+                : "Giỏ hàng"
+              : "Đơn hàng của bạn"}
       </h2>
       {error && <p role="alert">{error}</p>}
       {!staff && showCart && (
@@ -504,62 +523,70 @@ export function Orders({
           )}
         </>
       )}
-      <label>
-        Lọc đơn theo trạng thái
-        <select
-          value={statusFilter}
-          onChange={(e) => {
-            setStatusFilter(e.target.value);
-            setOrderPage(1);
-          }}
-        >
-          <option value="">Tất cả</option>
-          {[
-            "PENDING_PAYMENT",
-            "CONFIRMED",
-            "PROCESSING",
-            "SHIPPING",
-            "DELIVERED",
-            "CANCELLED",
-            "EXPIRED",
-          ].map((s) => (
-            <option key={s}>{s}</option>
-          ))}
-        </select>
-      </label>
-      <div className="order-list">
-        {orders.length === 0 ? (
-          <p>Chưa có đơn hàng.</p>
-        ) : (
-          orders.map((order) => (
-            <button
-              className="order-row"
-              key={order.id}
-              onClick={() => detail(order)}
+      {!showCart && !routeId && (
+        <>
+          <label>
+            Lọc đơn theo trạng thái
+            <select
+              value={statusFilter}
+              onChange={(e) => {
+                setStatusFilter(e.target.value);
+                setOrderPage(1);
+              }}
             >
-              <strong>{order.code}</strong>
-              <span>{order.status}</span>
-              <span>{order.total.toLocaleString("vi-VN")} ₫</span>
-            </button>
-          ))
-        )}
-      </div>
-      {orderTotal > 20 && (
-        <nav className="pagination" aria-label="Phân trang đơn hàng">
-          <button
-            disabled={orderPage === 1}
-            onClick={() => setOrderPage((p) => p - 1)}
-          >
-            Đơn trước
-          </button>
-          <span>Trang {orderPage}</span>
-          <button
-            disabled={orderPage * 20 >= orderTotal}
-            onClick={() => setOrderPage((p) => p + 1)}
-          >
-            Đơn sau
-          </button>
-        </nav>
+              <option value="">Tất cả</option>
+              {[
+                "PENDING_PAYMENT",
+                "CONFIRMED",
+                "PROCESSING",
+                "SHIPPING",
+                "DELIVERED",
+                "CANCELLED",
+                "EXPIRED",
+              ].map((s) => (
+                <option key={s} value={s}>
+                  {displayLabel(s)}
+                </option>
+              ))}
+            </select>
+          </label>
+          <div className="order-list">
+            {orders.length === 0 ? (
+              <p>Chưa có đơn hàng.</p>
+            ) : (
+              orders.map((order) => (
+                <button
+                  className="order-row"
+                  key={order.id}
+                  onClick={() => detail(order)}
+                >
+                  <strong>{order.code}</strong>
+                  <span className="status-badge" data-status={order.status}>
+                    {displayLabel(order.status)}
+                  </span>
+                  <span>{order.total.toLocaleString("vi-VN")} ₫</span>
+                </button>
+              ))
+            )}
+          </div>
+          {orderTotal > 20 && (
+            <nav className="pagination" aria-label="Phân trang đơn hàng">
+              <button
+                disabled={orderPage === 1}
+                onClick={() => setOrderPage((p) => p - 1)}
+              >
+                Đơn trước
+              </button>
+              <span>Trang {orderPage}</span>
+              <button
+                disabled={orderPage * 20 >= orderTotal}
+                onClick={() => setOrderPage((p) => p + 1)}
+              >
+                Đơn sau
+              </button>
+            </nav>
+          )}
+        </>
       )}
       {selected && (
         <section className="product-detail" aria-label="Chi tiết đơn hàng">
@@ -571,11 +598,14 @@ export function Orders({
               onNavigate ? onNavigate(basePath ?? prefix) : setSelected(null)
             }
           >
-            Đóng đơn
+            ← Danh sách đơn
           </button>
           <p>
-            Trạng thái: <strong>{selected.status}</strong> · Thanh toán:{" "}
-            {selected.paymentStatus}
+            Trạng thái:{" "}
+            <strong className="status-badge" data-status={selected.status}>
+              {displayLabel(selected.status)}
+            </strong>{" "}
+            · Thanh toán: {displayLabel(selected.paymentStatus)}
           </p>
           {selected.items?.map((i, index) => (
             <p key={index}>
@@ -604,7 +634,9 @@ export function Orders({
           )}
           <ol>
             {selected.history?.map((h) => (
-              <li key={h.version}>{h.toStatus}</li>
+              <li key={h.version} data-status={h.toStatus}>
+                {displayLabel(h.toStatus)}
+              </li>
             ))}
           </ol>
           {!staff && selected.status === "PENDING_PAYMENT" && (
@@ -618,6 +650,7 @@ export function Orders({
           {!staff &&
             ["PENDING_PAYMENT", "CONFIRMED"].includes(selected.status) && (
               <form
+                className="cancel-order"
                 onSubmit={(e) => {
                   e.preventDefault();
                   const reason = String(
@@ -630,44 +663,19 @@ export function Orders({
                   Lý do hủy
                   <input name="reason" minLength={5} maxLength={500} required />
                 </label>
-                <button disabled={busy}>Hủy đơn hàng</button>
+                <button className="danger-action" disabled={busy}>
+                  Hủy đơn hàng
+                </button>
               </form>
             )}
-          {staff &&
-            (
-              {
-                CONFIRMED: "PROCESSING",
-                PROCESSING: "SHIPPING",
-                SHIPPING: "DELIVERED",
-              } as Record<string, string>
-            )[selected.status] && (
-              <button
-                disabled={busy}
-                onClick={() =>
-                  action(
-                    selected,
-                    (
-                      {
-                        CONFIRMED: "PROCESSING",
-                        PROCESSING: "SHIPPING",
-                        SHIPPING: "DELIVERED",
-                      } as Record<string, string>
-                    )[selected.status]!,
-                  )
-                }
-              >
-                Chuyển sang{" "}
-                {
-                  (
-                    {
-                      CONFIRMED: "PROCESSING",
-                      PROCESSING: "SHIPPING",
-                      SHIPPING: "DELIVERED",
-                    } as Record<string, string>
-                  )[selected.status]
-                }
-              </button>
-            )}
+          {staff && nextStatus && (
+            <button
+              disabled={busy}
+              onClick={() => action(selected, nextStatus)}
+            >
+              {nextAction[nextStatus]}
+            </button>
+          )}
         </section>
       )}
     </section>

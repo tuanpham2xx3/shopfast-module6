@@ -17,7 +17,7 @@ test("UI-01 RT-04 real browser purchase, role operations and offline socket reco
   ).initialize();
   const email = `browser-${Date.now()}@example.test`;
   try {
-    await page.goto("/");
+    await page.goto("/register");
     await page.getByLabel("Họ tên").fill("Browser Admin");
     await page.getByLabel("Email").fill(email);
     await page
@@ -163,7 +163,7 @@ test("UI-01 RT-04 real browser purchase, role operations and offline socket reco
     await expect(
       page
         .getByLabel("Chi tiết đơn hàng")
-        .getByText("CANCELLED", { exact: true })
+        .getByText("Đã hủy", { exact: true })
         .first(),
     ).toBeVisible();
     await page.getByRole("button", { name: "Cửa hàng", exact: true }).click();
@@ -196,7 +196,7 @@ test("UI-01 RT-04 real browser purchase, role operations and offline socket reco
     await expect(
       page
         .getByLabel("Chi tiết đơn hàng")
-        .getByText("CONFIRMED", { exact: true })
+        .getByText("Đã xác nhận", { exact: true })
         .first(),
     ).toBeVisible();
     // A separate warehouse identity changes the real order while the customer's
@@ -245,17 +245,17 @@ test("UI-01 RT-04 real browser purchase, role operations and offline socket reco
     );
     expect(missedUpdate.ok()).toBeTruthy();
     await expect(
-      detail.getByText("CONFIRMED", { exact: true }).first(),
+      detail.getByText("Đã xác nhận", { exact: true }).first(),
     ).toBeVisible();
     await page.context().setOffline(false);
     await expect(
       detail.getByText("Đang theo dõi trực tiếp", { exact: true }),
     ).toBeVisible({ timeout: 40000 });
     await expect(
-      detail.getByText("PROCESSING", { exact: true }).first(),
+      detail.getByText("Đang chuẩn bị", { exact: true }).first(),
     ).toBeVisible();
     await expect(
-      detail.locator("ol li").filter({ hasText: "PROCESSING" }),
+      detail.locator("ol li").filter({ hasText: "Đang chuẩn bị" }),
     ).toHaveCount(1);
     const onlineUpdate = await request.patch(
       `${base}/staff/orders/${trackedOrder.id}/status`,
@@ -269,10 +269,10 @@ test("UI-01 RT-04 real browser purchase, role operations and offline socket reco
     );
     expect(onlineUpdate.ok()).toBeTruthy();
     await expect(
-      detail.getByText("SHIPPING", { exact: true }).first(),
+      detail.getByText("Đang giao", { exact: true }).first(),
     ).toBeVisible({ timeout: 5000 });
     await expect(
-      detail.locator("ol li").filter({ hasText: "PROCESSING" }),
+      detail.locator("ol li").filter({ hasText: "Đang chuẩn bị" }),
     ).toHaveCount(1);
     await page.screenshot({
       path: "harness/reports/reconnect-recovered.png",
@@ -290,16 +290,14 @@ test("UI-01 RT-04 real browser purchase, role operations and offline socket reco
       page.getByRole("heading", { name: "Chào Browser Admin" }),
     ).toBeVisible();
     await page.getByRole("button", { name: "Đơn hàng", exact: true }).click();
-    await page.getByRole("button").filter({ hasText: "SHIPPING" }).click();
-    for (const target of ["DELIVERED"]) {
-      await page
-        .getByRole("button", { name: `Chuyển sang ${target}`, exact: true })
-        .click();
-    }
+    await page.getByRole("button").filter({ hasText: "Đang giao" }).click();
+    await page
+      .getByRole("button", { name: "Xác nhận đã giao", exact: true })
+      .click();
     await expect(
       page
         .getByLabel("Chi tiết đơn hàng")
-        .getByText("DELIVERED", { exact: true })
+        .getByText("Đã giao", { exact: true })
         .first(),
     ).toBeVisible();
     const [inventory] = await source.query(
@@ -314,7 +312,10 @@ test("UI-01 RT-04 real browser purchase, role operations and offline socket reco
     await expect(
       page.getByRole("heading", { name: "Chào Browser Admin" }),
     ).toBeVisible();
-    await page.getByRole("button", { name: "Mở hỗ trợ", exact: true }).click();
+    await page.getByRole("button", { name: "Hỗ trợ", exact: true }).click();
+    await page
+      .getByRole("button", { name: "Tạo yêu cầu", exact: true })
+      .click();
     await page
       .getByLabel("Tiêu đề", { exact: true })
       .fill("Hỏi đơn hàng đã giao");
@@ -335,7 +336,7 @@ test("UI-01 RT-04 real browser purchase, role operations and offline socket reco
     await expect(
       page.getByRole("heading", { name: "Chào Browser Admin" }),
     ).toBeVisible();
-    await page.getByRole("button", { name: "Mở hỗ trợ", exact: true }).click();
+    await page.getByRole("button", { name: "Hỗ trợ", exact: true }).click();
     await page
       .getByRole("button")
       .filter({ hasText: "Hỏi đơn hàng đã giao" })
@@ -356,7 +357,9 @@ test("UI-01 RT-04 real browser purchase, role operations and offline socket reco
       .getByLabel("Hỏi trợ lý", { exact: true })
       .fill("Kiểm tra đơn hàng này");
     await page.getByRole("button", { name: "Hỏi Gemini", exact: true }).click();
-    await expect(page.getByText("UNAVAILABLE", { exact: true })).toBeVisible();
+    await expect(
+      page.getByText("Tạm thời không khả dụng", { exact: true }),
+    ).toBeVisible();
     await page.screenshot({
       path: "harness/reports/support-ui-mobile.png",
       fullPage: true,
@@ -369,9 +372,7 @@ test("UI-01 RT-04 real browser purchase, role operations and offline socket reco
     await expect(
       page.getByRole("heading", { name: "Chào Browser Admin" }),
     ).toBeVisible();
-    await page
-      .getByRole("button", { name: "Mở quản trị", exact: true })
-      .click();
+    await page.getByRole("button", { name: "Quản trị", exact: true }).click();
     await expect(
       page.getByRole("heading", { name: "Quản trị ShopFast", exact: true }),
     ).toBeVisible();
@@ -400,6 +401,10 @@ test("UI-01 RT-04 real browser purchase, role operations and offline socket reco
         expect(queueSnapshot.counts[state]).toEqual(expect.any(Number));
         expect(queueSnapshot.counts[state]).toBeGreaterThanOrEqual(0);
       }
+      await expect(page.getByLabel("Số lượng tác vụ")).toContainText(
+        "Đang chạy",
+      );
+      await page.getByText("Chi tiết kỹ thuật", { exact: true }).click();
       await expect(
         page.locator("pre").filter({ hasText: "redisQueue" }),
       ).toContainText('"waiting"');

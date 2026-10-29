@@ -62,6 +62,10 @@ Thiết kế sau phải xử lý migration tương thích khi chạy hai version
 
 29/10/2026: người dùng yêu cầu triển khai bản đồ route của spec. Dùng React Router DOM 7.18.5 (React18/Node20), BrowserRouter declarative theo [tài liệu chính thức](https://reactrouter.com/7.18.5/start/declarative/installation), giữ ứng dụng SPA hiện có. Route/detail IDs và query catalog là nguồn lựa chọn màn hình. Guard đợi session restore, giữ return URL nội bộ qua login/verify và phân quyền trước khi mount component; server tiếp tục kiểm quyền và ownership. Sản phẩm giữ popup có URL, giỏ giữ dropdown. Loại proxy HTTP `/orders/` của Nginx để nhường deep link FE; Socket.IO tiếp tục đi `/socket.io/` với namespace `/orders`. Không đổi API, database, transaction/idempotency hoặc provider.
 
+### D28 — Dọn giao diện theo tác vụ
+
+29/10/2026: theo yêu cầu bớt nội dung thừa, `/` vào `/products`, auth dùng trang riêng; metadata, JSON và chứng cứ công cụ có disclosure; nhãn enum dịch ở presentation layer và option giữ value gốc. Không thay provider, API, transaction, ownership hoặc human confirmation. Xem [audit và thay đổi UI](15-ui-refresh.md).
+
 ### D25 — Đối tác tồn kho demo được người dùng chấp thuận
 
 28/10/2026: người dùng xác nhận “Không có, dùng đối tác demo”. Nghiệm thu luồng `inventory.partner-sync` với `partner_inventory` mô phỏng có version và business key; ghi rõ đây là demo trong API/dashboard/report/slide. Không yêu cầu credential/endpoint đối tác thật và không tuyên bố đã gửi dữ liệu ra bên thứ ba. Vẫn kiểm queue không chặn checkout, retry/dedup và snapshot cũ không ghi đè mới. Gate `partner-http-contract` trước đây đổi thành `partner-versioned-demo`; không suy việc người dùng chấp thuận thành test đã PASS.

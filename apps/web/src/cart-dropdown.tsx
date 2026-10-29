@@ -150,7 +150,6 @@ export function CartDropdown({
         >
           <header>
             <div>
-              <p className="eyebrow">SHOPFAST</p>
               <h2>Giỏ hàng của bạn</h2>
             </div>
             <button
@@ -274,7 +273,7 @@ export function CartDropdown({
                   <small role="status">
                     {busy || loading
                       ? "Đang cập nhật giỏ hàng…"
-                      : "Giá và ưu đãi được xác nhận khi đặt hàng."}
+                      : "Giá được xác nhận khi đặt hàng."}
                   </small>
                   <button
                     type="button"

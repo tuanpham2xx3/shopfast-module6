@@ -18,6 +18,7 @@ import {
   useNavigate,
 } from "react-router-dom";
 import { AuthMode, Screen, resolveRoute, safeReturnTo } from "./routing";
+import { displayLabel } from "./presentation";
 
 function App() {
   const location = useLocation();
@@ -302,9 +303,10 @@ function App() {
         )}
         <button
           aria-current={screen === "auth" ? "page" : undefined}
+          aria-label="Tài khoản"
           onClick={() => setScreen("auth")}
         >
-          {user ? "Tài khoản" : "Đăng nhập / Đăng ký"}
+          {user ? "Tài khoản" : "Đăng nhập"}
         </button>
         {(!user || user.role === "CUSTOMER") && (
           <CartDropdown
@@ -337,7 +339,26 @@ function App() {
             : "Chuyển sang giao diện sáng"
         }
       >
-        {theme === "light" ? "Chế độ tối" : "Chế độ sáng"}
+        <svg
+          aria-hidden="true"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.7"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          {theme === "light" ? (
+            <path d="M20.8 13a9 9 0 0 1-9.8-9.8A9 9 0 1 0 20.8 13Z" />
+          ) : (
+            <>
+              <circle cx="12" cy="12" r="4" />
+              <path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5" />
+            </>
+          )}
+        </svg>
       </button>
     </nav>
   );
@@ -351,6 +372,7 @@ function App() {
       </main>
     </>
   );
+  if (location.pathname === "/") return <Navigate replace to="/products" />;
   if (route.roles !== undefined) {
     if (restoring)
       return statusPage(
@@ -483,48 +505,9 @@ function App() {
       {navigation}
       {rateNotice}
       <main className="shell">
-        <section className="intro" aria-labelledby="brand-title">
-          <div className="intro-content">
-            <p className="eyebrow">Mỗi ngày, dễ dàng hơn</p>
-            <h1 id="brand-title">
-              Mua sắm gọn gàng.
-              <br />
-              Theo dõi rõ ràng.
-            </h1>
-            <p className="promise">
-              Chọn món bạn thích, đặt hàng và theo dõi hành trình giao hàng ngay
-              tại một nơi.
-            </p>
-            <button className="intro-cta" onClick={() => setScreen("catalog")}>
-              Khám phá sản phẩm <span aria-hidden="true">↗</span>
-            </button>
-          </div>
-          <ul>
-            <li>
-              <strong>Rõ ràng từ lúc chọn</strong>
-              <span>Xem giá và số lượng còn hàng trước khi đặt.</span>
-            </li>
-            <li>
-              <strong>An tâm theo dõi</strong>
-              <span>Cập nhật trạng thái và xem lại lịch sử đơn hàng.</span>
-            </li>
-            <li>
-              <strong>Luôn có người hỗ trợ</strong>
-              <span>Gửi yêu cầu và trao đổi với đội ngũ ShopFast.</span>
-            </li>
-          </ul>
-          <div className="intro-actions">
-            {user?.verified && (
-              <button onClick={() => setScreen("tickets")}>Mở hỗ trợ</button>
-            )}
-            {user?.verified && user.role === "ADMIN" && (
-              <button onClick={() => setScreen("admin")}>Mở quản trị</button>
-            )}
-          </div>
-        </section>
         <section className="auth" aria-live="polite">
           <header>
-            <p>{mode === "account" ? "Tài khoản" : "Bắt đầu"}</p>
+            {mode === "account" && <p>Tài khoản</p>}
             <h2>
               {mode === "register"
                 ? "Tạo tài khoản"
@@ -553,14 +536,17 @@ function App() {
                 </div>
                 <div>
                   <dt>Vai trò</dt>
-                  <dd>{user?.role}</dd>
+                  <dd>{displayLabel(user?.role ?? "")}</dd>
                 </div>
                 <div>
                   <dt>Trạng thái</dt>
                   <dd>{user?.verified ? "Đã xác minh" : "Chờ xác minh"}</dd>
                 </div>
               </dl>
-              <button disabled={busy} onClick={logout}>
+              <button onClick={() => setScreen("catalog")}>
+                Khám phá sản phẩm
+              </button>
+              <button className="switch" disabled={busy} onClick={logout}>
                 Đăng xuất
               </button>
             </div>

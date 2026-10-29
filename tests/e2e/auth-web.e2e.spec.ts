@@ -19,7 +19,7 @@ test("preserves password input and theme preference on mobile", async ({
     }),
   );
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/");
+  await page.goto("/register");
   const password = page.getByLabel("Mật khẩu", { exact: true });
   await password.fill("SyntheticUiPassword!2026");
   await page
@@ -99,7 +99,7 @@ test("registers, verifies and shows the current account", async ({ page }) => {
     }),
   );
 
-  await page.goto("/");
+  await page.goto("/register");
   await page.getByLabel("Họ tên").fill("Nguyễn Demo");
   await page.getByLabel("Email").fill("browser@example.test");
   await page.getByLabel("Mật khẩu", { exact: true }).fill("TestPassword!2026");

@@ -17,13 +17,7 @@
       page.on("response", (r) => {
         if (r.status() >= 500) errors.push("HTTP" + r.status());
       });
-      await page.goto("https://shopfast.tuanpq.com");
-      await page
-        .getByRole("button", {
-          name: "Đã có tài khoản? Đăng nhập",
-          exact: true,
-        })
-        .click();
+      await page.goto("https://shopfast.tuanpq.com/login");
       await page
         .getByLabel("Email", { exact: true })
         .fill(
@@ -39,13 +33,11 @@
         page.getByRole("button", { name: "Đăng xuất", exact: true }),
       ).toBeVisible({ timeout: 15000 });
       if (role === "support") {
-        await page
-          .getByRole("button", { name: "Mở hỗ trợ", exact: true })
-          .click();
+        await page.getByRole("button", { name: "Hỗ trợ", exact: true }).click();
         await expect(page.locator(".workspace-title")).toBeVisible();
       } else if (role === "admin") {
         await page
-          .getByRole("button", { name: "Mở quản trị", exact: true })
+          .getByRole("button", { name: "Quản trị", exact: true })
           .click();
         await expect(
           page.getByRole("heading", { name: "Quản trị ShopFast", exact: true }),

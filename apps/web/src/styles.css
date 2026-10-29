@@ -235,21 +235,18 @@ pre {
   white-space: nowrap;
   padding-inline: 0.8rem;
   font-size: 0.8rem;
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  min-height: 40px;
+  padding: 8px;
 }
 .shell {
-  min-height: calc(100dvh - 76px);
-  max-width: 1200px;
-  padding: 4rem 32px;
-  margin: auto;
-  display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(340px, 0.85fr);
-  gap: clamp(3rem, 7vw, 7rem);
-  align-items: center;
-}
-.intro {
-  display: grid;
-  gap: 2.5rem;
-  padding: 0.5rem 0;
+  max-width: 520px;
+  min-height: 0;
+  padding: 0 20px 48px;
+  margin: clamp(24px, 5vh, 56px) auto;
+  display: block;
 }
 .eyebrow,
 .auth header > p {
@@ -260,78 +257,14 @@ pre {
   letter-spacing: 0.08em;
   margin: 0 0 1rem;
 }
-.intro h1 {
-  font-size: clamp(2.4rem, 4.1vw, 3.7rem);
-  max-width: 16ch;
-  line-height: 1.2;
-  letter-spacing: -0.055em;
-}
-.promise {
-  max-width: 43ch;
-  color: var(--muted);
-  font-size: 1rem;
-  line-height: 1.85;
-  margin: 1.4rem 0;
-}
-.intro-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 2rem;
-  margin-top: 0.3rem;
-}
-.intro-cta span {
-  font-size: 1.2rem;
-}
-.intro ul {
-  display: grid;
-  gap: 1.2rem;
-  list-style: none;
-  padding: 1.5rem 0 0;
-  margin: 0;
-  border-top: 1px solid var(--border);
-}
-.intro li {
-  display: grid;
-  grid-template-columns: 3px 1fr;
-  column-gap: 1rem;
-}
-.intro li::before {
-  content: "";
-  background: var(--accent);
-  border-radius: 2px;
-  grid-row: span 2;
-}
-.intro li strong {
-  font-size: 0.9rem;
-  font-weight: 600;
-}
-.intro li > span {
-  color: var(--muted);
-  font-size: 0.83rem;
-  margin-top: 0.2rem;
-}
-.intro-actions {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-.intro-actions:empty {
-  display: none;
-}
-.intro-actions button {
-  background: var(--surface);
-  color: var(--accent);
-  border-color: var(--border);
-}
 .auth {
   width: 100%;
-  max-width: 460px;
-  justify-self: end;
   background: var(--surface);
   border: 1px solid var(--border);
-  padding: clamp(1.6rem, 3vw, 2.6rem);
-  border-radius: 16px;
-  box-shadow: var(--shadow);
+  max-width: none;
+  padding: 28px;
+  box-shadow: none;
+  border-radius: 12px;
 }
 .auth header > p {
   margin-bottom: 0.55rem;
@@ -440,7 +373,7 @@ pre {
 .workspace {
   max-width: 1280px;
   margin: auto;
-  padding: 2.8rem 32px 4rem;
+  padding: 32px 24px 48px;
 }
 .store-heading {
   display: flex;
@@ -455,8 +388,8 @@ pre {
 .store-heading h2,
 .workspace-title {
   margin: 0;
-  font-size: clamp(1.8rem, 3vw, 2.4rem);
   letter-spacing: -0.045em;
+  font-size: clamp(1.5rem, 2.6vw, 2rem);
 }
 .workspace > .workspace-title {
   margin-bottom: 1.75rem;
@@ -471,12 +404,12 @@ pre {
   display: grid;
   grid-template-columns: 1fr 1fr 0.8fr 0.8fr 1fr auto;
   align-items: end;
-  gap: 0.85rem;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 1.1rem;
   margin: 0 0 1.6rem;
+  padding: 14px;
+  gap: 12px;
 }
 .filters label {
   font-size: 0.78rem;
@@ -557,9 +490,12 @@ pre {
 .out-of-stock {
   color: var(--muted);
 }
-.product-card > button {
-  width: 100%;
+.product-actions > button {
   margin-top: 0.35rem;
+  width: auto;
+  margin: 0;
+  flex: 1;
+  min-height: 40px;
 }
 .product-card .switch {
   color: var(--accent);
@@ -630,7 +566,9 @@ pre {
 .orders-panel {
   margin-top: 3rem;
   padding-top: 2rem;
-  border-top: 1px solid var(--border);
+  border-top: 0;
+  padding: 0;
+  margin: 0;
 }
 .orders-panel > h2 {
   font-size: 1.8rem;
@@ -871,11 +809,16 @@ pre {
     gap: 0.7rem;
   }
   .shell {
-    gap: 2.5rem;
-    padding: 3rem 24px;
+    max-width: 520px;
+    min-height: 0;
+    padding: 0 20px 48px;
+    margin: clamp(24px, 5vh, 56px) auto;
+    display: block;
   }
   .filters {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    padding: 14px;
+    gap: 12px;
   }
   .filters > button {
     width: 100%;
@@ -904,7 +847,11 @@ pre {
   .theme-toggle {
     grid-column: 2;
     grid-row: 1;
-    min-height: 36px;
+    display: inline-grid;
+    place-items: center;
+    width: 40px;
+    min-height: 40px;
+    padding: 8px;
   }
   .nav-actions {
     grid-column: 1 / -1;
@@ -916,40 +863,23 @@ pre {
     padding-bottom: 3px;
   }
   .nav-actions button {
-    padding: 0.55rem 0.75rem;
+    padding: 0.55rem 0.5rem;
     font-size: 0.78rem;
     min-height: 38px;
     flex-shrink: 0;
   }
   .shell {
-    display: flex;
-    flex-direction: column;
-    min-height: auto;
-    gap: 2rem;
-    padding: 2.5rem 20px 3rem;
-  }
-  .intro {
-    width: 100%;
-    max-width: 460px;
-    gap: 1.5rem;
-    padding: 0;
-  }
-  .intro h1 {
-    font-size: clamp(2.2rem, 8vw, 3rem);
-  }
-  .promise {
-    font-size: 0.9rem;
-    margin: 1rem 0;
-  }
-  .intro ul {
-    display: none;
-  }
-  .intro-actions {
-    gap: 0.5rem;
+    max-width: 520px;
+    min-height: 0;
+    padding: 0 20px 48px;
+    margin: clamp(24px, 5vh, 56px) auto;
+    display: block;
   }
   .auth {
-    justify-self: auto;
-    padding: 1.5rem;
+    max-width: none;
+    padding: 28px;
+    box-shadow: none;
+    border-radius: 12px;
   }
   .auth h2 {
     font-size: 1.65rem;
@@ -971,8 +901,8 @@ pre {
   }
   .filters {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    padding: 0.9rem;
-    gap: 0.8rem;
+    padding: 14px;
+    gap: 12px;
   }
   .product-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1347,5 +1277,153 @@ pre {
   .product-dialog-content {
     grid-template-columns: 1fr;
     gap: 20px;
+  }
+}
+.product-card .product-art {
+  aspect-ratio: 16 / 10;
+}
+.product-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+.product-actions .product-detail-link {
+  color: var(--muted);
+  border-color: var(--border);
+}
+.catalog-credit {
+  margin: 20px 0 0;
+  text-align: center;
+  font-size: 11px;
+  color: var(--muted);
+}
+.catalog-credit a {
+  color: inherit;
+}
+.filter-panel {
+  margin-bottom: 20px;
+}
+.filter-panel > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 40px;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 12px;
+  list-style: none;
+}
+.filter-panel > summary::-webkit-details-marker {
+  display: none;
+}
+.filter-panel > summary::after {
+  content: "+";
+  font-size: 18px;
+}
+.filter-panel[open] > summary::after {
+  content: "−";
+}
+.filter-panel .filters {
+  margin-bottom: 0;
+}
+.account > button {
+  width: 100%;
+}
+.status-badge {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 6px;
+  background: var(--surface-muted);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.status-badge[data-status="DELIVERED"],
+.status-badge[data-status="CONFIRMED"] {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.status-badge[data-status="CANCELLED"],
+.status-badge[data-status="EXPIRED"] {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+.service-list {
+  margin: 20px 0;
+}
+.service-list > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.service-state {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+}
+.service-state.is-ready {
+  color: var(--accent);
+}
+.queue-stats {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+  margin: 20px 0;
+}
+.queue-stats > div {
+  min-width: 0;
+}
+.queue-stats span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+.queue-stats strong {
+  display: block;
+  font-size: 24px;
+  font-variant-numeric: tabular-nums;
+}
+.muted {
+  color: var(--muted);
+  font-size: 12px;
+}
+.technical-details {
+  margin-top: 20px;
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+}
+.technical-details summary {
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 12px;
+}
+.workspace-create {
+  margin: 0 0 24px;
+}
+.danger-action {
+  background: transparent;
+  color: var(--danger);
+  border-color: var(--border);
+}
+.danger-action:hover:not(:disabled) {
+  background: var(--danger-soft);
+  color: var(--danger);
+  box-shadow: none;
+}
+.cancel-order {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+@media (max-width: 600px) {
+  .queue-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px 12px;
   }
 }

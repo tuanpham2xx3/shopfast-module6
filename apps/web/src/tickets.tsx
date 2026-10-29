@@ -1,9 +1,17 @@
 import { FormEvent, useEffect, useState } from "react";
+import { displayLabel } from "./presentation";
 type Api = <T>(
   path: string,
   options?: RequestInit,
   token?: string,
 ) => Promise<T>;
+type OrderLookup = {
+  orderCode: string;
+  status: string;
+  paymentStatus: string;
+  updatedAt: string;
+  version: number;
+};
 type Ticket = {
   id: string;
   subject: string;
@@ -71,7 +79,8 @@ export function Tickets({
   const [answer, setAnswer] = useState<Answer | null>(null);
   const [draft, setDraft] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
-  const [lookup, setLookup] = useState<unknown>(null);
+  const [lookup, setLookup] = useState<OrderLookup | null>(null);
+  const [creating, setCreating] = useState(false);
   const prefix = staff ? "/staff/tickets" : "/tickets";
   useEffect(() => {
     setTicket(null);
@@ -80,6 +89,7 @@ export function Tickets({
     setAnswer(null);
     setDraft("");
     setLookup(null);
+    setCreating(false);
   }, [prefix, routeId]);
   useEffect(() => {
     let active = true;
@@ -212,12 +222,23 @@ export function Tickets({
           {error}
         </p>
       )}
-      {!staff && (
+      {!staff && !routeId && !creating && (
+        <button className="workspace-create" onClick={() => setCreating(true)}>
+          Tạo yêu cầu
+        </button>
+      )}
+      {!staff && creating && (
         <form className="panel" onSubmit={create}>
           <h2>Tạo yêu cầu mới</h2>
           <label>
             Tiêu đề
-            <input name="subject" minLength={5} maxLength={150} required />
+            <input
+              name="subject"
+              minLength={5}
+              maxLength={150}
+              required
+              autoFocus
+            />
           </label>
           <label>
             Nội dung
@@ -228,6 +249,14 @@ export function Tickets({
             <input name="orderId" />
           </label>
           <button disabled={busy}>Gửi yêu cầu</button>
+          <button
+            type="button"
+            className="switch"
+            disabled={busy}
+            onClick={() => setCreating(false)}
+          >
+            Hủy
+          </button>
         </form>
       )}
       <div className="support-layout">
@@ -243,7 +272,9 @@ export function Tickets({
             >
               <option value="">Tất cả</option>
               {["OPEN", "IN_PROGRESS", "RESOLVED", "CLOSED"].map((s) => (
-                <option key={s}>{s}</option>
+                <option key={s} value={s}>
+                  {displayLabel(s)}
+                </option>
               ))}
             </select>
           </label>
@@ -256,32 +287,43 @@ export function Tickets({
             >
               <strong>{t.subject}</strong>
               <span>
-                {t.status} · {t.category}
+                {displayLabel(t.status)} · {displayLabel(t.category)}
               </span>
               {(t.needsReview || t.classificationStatus === "FAILED") && (
                 <span>Cần nhân viên kiểm tra nhãn</span>
               )}
             </button>
           ))}
-          <nav className="pagination">
-            <button disabled={page === 1} onClick={() => setPage((p) => p - 1)}>
-              Trước
-            </button>
-            <span>{page}</span>
-            <button
-              disabled={page * 20 >= total}
-              onClick={() => setPage((p) => p + 1)}
-            >
-              Sau
-            </button>
-          </nav>
+          {total > 20 && (
+            <nav className="pagination" aria-label="Phân trang yêu cầu">
+              <button
+                disabled={page === 1}
+                onClick={() => setPage((p) => p - 1)}
+              >
+                Trước
+              </button>
+              <span>{page}</span>
+              <button
+                disabled={page * 20 >= total}
+                onClick={() => setPage((p) => p + 1)}
+              >
+                Sau
+              </button>
+            </nav>
+          )}
         </section>
         {ticket && (
           <section className="panel">
+            <button
+              className="switch"
+              onClick={() => onNavigate?.(basePath ?? prefix)}
+            >
+              ← Danh sách yêu cầu
+            </button>
             <h2>{ticket.subject}</h2>
             <p>{ticket.body}</p>
             <p>
-              {ticket.status} · {ticket.category} · phiên bản {ticket.version}
+              {displayLabel(ticket.status)} · {displayLabel(ticket.category)}
             </p>
             {staff && !ticket.assignedTo && (
               <button
@@ -315,7 +357,9 @@ export function Tickets({
                     key={`s${ticket.id}${ticket.version}`}
                   >
                     {["OPEN", "IN_PROGRESS", "RESOLVED", "CLOSED"].map((s) => (
-                      <option key={s}>{s}</option>
+                      <option key={s} value={s}>
+                        {displayLabel(s)}
+                      </option>
                     ))}
                   </select>
                 </label>
@@ -327,7 +371,9 @@ export function Tickets({
                     key={`c${ticket.id}${ticket.version}`}
                   >
                     {categories.map((c) => (
-                      <option key={c}>{c}</option>
+                      <option key={c} value={c}>
+                        {displayLabel(c)}
+                      </option>
                     ))}
                   </select>
                 </label>
@@ -384,10 +430,7 @@ export function Tickets({
             {staff && ticket.assignedTo && (
               <section className="ai-panel">
                 <h3>Trợ lý Gemini</h3>
-                <p>
-                  Gợi ý được giữ ở đây. Chỉ nút gửi tin nhắn phía trên mới gửi
-                  câu trả lời cho khách.
-                </p>
+                <p>Bản nháp AI. Kiểm tra trước khi gửi cho khách.</p>
                 <form onSubmit={chat}>
                   <label>
                     Hỏi trợ lý
@@ -397,21 +440,26 @@ export function Tickets({
                 </form>
                 {answer && (
                   <>
-                    <p role="status">{answer.status}</p>
+                    <p role="status">{displayLabel(answer.status)}</p>
                     <p>{answer.answer}</p>
                     <button onClick={() => setDraft(answer.answer)}>
                       Dùng làm bản nháp
                     </button>
-                    <ul>
-                      {answer.evidence?.map((e, i) => (
-                        <li key={i}>
-                          {e.tool} · {e.observedAt} ·{" "}
-                          {typeof e.resultSummary === "string"
-                            ? e.resultSummary
-                            : JSON.stringify(e.resultSummary)}
-                        </li>
-                      ))}
-                    </ul>
+                    <details className="technical-details">
+                      <summary>
+                        Nguồn thông tin ({answer.evidence?.length ?? 0})
+                      </summary>
+                      <ul>
+                        {answer.evidence?.map((e, i) => (
+                          <li key={i}>
+                            {e.tool} · {e.observedAt} ·{" "}
+                            {typeof e.resultSummary === "string"
+                              ? e.resultSummary
+                              : JSON.stringify(e.resultSummary)}
+                          </li>
+                        ))}
+                      </ul>
+                    </details>
                     {answer.proposal && (
                       <div className="proposal">
                         <h4>Đề xuất đổi nhãn</h4>
@@ -468,7 +516,7 @@ export function Tickets({
                         new FormData(e.currentTarget).get("code"),
                       );
                       setLookup(
-                        await api(
+                        await api<OrderLookup>(
                           `/staff/tickets/${ticket.id}/orders/${encodeURIComponent(code)}`,
                           {},
                           token,
@@ -486,7 +534,17 @@ export function Tickets({
                   <button>Tra cứu đơn</button>
                 </form>
                 {lookup !== null && (
-                  <pre>{JSON.stringify(lookup, null, 2)}</pre>
+                  <div className="lookup-summary">
+                    <strong>{lookup.orderCode}</strong>
+                    <p>
+                      {displayLabel(lookup.status)} ·{" "}
+                      {displayLabel(lookup.paymentStatus)}
+                    </p>
+                    <details className="technical-details">
+                      <summary>Chi tiết tra cứu</summary>
+                      <pre>{JSON.stringify(lookup, null, 2)}</pre>
+                    </details>
+                  </div>
                 )}
               </section>
             )}

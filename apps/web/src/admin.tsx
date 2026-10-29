@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
+import { OperationsSummary } from "./operations-summary";
 type Api = <T>(
   path: string,
   options?: RequestInit,
@@ -37,6 +38,8 @@ export function Admin({
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
   const [revision, setRevision] = useState(0);
+  const [checking, setChecking] = useState(false);
+  const [failedLoaded, setFailedLoaded] = useState(false);
   useEffect(() => {
     let active = true;
     Promise.all([
@@ -127,6 +130,8 @@ export function Admin({
     });
   }
   async function refreshOps() {
+    if (checking) return;
+    setChecking(true);
     setMessage("");
     for (const [path, setter] of [
       ["/admin/health", setOps],
@@ -141,9 +146,11 @@ export function Admin({
     try {
       const r = await api<{ items: Failed[] }>("/admin/failed-jobs", {}, token);
       setFailed(r.items);
+      setFailedLoaded(true);
     } catch (e) {
       setMessage((e as Error).message);
     }
+    setChecking(false);
   }
   return (
     <main className="workspace">
@@ -359,22 +366,21 @@ export function Admin({
       {panel === "operations" && (
         <section className="panel">
           <h2>Vận hành và tác vụ nền</h2>
-          <button onClick={refreshOps}>Kiểm tra dịch vụ và queue</button>
-          <div className="admin-grid">
-            <pre>
-              {ops === null
-                ? "Chưa kiểm tra health"
-                : JSON.stringify(ops, null, 2)}
-            </pre>
-            <pre>
-              {queues === null
-                ? "Chưa kiểm tra queue"
-                : JSON.stringify(queues, null, 2)}
-            </pre>
-          </div>
+          <button
+            disabled={checking}
+            aria-label="Kiểm tra dịch vụ và queue"
+            onClick={refreshOps}
+          >
+            {checking ? "Đang kiểm tra…" : "Kiểm tra dịch vụ"}
+          </button>
+          <OperationsSummary health={ops} queues={queues} />
           <h3>Tác vụ lỗi</h3>
           {failed.length === 0 ? (
-            <p>Chưa tải hoặc không có tác vụ lỗi.</p>
+            <p>
+              {failedLoaded
+                ? "Không có tác vụ lỗi."
+                : "Kiểm tra dịch vụ để xem tác vụ lỗi."}
+            </p>
           ) : (
             failed.map((job) => (
               <article key={job.id}>
