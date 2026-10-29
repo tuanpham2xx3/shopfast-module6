@@ -18,20 +18,20 @@ import "dotenv/config";
 import { json, NextFunction, Request, Response } from "express";
 import { randomUUID } from "node:crypto";
 import "reflect-metadata";
-import { AuthModule } from "../../../libs/modules/auth/src/auth.module";
 import { AuthError } from "../../../libs/modules/auth/src/auth.contracts";
-import { CatalogModule } from "../../../libs/modules/catalog/src/catalog.module";
+import { AuthModule } from "../../../libs/modules/auth/src/auth.module";
 import { CatalogError } from "../../../libs/modules/catalog/src/catalog.contracts";
+import { CatalogModule } from "../../../libs/modules/catalog/src/catalog.module";
 import { JobsModule } from "../../../libs/modules/jobs/src/jobs.module";
 import { OperationsModule } from "../../../libs/modules/operations/src/operations.module";
+import { OrderError } from "../../../libs/modules/orders/src/order.contracts";
 import { OrderModule } from "../../../libs/modules/orders/src/order.module";
-import { OrderError } from "../../../libs/modules/orders/src/order.service";
 import { RealtimeModule } from "../../../libs/modules/realtime/src/realtime.module";
 import { RuntimeRateInterceptor } from "../../../libs/modules/runtime/src/http/runtime.interceptor";
 import { RateLimitError } from "../../../libs/modules/runtime/src/limiter";
 import { RuntimeModule } from "../../../libs/modules/runtime/src/runtime.module";
+import { TicketError } from "../../../libs/modules/tickets/src/tickets.contracts";
 import { TicketsModule } from "../../../libs/modules/tickets/src/tickets.module";
-import { TicketError } from "../../../libs/modules/tickets/src/tickets.service";
 import { parseEnvironment } from "../../../libs/platform/src/config/environment";
 import {
   probeDatabase,

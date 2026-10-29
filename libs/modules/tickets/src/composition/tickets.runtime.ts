@@ -1,8 +1,9 @@
 import { Injectable, OnApplicationShutdown } from "@nestjs/common";
 import { DataSource } from "typeorm";
 import { createDataSource } from "../../../../platform/src/database/data-source";
-import { AiService } from "../../../ai/src/ai.service";
-import { TicketsService } from "../tickets.service";
+import { AiService } from "../../../ai/src/application/ai.service";
+import { GoogleGeminiProvider } from "../../../ai/src/adapters/gemini.provider";
+import { TicketsService } from "../application/tickets.service";
 
 @Injectable()
 export class TicketsRuntime implements OnApplicationShutdown {
@@ -25,7 +26,7 @@ export class TicketsRuntime implements OnApplicationShutdown {
       this.source,
       process.env.DATABASE_SCHEMA,
     );
-    return { tickets, ai: new AiService(tickets) };
+    return { tickets, ai: new AiService(tickets, new GoogleGeminiProvider()) };
   }
   async onApplicationShutdown() {
     if (this.source?.isInitialized) await this.source.destroy();

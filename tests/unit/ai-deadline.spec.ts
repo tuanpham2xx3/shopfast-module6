@@ -1,5 +1,5 @@
-import { AiService } from "../../libs/modules/ai/src/ai.service";
-import { TicketsService } from "../../libs/modules/tickets/src/tickets.service";
+import { AiService } from "../../libs/modules/ai/src/application/ai.service";
+import { TicketsService } from "../../libs/modules/tickets/src/application/tickets.service";
 
 it("bounds the entire AI request when the initial database lookup stalls", async () => {
   const source = { manager: { query: () => new Promise(() => {}) } };

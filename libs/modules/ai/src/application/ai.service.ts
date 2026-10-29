@@ -1,20 +1,20 @@
-﻿import { randomUUID } from "node:crypto";
+import { randomUUID } from "node:crypto";
 import { EntityManager } from "typeorm";
 import { z } from "zod";
 import {
   Actor,
   categories,
   TicketError,
-  TicketsService,
-} from "../../tickets/src/tickets.service";
+} from "../../../tickets/src/tickets.contracts";
+import { TicketsService } from "../../../tickets/src/application/tickets.service";
 import {
   BoundedProvider,
   classificationSchema,
   Content,
   GeminiProvider,
-  GoogleGeminiProvider,
   Part,
-} from "./gemini.provider";
+} from "../adapters/gemini.provider";
+import { AiRepository } from "../persistence/ai.repository";
 const unavailable =
   "Trợ lý AI đang tạm thời không khả dụng. Bạn có thể tra cứu bằng công cụ thông thường.";
 const answerSchema = z
@@ -46,12 +46,18 @@ interface Session {
   expiresAt: Date;
 }
 export class AiService {
+  private readonly repository: AiRepository;
   readonly provider: BoundedProvider;
   constructor(
     readonly tickets: TicketsService,
-    provider: GeminiProvider = new GoogleGeminiProvider(),
+    provider: GeminiProvider = {
+      generate: async () => {
+        throw new Error("GEMINI_PROVIDER_NOT_CONFIGURED");
+      },
+    },
     private readonly deadlineMs = 25000,
   ) {
+    this.repository = new AiRepository(this.tickets.schema);
     this.provider = new BoundedProvider(provider);
   }
   async session(
@@ -59,10 +65,7 @@ export class AiService {
     id: string,
     m: EntityManager = this.tickets.source.manager,
   ): Promise<Session> {
-    const [s] = await m.query(
-      `SELECT id,ticket_id AS "ticketId",actor_id AS "actorId",expires_at AS "expiresAt" FROM ${this.tickets.t("ai_sessions")} WHERE id=$1`,
-      [id],
-    );
+    const [s] = await this.repository.sessionAiSessionsSelect(m, [id]);
     if (!s) throw new TicketError("NOT_FOUND");
     if (s.actorId !== a.id || new Date(s.expiresAt).getTime() <= Date.now())
       throw new TicketError("SESSION_NOT_ACCESSIBLE");
@@ -77,8 +80,8 @@ export class AiService {
     this.tickets.authorize(t, a, true);
     if (!["ADMIN", "SUPPORT"].includes(a.role))
       throw new TicketError("FORBIDDEN");
-    const [s] = await this.tickets.source.query(
-      `INSERT INTO ${this.tickets.t("ai_sessions")}(id,ticket_id,actor_id) VALUES($1,$2,$3) RETURNING id AS "sessionId",expires_at AS "expiresAt"`,
+    const [s] = await this.repository.createSessionAiSessionsInsert(
+      this.tickets.source,
       [randomUUID(), ticketId, a.id],
     );
     return s;
@@ -131,15 +134,12 @@ export class AiService {
     const session = await this.session(a, id);
     if (Date.now() >= deadline) throw new TicketError("AI_DEADLINE");
     const turn = await this.tickets.source.transaction(async (m) => {
-      await m.query(
-        `SELECT id FROM ${this.tickets.t("ai_sessions")} WHERE id=$1 FOR UPDATE`,
-        [id],
-      );
+      await this.repository.executeMessageAiSessionsSelect(m, [id]);
       if (Date.now() >= deadline) throw new TicketError("AI_DEADLINE");
-      const [old] = await m.query(
-        `SELECT id,message,status,response,created_at FROM ${this.tickets.t("ai_turns")} WHERE session_id=$1 AND client_message_id=$2`,
-        [id, clientMessageId],
-      );
+      const [old] = await this.repository.executeMessageAiTurnsSelect(m, [
+        id,
+        clientMessageId,
+      ]);
       if (old) {
         if (old.message !== message)
           throw new TicketError("IDEMPOTENCY_CONFLICT");
@@ -154,24 +154,25 @@ export class AiService {
             toolResults: [],
             proposal: null,
           };
-          await m.query(
-            `UPDATE ${this.tickets.t("ai_turns")} SET status='COMPLETED',response=$2 WHERE id=$1`,
-            [old.id, JSON.stringify(response)],
-          );
+          await this.repository.executeMessageAiTurnsUpdate(m, [
+            old.id,
+            JSON.stringify(response),
+          ]);
           return { id: old.id, response };
         }
         return { id: old.id, response: old.response };
       }
-      const [busy] = await m.query(
-        `SELECT id FROM ${this.tickets.t("ai_turns")} WHERE session_id=$1 AND status='PROCESSING' AND created_at>now()-interval '30 seconds'`,
-        [id],
-      );
+      const [busy] = await this.repository.executeMessageAiTurnsSelect2(m, [
+        id,
+      ]);
       if (busy) throw new TicketError("REQUEST_IN_PROGRESS");
       const turnId = randomUUID();
-      await m.query(
-        `INSERT INTO ${this.tickets.t("ai_turns")}(id,session_id,client_message_id,message) VALUES($1,$2,$3,$4)`,
-        [turnId, id, clientMessageId, message],
-      );
+      await this.repository.executeMessageAiTurnsInsert(m, [
+        turnId,
+        id,
+        clientMessageId,
+        message,
+      ]);
       return { id: turnId, response: null };
     });
     if (turn.response) return turn.response;
@@ -190,12 +191,12 @@ export class AiService {
     await this.session(a, id);
     if (Date.now() >= deadline) throw new TicketError("AI_DEADLINE");
     response = { ...response, aiMessageId: turn.id };
-    await this.tickets.source.query(
-      `UPDATE ${this.tickets.t("ai_turns")} SET status='COMPLETED',response=$2 WHERE id=$1 AND status='PROCESSING'`,
-      [turn.id, JSON.stringify(response)],
-    );
-    const [stored] = await this.tickets.source.query(
-      `SELECT response FROM ${this.tickets.t("ai_turns")} WHERE id=$1`,
+    await this.repository.executeMessageAiTurnsUpdate2(this.tickets.source, [
+      turn.id,
+      JSON.stringify(response),
+    ]);
+    const [stored] = await this.repository.executeMessageAiTurnsSelect3(
+      this.tickets.source,
       [turn.id],
     );
     if (stored?.response) return stored.response;
@@ -208,8 +209,8 @@ export class AiService {
     deadline: number,
   ): Promise<Record<string, unknown>> {
     const t = await this.tickets.ticket(s.ticketId);
-    const history = await this.tickets.source.query(
-      `SELECT message,response FROM ${this.tickets.t("ai_turns")} WHERE session_id=$1 AND status='COMPLETED' ORDER BY created_at DESC LIMIT 5`,
+    const history = await this.repository.runAiTurnsSelect(
+      this.tickets.source,
       [s.id],
     );
     const contents: Content[] = [
@@ -332,7 +333,7 @@ export class AiService {
     deadline = Date.now() + 2000,
   ) {
     return this.tickets.source.transaction(async (m) => {
-      await m.query("SET LOCAL statement_timeout = '2s'");
+      await this.repository.toolLockSet(m, []);
       await this.session(a, s.id, m);
       if (Date.now() >= deadline) throw new TicketError("AI_DEADLINE");
       if (name === "get_order_status") {
@@ -361,10 +362,7 @@ export class AiService {
           .object({ sku: z.string().min(1).max(64) })
           .strict()
           .parse(args);
-        const [r] = await m.query(
-          `SELECT p.sku,p.name AS "productName",(i.on_hand-i.reserved) AS available,(p.active AND c.active AND b.active) AS active,i.version AS "inventoryVersion",now() AS "observedAt" FROM ${this.tickets.t("products")} p JOIN ${this.tickets.t("inventories")} i ON i.product_id=p.id JOIN ${this.tickets.t("categories")} c ON c.id=p.category_id JOIN ${this.tickets.t("brands")} b ON b.id=p.brand_id WHERE p.sku=$1`,
-          [d.sku],
-        );
+        const [r] = await this.repository.toolProductsSelect(m, [d.sku]);
         if (!r) throw new TicketError("PRODUCT_NOT_FOUND");
         evidence.push({
           tool: name,
@@ -385,17 +383,14 @@ export class AiService {
         const t = await this.tickets.ticket(s.ticketId, m, true);
         this.tickets.authorize(t, a, true);
         if (Date.now() >= deadline) throw new TicketError("AI_DEADLINE");
-        const [p] = await m.query(
-          `INSERT INTO ${this.tickets.t("ai_proposals")}(id,session_id,ticket_id,actor_id,action,payload,expected_version) VALUES($1,$2,$3,$4,'SET_TICKET_CATEGORY',$5,$6) RETURNING id,payload,expected_version AS "expectedVersion",expires_at AS "expiresAt",status`,
-          [
-            randomUUID(),
-            s.id,
-            t.id,
-            a.id,
-            JSON.stringify({ ...d, previousCategory: t.category }),
-            t.version,
-          ],
-        );
+        const [p] = await this.repository.toolAiProposalsInsert(m, [
+          randomUUID(),
+          s.id,
+          t.id,
+          a.id,
+          JSON.stringify({ ...d, previousCategory: t.category }),
+          t.version,
+        ]);
         return p;
       }
       throw new TicketError("TOOL_NOT_ALLOWED");
@@ -408,10 +403,7 @@ export class AiService {
     expectedVersion?: number,
   ) {
     return this.tickets.source.transaction(async (m) => {
-      const [p] = await m.query(
-        `SELECT * FROM ${this.tickets.t("ai_proposals")} WHERE id=$1 FOR UPDATE`,
-        [id],
-      );
+      const [p] = await this.repository.decideAiProposalsSelect(m, [id]);
       if (!p) throw new TicketError("NOT_FOUND");
       if (a.id !== p.actor_id && a.role !== "ADMIN")
         throw new TicketError("FORBIDDEN");
@@ -430,10 +422,7 @@ export class AiService {
       if (new Date(p.expires_at).getTime() <= Date.now())
         throw new TicketError("PROPOSAL_EXPIRED");
       if (!confirm) {
-        await m.query(
-          `UPDATE ${this.tickets.t("ai_proposals")} SET status='REJECTED' WHERE id=$1`,
-          [id],
-        );
+        await this.repository.decideAiProposalsUpdate(m, [id]);
         await this.tickets.audit(m, t, a, "AI_PROPOSAL_REJECTED", {
           proposalId: id,
         });
@@ -442,19 +431,16 @@ export class AiService {
       if (expectedVersion !== p.expected_version)
         throw new TicketError("VERSION_CONFLICT");
       this.tickets.version(t, p.expected_version);
-      await m.query(
-        `UPDATE ${this.tickets.t("tickets")} SET category=$2,classification_source='HUMAN',classification_status='COMPLETED',needs_review=false,version=version+1,updated_at=now() WHERE id=$1`,
-        [t.id, p.payload.category],
-      );
+      await this.repository.decideTicketsUpdate(m, [t.id, p.payload.category]);
       const result = await this.tickets.ticket(t.id, m);
       await this.tickets.audit(m, t, a, "AI_PROPOSAL_CONFIRMED", {
         proposalId: id,
         ticket: result,
       });
-      await m.query(
-        `UPDATE ${this.tickets.t("ai_proposals")} SET status='EXECUTED',result=$2 WHERE id=$1`,
-        [id, JSON.stringify(result)],
-      );
+      await this.repository.decideAiProposalsUpdate2(m, [
+        id,
+        JSON.stringify(result),
+      ]);
       return result;
     });
   }
@@ -489,17 +475,14 @@ export class AiService {
         /* bounded schema/provider failure becomes review */
       }
     }
-    await this.tickets.source.query(
-      `UPDATE ${this.tickets.t("tickets")} SET category=$3,confidence=$4,classification_reason=$5,classification_status=$6,needs_review=$7,version=version+1,updated_at=now() WHERE id=$1 AND classification_version=$2 AND classification_source<>'HUMAN' AND classification_status='PENDING'`,
-      [
-        ticketId,
-        classificationVersion,
-        result?.category ?? "OTHER",
-        result?.confidence ?? null,
-        result?.reason ?? null,
-        result ? "COMPLETED" : "FAILED",
-        !result || result.confidence < 0.7,
-      ],
-    );
+    await this.repository.classifyTicketsUpdate(this.tickets.source, [
+      ticketId,
+      classificationVersion,
+      result?.category ?? "OTHER",
+      result?.confidence ?? null,
+      result?.reason ?? null,
+      result ? "COMPLETED" : "FAILED",
+      !result || result.confidence < 0.7,
+    ]);
   }
 }

@@ -10,9 +10,10 @@ import { createDataSource } from "../../../../platform/src/database/data-source"
 import {
   DevelopmentEmailAdapter,
   HttpEmailAdapter,
-  JobsService,
-} from "../jobs.service";
-import { ResendEmailAdapter } from "../resend-email";
+} from "../adapters/email.adapters";
+import { JobsService } from "../application/jobs.service";
+import { ResendEmailAdapter } from "../adapters/resend-email";
+import { GoogleGeminiProvider } from "../../../ai/src/adapters/gemini.provider";
 
 export function createJobsService(
   source: DataSource,
@@ -37,7 +38,9 @@ export function createJobsService(
             process.env.EMAIL_PROVIDER_TOKEN,
           )
         : new DevelopmentEmailAdapter(source, schema);
-  return new JobsService(source, email, secret, schema);
+  const service = new JobsService(source, email, secret, schema);
+  service.setAiProvider(new GoogleGeminiProvider());
+  return service;
 }
 
 @Injectable()

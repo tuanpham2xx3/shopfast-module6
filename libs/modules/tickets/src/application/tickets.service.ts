@@ -1,57 +1,24 @@
-﻿import { randomUUID } from "node:crypto";
+import { randomUUID } from "node:crypto";
 import { DataSource, EntityManager } from "typeorm";
-import { enqueueOutbox } from "../../../platform/src/outbox/outbox";
-export const categories = [
-  "ORDER_STATUS",
-  "PAYMENT",
-  "INVENTORY",
-  "DELIVERY",
-  "CANCELLATION",
-  "OTHER",
-] as const;
-export interface Actor {
-  id: string;
-  role: string;
-  verified?: boolean;
-}
-export interface Ticket {
-  id: string;
-  customerId: string;
-  orderId: string | null;
-  subject: string;
-  body: string;
-  status: string;
-  assignedTo: string | null;
-  category: string;
-  version: number;
-  resolvedAt: Date | null;
-  classificationVersion: number;
-  classificationSource: string;
-}
-export class TicketError extends Error {
-  constructor(public readonly code: string) {
-    super(code);
-  }
-}
+import { enqueueOutbox } from "../../../../platform/src/outbox/outbox";
+import { TicketsRepository } from "../persistence/tickets.repository";
+import { Actor, categories, Ticket, TicketError } from "../tickets.contracts";
 export class TicketsService {
+  private readonly repository: TicketsRepository;
   constructor(
     public readonly source: DataSource,
     public readonly schema = "public",
   ) {
+    this.repository = new TicketsRepository(this.schema);
     if (!/^[a-z][a-z0-9_]{0,62}$/.test(schema)) throw Error("Invalid schema");
   }
-  t(n: string) {
-    return `"${this.schema}".${n}`;
-  }
+
   async ticket(
     id: string,
     m: EntityManager = this.source.manager,
     lock = false,
   ): Promise<Ticket> {
-    const [r] = await m.query(
-      `SELECT id,customer_id AS "customerId",order_id AS "orderId",subject,body,status,assigned_to AS "assignedTo",category,version,resolved_at AS "resolvedAt",classification_version AS "classificationVersion",classification_source AS "classificationSource" FROM ${this.t("tickets")} WHERE id=$1 ${lock ? "FOR UPDATE" : ""}`,
-      [id],
-    );
+    const [r] = await this.repository.ticketTicketsSelect(m, [id], lock);
     if (!r) throw new TicketError("NOT_FOUND");
     return r;
   }
@@ -79,17 +46,14 @@ export class TicketsService {
     action: string,
     after: unknown,
   ) {
-    await m.query(
-      `INSERT INTO ${this.t("ticket_audit")}(id,ticket_id,actor_id,action,before_data,after_data) VALUES($1,$2,$3,$4,$5,$6)`,
-      [
-        randomUUID(),
-        t.id,
-        a?.id ?? null,
-        action,
-        JSON.stringify(t),
-        JSON.stringify(after),
-      ],
-    );
+    await this.repository.auditTicketAuditInsert(m, [
+      randomUUID(),
+      t.id,
+      a?.id ?? null,
+      action,
+      JSON.stringify(t),
+      JSON.stringify(after),
+    ]);
   }
   async create(
     a: Actor,
@@ -105,17 +69,20 @@ export class TicketsService {
       throw new TicketError("BAD_REQUEST");
     return this.source.transaction(async (m) => {
       if (d.orderId) {
-        const [o] = await m.query(
-          `SELECT id FROM ${this.t("orders")} WHERE id=$1 AND customer_id=$2`,
-          [d.orderId, a.id],
-        );
+        const [o] = await this.repository.createOrdersSelect(m, [
+          d.orderId,
+          a.id,
+        ]);
         if (!o) throw new TicketError("ORDER_NOT_ACCESSIBLE");
       }
       const id = randomUUID();
-      await m.query(
-        `INSERT INTO ${this.t("tickets")}(id,customer_id,order_id,subject,body) VALUES($1,$2,$3,$4,$5)`,
-        [id, a.id, d.orderId ?? null, d.subject.trim(), d.body],
-      );
+      await this.repository.createTicketsInsert(m, [
+        id,
+        a.id,
+        d.orderId ?? null,
+        d.subject.trim(),
+        d.body,
+      ]);
       await enqueueOutbox(
         m,
         {
@@ -144,31 +111,9 @@ export class TicketsService {
       pageSize = q.pageSize ?? 20;
     if (page < 1 || pageSize < 1 || pageSize > 100)
       throw new TicketError("BAD_REQUEST");
-    const args: unknown[] = [];
-    const filters: string[] = [];
-    const add = (sql: string, v: unknown) => {
-      args.push(v);
-      filters.push(`${sql}$${args.length}`);
-    };
-    if (a.role === "CUSTOMER") add("customer_id=", a.id);
-    else if (a.role === "SUPPORT") {
-      args.push(a.id);
-      filters.push(`(assigned_to IS NULL OR assigned_to=$${args.length})`);
-    } else if (a.role !== "ADMIN") throw new TicketError("FORBIDDEN");
-    if (q.status) add("status=", q.status);
-    if (q.category) add("category=", q.category);
-    if (q.assignedTo) add("assigned_to=", q.assignedTo);
-    const where = filters.length ? "WHERE " + filters.join(" AND ") : "";
-    const [count] = await this.source.query(
-      `SELECT count(*)::int total FROM ${this.t("tickets")} ${where}`,
-      args,
-    );
-    args.push(pageSize, (page - 1) * pageSize);
-    const items = await this.source.query(
-      `SELECT id,subject,status,category,assigned_to AS "assignedTo",classification_status AS "classificationStatus",needs_review AS "needsReview",version,created_at AS "createdAt" FROM ${this.t("tickets")} ${where} ORDER BY created_at DESC,id LIMIT $${args.length - 1} OFFSET $${args.length}`,
-      args,
-    );
-    return { items, page, pageSize, total: count.total };
+    if (!["CUSTOMER", "SUPPORT", "ADMIN"].includes(a.role))
+      throw new TicketError("FORBIDDEN");
+    return this.repository.list(this.source, a, q, page, pageSize);
   }
   async detail(
     a: Actor,
@@ -181,14 +126,13 @@ export class TicketsService {
       pageSize = q.pageSize ?? 20;
     if (page < 1 || pageSize < 1 || pageSize > 100)
       throw new TicketError("BAD_REQUEST");
-    const messages = await this.source.query(
-      `SELECT id,author_id AS "authorId",body,approved_ai_message_id AS "approvedAiMessageId",created_at AS "createdAt" FROM ${this.t("ticket_messages")} WHERE ticket_id=$1 ORDER BY created_at,id LIMIT $2 OFFSET $3`,
+    const messages = await this.repository.detailTicketMessagesSelect(
+      this.source,
       [id, pageSize, (page - 1) * pageSize],
     );
-    const [r] = await this.source.query(
-      `SELECT count(*)::int total FROM ${this.t("ticket_messages")} WHERE ticket_id=$1`,
-      [id],
-    );
+    const [r] = await this.repository.detailTicketMessagesSelect2(this.source, [
+      id,
+    ]);
     return {
       ...t,
       messages: { items: messages, page, pageSize, total: r.total },
@@ -206,15 +150,9 @@ export class TicketsService {
       if (a.role !== "ADMIN" && t.assignedTo && t.assignedTo !== a.id)
         throw new TicketError("ALREADY_CLAIMED");
       const agent = agentId ?? a.id;
-      const [user] = await m.query(
-        `SELECT id FROM ${this.t("users")} WHERE id=$1 AND role IN ('SUPPORT','ADMIN') AND status='ACTIVE'`,
-        [agent],
-      );
+      const [user] = await this.repository.claimUsersSelect(m, [agent]);
       if (!user) throw new TicketError("BAD_REQUEST");
-      await m.query(
-        `UPDATE ${this.t("tickets")} SET assigned_to=$2,version=version+1,updated_at=now() WHERE id=$1`,
-        [id, agent],
-      );
+      await this.repository.claimTicketsUpdate(m, [id, agent]);
       const result = await this.ticket(id, m);
       await this.audit(m, t, a, "CLAIM", result);
       return result;
@@ -254,10 +192,11 @@ export class TicketsService {
         !categories.includes(d.category as (typeof categories)[number])
       )
         throw new TicketError("BAD_REQUEST");
-      await m.query(
-        `UPDATE ${this.t("tickets")} SET status=COALESCE($2,status),category=COALESCE($3,category),classification_source=CASE WHEN $3::text IS NULL THEN classification_source ELSE 'HUMAN' END,classification_status=CASE WHEN $3::text IS NULL THEN classification_status ELSE 'COMPLETED' END,needs_review=CASE WHEN $3::text IS NULL THEN needs_review ELSE false END,resolved_at=CASE WHEN $2='RESOLVED' THEN now() WHEN $2='OPEN' THEN NULL ELSE resolved_at END,version=version+1,updated_at=now() WHERE id=$1`,
-        [id, d.status ?? null, d.category ?? null],
-      );
+      await this.repository.updateTicketsUpdate(m, [
+        id,
+        d.status ?? null,
+        d.category ?? null,
+      ]);
       const result = await this.ticket(id, m);
       await this.audit(m, t, a, reopen ? "REOPEN" : "UPDATE", result);
       return result;
@@ -277,10 +216,11 @@ export class TicketsService {
       if (t.status === "CLOSED") throw new TicketError("TICKET_CLOSED");
       if (approvedAiMessageId) {
         if (a.role === "CUSTOMER") throw new TicketError("FORBIDDEN");
-        const [turn] = await m.query(
-          `SELECT x.response FROM ${this.t("ai_turns")} x JOIN ${this.t("ai_sessions")} s ON s.id=x.session_id WHERE x.id=$1 AND s.ticket_id=$2 AND s.actor_id=$3 AND x.status='COMPLETED' FOR UPDATE OF x`,
-          [approvedAiMessageId, id, a.id],
-        );
+        const [turn] = await this.repository.messageAiTurnsSelect(m, [
+          approvedAiMessageId,
+          id,
+          a.id,
+        ]);
         if (
           !turn ||
           turn.response?.status !== "OK" ||
@@ -288,10 +228,13 @@ export class TicketsService {
         )
           throw new TicketError("AI_MESSAGE_NOT_APPROVABLE");
       }
-      const [r] = await m.query(
-        `INSERT INTO ${this.t("ticket_messages")}(id,ticket_id,author_id,body,approved_ai_message_id) VALUES($1,$2,$3,$4,$5) RETURNING id,body,created_at AS "createdAt"`,
-        [randomUUID(), id, a.id, body, approvedAiMessageId ?? null],
-      );
+      const [r] = await this.repository.messageTicketMessagesInsert(m, [
+        randomUUID(),
+        id,
+        a.id,
+        body,
+        approvedAiMessageId ?? null,
+      ]);
       await this.audit(m, t, a, "MESSAGE_SENT", {
         messageId: r.id,
         approvedAiMessageId,
@@ -307,9 +250,11 @@ export class TicketsService {
   ) {
     const t = await this.ticket(id, m);
     this.authorize(t, a, true);
-    const [o] = await m.query(
-      `SELECT id,code AS "orderCode",status,payment_status AS "paymentStatus",updated_at AS "updatedAt",version FROM ${this.t("orders")} WHERE customer_id=$1 AND ${code ? "code=$2" : "id=$2"} ${t.orderId ? "AND id=$3" : ""}`,
+    const [o] = await this.repository.orderOrdersSelect(
+      m,
       [t.customerId, code ?? t.orderId, ...(t.orderId ? [t.orderId] : [])],
+      Boolean(code),
+      Boolean(t.orderId),
     );
     if (!o) throw new TicketError("ORDER_NOT_ACCESSIBLE");
     return o;

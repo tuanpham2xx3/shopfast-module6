@@ -9,8 +9,8 @@ import Redis from "ioredis";
 import { createHash, randomUUID } from "node:crypto";
 import { DataSource } from "typeorm";
 import { createJobsService } from "../../../libs/modules/jobs/src/composition/jobs.runtime";
-import { JobsService } from "../../../libs/modules/jobs/src/jobs.service";
-import { RetentionService } from "../../../libs/modules/jobs/src/retention.service";
+import { JobsService } from "../../../libs/modules/jobs/src/application/jobs.service";
+import { RetentionService } from "../../../libs/modules/jobs/src/application/retention.service";
 import { createDataSource } from "../../../libs/platform/src/database/data-source";
 import { domainEvents } from "../../../libs/platform/src/domain-events";
 import {

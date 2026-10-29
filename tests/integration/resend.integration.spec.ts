@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { createDataSource } from "../../libs/platform/src/database/data-source";
-import { ResendEmailAdapter } from "../../libs/modules/jobs/src/resend-email";
+import { ResendEmailAdapter } from "../../libs/modules/jobs/src/adapters/resend-email";
 describe("Resend durable idempotency", () => {
   const schema = `test_${randomUUID().replace(/-/g, "")}`;
   const source = createDataSource(process.env.TEST_DATABASE_URL!, schema);

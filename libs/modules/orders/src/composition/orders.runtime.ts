@@ -2,7 +2,7 @@ import { Injectable, OnApplicationShutdown } from "@nestjs/common";
 import { DataSource } from "typeorm";
 import { createDataSource } from "../../../../platform/src/database/data-source";
 import { RuntimeServices } from "../../../runtime/src/composition/runtime.runtime";
-import { OrderService } from "../order.service";
+import { OrderService } from "../application/order.service";
 
 @Injectable()
 export class OrderRuntime implements OnApplicationShutdown {

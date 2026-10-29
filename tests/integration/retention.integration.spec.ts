@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
+import { RetentionService } from "../../libs/modules/jobs/src/application/retention.service";
+import { TicketsService } from "../../libs/modules/tickets/src/application/tickets.service";
 import { createDataSource } from "../../libs/platform/src/database/data-source";
-import { RetentionService } from "../../libs/modules/jobs/src/retention.service";
-import { TicketsService } from "../../libs/modules/tickets/src/tickets.service";
 
 describe("bounded retention preserves audit and replay protection", () => {
   const schema = `test_${randomUUID().replace(/-/g, "")}`;

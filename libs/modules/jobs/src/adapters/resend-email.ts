@@ -1,7 +1,7 @@
-import { DataSource } from "typeorm";
 import { createHash } from "node:crypto";
-import { EmailAdapter, PermanentJobError } from "./jobs.service";
+import { DataSource } from "typeorm";
 import { renderEmail } from "./email-templates";
+import { EmailAdapter, PermanentJobError } from "../jobs.contracts";
 export class ResendEmailAdapter implements EmailAdapter {
   readonly mode = "resend";
   constructor(

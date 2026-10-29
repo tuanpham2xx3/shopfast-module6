@@ -10,7 +10,7 @@ import {
   Max,
   Min,
 } from "class-validator";
-import { categories } from "../tickets.service";
+import { categories } from "../tickets.contracts";
 
 export class PageDto {
   @IsOptional() @Type(() => Number) @IsInt() @Min(1) page?: number;

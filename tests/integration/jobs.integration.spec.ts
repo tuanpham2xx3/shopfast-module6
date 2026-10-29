@@ -1,11 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { DataSource } from "typeorm";
-import { createDataSource } from "../../libs/platform/src/database/data-source";
 import { Jobs1780000500000 } from "../../database/migrations/1780000500000-jobs";
-import {
-  DevelopmentEmailAdapter,
-  JobsService,
-} from "../../libs/modules/jobs/src/jobs.service";
+import { DevelopmentEmailAdapter } from "../../libs/modules/jobs/src/adapters/email.adapters";
+import { JobsService } from "../../libs/modules/jobs/src/application/jobs.service";
+import { createDataSource } from "../../libs/platform/src/database/data-source";
 describe("durable jobs, invoice authorization and crash recovery", () => {
   let source: DataSource;
   let service: JobsService;

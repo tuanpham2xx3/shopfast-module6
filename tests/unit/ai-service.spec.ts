@@ -1,12 +1,12 @@
 import { randomUUID } from "node:crypto";
 import { DataSource } from "typeorm";
-import { AiService } from "../../libs/modules/ai/src/ai.service";
+import { AiService } from "../../libs/modules/ai/src/application/ai.service";
+import { Part } from "../../libs/modules/ai/src/adapters/gemini.provider";
 import {
-  TicketsService,
-  Ticket,
   Actor,
-} from "../../libs/modules/tickets/src/tickets.service";
-import { Part } from "../../libs/modules/ai/src/gemini.provider";
+  Ticket,
+} from "../../libs/modules/tickets/src/tickets.contracts";
+import { TicketsService } from "../../libs/modules/tickets/src/application/tickets.service";
 const actor: Actor = { id: randomUUID(), role: "SUPPORT" };
 function fixture(parts: Part[][]) {
   const session = {
