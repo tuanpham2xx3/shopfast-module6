@@ -2,7 +2,7 @@ import "dotenv/config";
 import { randomUUID } from "node:crypto";
 import * as argon2 from "argon2";
 import { createDataSource } from "../../libs/platform/src/database/data-source";
-import { CatalogService } from "../../libs/modules/catalog/src/catalog.service";
+import { CatalogService } from "../../libs/modules/catalog/src/application/catalog.service";
 
 async function main() {
   if (process.env.NODE_ENV === "production")

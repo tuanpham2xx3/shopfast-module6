@@ -1,17 +1,15 @@
 ﻿import { randomUUID } from "node:crypto";
 import { DataSource } from "typeorm";
-import { createDataSource } from "../../libs/platform/src/database/data-source";
-import {
-  Actor,
-  TicketsService,
-} from "../../libs/modules/tickets/src/tickets.service";
-import { AiService } from "../../libs/modules/ai/src/ai.service";
-import { CatalogService } from "../../libs/modules/catalog/src/catalog.service";
+import { AiService } from "../../libs/modules/ai/src/application/ai.service";
 import {
   GeminiProvider,
   Part,
   ProviderError,
-} from "../../libs/modules/ai/src/gemini.provider";
+} from "../../libs/modules/ai/src/adapters/gemini.provider";
+import { CatalogService } from "../../libs/modules/catalog/src/application/catalog.service";
+import { Actor } from "../../libs/modules/tickets/src/tickets.contracts";
+import { TicketsService } from "../../libs/modules/tickets/src/application/tickets.service";
+import { createDataSource } from "../../libs/platform/src/database/data-source";
 class Fake implements GeminiProvider {
   calls = 0;
   constructor(public results: Part[][]) {}

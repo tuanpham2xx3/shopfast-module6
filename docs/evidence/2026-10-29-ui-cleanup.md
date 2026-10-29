@@ -32,3 +32,9 @@ Branch `feat/ui-cleanup`; baseline `697e40aadcce5fc4e196c1672c2666ffbca6292c`.
 | Chi tiết đơn | List và filter lặp bên trên                                            | [Mobile](2026-10-29-ui-clean-order.png)       |
 
 Không thay backend transaction, database, API, Redis/Gemini/email configuration. Full provider/performance/restore harness không chạy lại trong lượt UI này; kết quả cũ không gán cho source mới. CI và production smoke chỉ đánh đạt sau khi thực thi.
+
+## Production đã kiểm chứng
+
+Release `f252c86a20b28c90a754a15a500f7ea43ab655e2`: CI và deploy PASS. Public homepage redirect/catalog/auth, ảnh thực tải đủ, menu customer mobile không cắt giỏ, nhãn đơn tiếng Việt và compose ticket mở/hủy — PASS với API thật, không ghi giỏ/đơn/ticket. Admin summary counts đối chiếu response Redis queue API và disclosure metadata — PASS. Harness đăng nhập/refresh workspace thật 4 role PASS; một lần429 đã chờ đúng Retry-After, không bypass.
+
+[Receipt loại bỏ credential](2026-10-29-ui-cleanup-production.json). Ảnh production sau: [catalog desktop](2026-10-29-ui-live-store.png), [auth mobile](2026-10-29-ui-live-auth.png); đã mở ảnh catalog để kiểm tra trực quan. Không gửi email hay gọi Gemini generate trong production smoke.

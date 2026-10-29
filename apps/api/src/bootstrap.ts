@@ -1,6 +1,3 @@
-import "reflect-metadata";
-import "dotenv/config";
-import { randomUUID } from "node:crypto";
 import {
   ArgumentsHost,
   Catch,
@@ -13,33 +10,34 @@ import {
   ServiceUnavailableException,
   ValidationPipe,
 } from "@nestjs/common";
-import { APP_INTERCEPTOR, NestFactory } from "@nestjs/core";
 import { ConfigModule } from "@nestjs/config";
+import { APP_INTERCEPTOR, NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
-import { json, Request, Response, NextFunction } from "express";
 import cookieParser from "cookie-parser";
+import "dotenv/config";
+import { json, NextFunction, Request, Response } from "express";
+import { randomUUID } from "node:crypto";
+import "reflect-metadata";
+import { AuthError } from "../../../libs/modules/auth/src/auth.contracts";
+import { AuthModule } from "../../../libs/modules/auth/src/auth.module";
+import { CatalogError } from "../../../libs/modules/catalog/src/catalog.contracts";
+import { CatalogModule } from "../../../libs/modules/catalog/src/catalog.module";
+import { JobsModule } from "../../../libs/modules/jobs/src/jobs.module";
+import { OperationsModule } from "../../../libs/modules/operations/src/operations.module";
+import { OrderError } from "../../../libs/modules/orders/src/order.contracts";
+import { OrderModule } from "../../../libs/modules/orders/src/order.module";
+import { RealtimeModule } from "../../../libs/modules/realtime/src/realtime.module";
+import { RuntimeRateInterceptor } from "../../../libs/modules/runtime/src/http/runtime.interceptor";
+import { RateLimitError } from "../../../libs/modules/runtime/src/limiter";
+import { RuntimeModule } from "../../../libs/modules/runtime/src/runtime.module";
+import { TicketError } from "../../../libs/modules/tickets/src/tickets.contracts";
+import { TicketsModule } from "../../../libs/modules/tickets/src/tickets.module";
 import { parseEnvironment } from "../../../libs/platform/src/config/environment";
-import { checkReadiness } from "../../../libs/platform/src/health/readiness";
 import {
   probeDatabase,
   probeRedis,
 } from "../../../libs/platform/src/health/dependency-probes";
-import { AuthError } from "../../../libs/modules/auth/src/auth.service";
-import { AuthModule } from "../../../libs/modules/auth/src/auth.module";
-import { CatalogModule } from "../../../libs/modules/catalog/src/catalog.module";
-import { CatalogError } from "../../../libs/modules/catalog/src/catalog.service";
-import { OrderError } from "../../../libs/modules/orders/src/order.service";
-import { OrderModule } from "../../../libs/modules/orders/src/order.module";
-import { RealtimeModule } from "../../../libs/modules/realtime/src/realtime.module";
-import { JobsModule } from "../../../libs/modules/jobs/src/jobs.module";
-import { TicketsModule } from "../../../libs/modules/tickets/src/tickets.module";
-import { TicketError } from "../../../libs/modules/tickets/src/tickets.service";
-import {
-  RuntimeModule,
-  RuntimeRateInterceptor,
-} from "../../../libs/modules/runtime/src/runtime.module";
-import { RateLimitError } from "../../../libs/modules/runtime/src/limiter";
-import { OperationsModule } from "../../../libs/modules/operations/src/operations.module";
+import { checkReadiness } from "../../../libs/platform/src/health/readiness";
 
 type IdentifiedRequest = Request & { requestId: string };
 

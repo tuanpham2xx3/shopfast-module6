@@ -1,19 +1,37 @@
 # 19 — Cấu trúc repository và ranh giới phụ thuộc
 
+Bố cục dưới đây mô tả source sau các đợt R1–R5 của [plan chuẩn hóa](21-repository-refactor-plan.md). Nghiệm thu release theo R6 và evidence, không suy cấu trúc thư mục thành all-SRS PASS.
+
 ## Bố cục
 
 ```text
 apps/
   api/src/             HTTP, bootstrap, composition của API
   worker/src/          Composition, scheduler và vòng đời worker
-  web/src/             React UI, chỉ giao tiếp backend qua HTTP/socket
+  web/src/
+    main.tsx           Mount React
+    app/               App, routing và navigation
+    features/          Auth/account/catalog/cart/orders/tickets/admin
+    shared/            API client, presentation và global styles
 libs/
-  modules/<feature>/src/  Module nghiệp vụ, service và adapter theo feature
+  modules/<feature>/src/
+    http/              Controller, DTO, guard/interceptor nếu có
+    application/       Use case, quyền nghiệp vụ và transaction orchestration
+    persistence/       SQL, query builder và mapping dữ liệu
+    composition/       Runtime provider, khởi tạo adapter và lifecycle
+    adapters/          Gemini, email, PDF hoặc gateway tùy module
+    *.contracts.ts     Type/error contract dùng chung trong module
+    *.module.ts        Nest wiring
   platform/src/          Config, DB, outbox, health dùng chung
 database/              Migration và seed có kiểm soát
 tests/                 Unit, integration, contract, runtime, browser
-deploy/                Docker Linux, Nginx, AWS và script vận hành
-harness/               Runner, requirement registry, receipt và collector
+deploy/                containers/nginx/aws/host/release/backup/checks
+harness/               run.mjs và CLI ổn định tại gốc
+  core/                Context, gate, receipt, artifact verification
+  suites/              Cases và các profile kiểm chứng
+  collectors/          Browser, host, cloud và evidence collectors
+  registries/          Requirement, acceptance và gate mappings
+  tests/               Self-test của harness
 scripts/               Entrypoint phát triển và smoke provider
 tools/                 Công cụ phát triển, không thuộc runtime sản phẩm
 docs/                  Spec, quyết định, runbook, bàn giao và evidence
@@ -28,7 +46,11 @@ API/worker là composition root. Thư viện không import ứng dụng, test, h
 
 Scheduler phối hợp jobs/retention/outbox và quản lý tiến trình worker nằm tại `apps/worker/src/foundation-worker.ts`; đặt nó trong platform sẽ tạo phụ thuộc ngược từ platform sang nghiệp vụ. Service nghiệp vụ vẫn dùng transaction và quyền tại server; việc sắp xếp thư mục không đổi API, schema hoặc idempotency key.
 
-`npm run architecture:check` dùng TypeScript AST để kiểm static import/export, literal require và dynamic import trong apps/libs; kiểm các module không còn source TS ở ngoài `src`. Check nằm trong `npm run check`, nên CI sẽ từ chối vi phạm. Đây là kiểm ranh giới source, không chứng minh mọi phụ thuộc runtime hoặc chất lượng thiết kế. Import tính toán không được xem là đã phân tích đầy đủ.
+`npm run architecture:check` chạy sáu negative/positive fixture rồi dùng TypeScript AST kiểm import/export, literal require/dynamic import và dependency vòng trong apps/libs. Check chặn query tại HTTP/application, persistence import ngược và application tự phụ thuộc Google provider implementation. Rule không thay thế review transaction; import tính toán không được xem là đã phân tích đầy đủ. Runtime cache/limiter là hạ tầng nội bộ, không phải module nghiệp vụ mới.
+
+Repository giữ query và dùng executor do use case truyền xuống, không tự mở transaction lồng nhau. Auth/Catalog/Orders/Tickets/AI/Jobs/Retention đã tách lớp; SQL đặc thù email idempotency nằm trong adapter email. Worker vẫn là composition/scheduling root; SQL vận hành scheduler được kiểm riêng, không được coi là domain controller.
+
+Trên VPS, `/opt/shopfast/deploy-release.sh`, `migrate.cjs`, `compose.*.yml` và systemd entrypoint vẫn là giao diện cài đặt ổn định. Source tương ứng nằm trong các nhóm `deploy/`; cập nhật host bằng cách cài file mới vào entrypoint ổn định, giữ bản cũ cho rollback. Di chuyển source không tự di chuyển dữ liệu PostgreSQL hoặc volume.
 
 Ưu tiên import rõ tới file đang dùng. Chỉ tách thêm controller/DTO/repository khi trách nhiệm cần thay đổi độc lập và có test giữ contract; không tạo interface hoặc lớp rỗng chỉ để tăng số tầng. Không áp dụng microservices, event broker mới hoặc workspace package publishing khi chưa có nhu cầu.
 

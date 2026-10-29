@@ -1,13 +1,13 @@
+import * as jwt from "jsonwebtoken";
 import { randomUUID } from "node:crypto";
 import { AddressInfo } from "node:net";
 import { io, Socket } from "socket.io-client";
 import { DataSource } from "typeorm";
-import * as jwt from "jsonwebtoken";
 import { createApiApp } from "../../apps/api/src/bootstrap";
+import { AuthService } from "../../libs/modules/auth/src/application/auth.service";
+import { CatalogService } from "../../libs/modules/catalog/src/application/catalog.service";
+import { OrderService } from "../../libs/modules/orders/src/application/order.service";
 import { createDataSource } from "../../libs/platform/src/database/data-source";
-import { AuthService } from "../../libs/modules/auth/src/auth.service";
-import { CatalogService } from "../../libs/modules/catalog/src/catalog.service";
-import { OrderService } from "../../libs/modules/orders/src/order.service";
 
 describe("realtime authorization and post-commit delivery", () => {
   let source: DataSource;

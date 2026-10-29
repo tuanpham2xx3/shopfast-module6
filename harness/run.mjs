@@ -2,12 +2,12 @@ import "dotenv/config";
 import { readFile, mkdir, writeFile, readdir } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
 import { lookup } from "node:dns/promises";
-import { harnessContext } from "./context.mjs";
-import { runCommand, aggregate } from "./core.mjs";
-import { assessRequirements, verifyArtifact } from "./evidence.mjs";
+import { harnessContext } from "./core/context.mjs";
+import { runCommand, aggregate } from "./core/core.mjs";
+import { assessRequirements, verifyArtifact } from "./core/evidence.mjs";
 import { deriveRequirements } from "./derive.mjs";
-import { recordCommandGates } from "./gates.mjs";
-import { recordRemoteProfile } from "./remote-evidence.mjs";
+import { recordCommandGates } from "./core/gates.mjs";
+import { recordRemoteProfile } from "./core/remote-evidence.mjs";
 const startedAt = Date.now();
 const profile = process.argv[2] ?? "preflight";
 const directory = "harness/reports";
@@ -69,8 +69,11 @@ async function staging() {
 }
 switch (profile) {
   case "preflight": {
-    await command("SECRETS-SCAN", ["harness/secrets.mjs"]);
-    for (const p of ["deploy/compose.infra.yml", ".secrets/shopfast-ec2.pem"]) {
+    await command("SECRETS-SCAN", ["harness/core/secrets.mjs"]);
+    for (const p of [
+      "deploy/containers/compose.infra.yml",
+      ".secrets/shopfast-ec2.pem",
+    ]) {
       try {
         await readFile(p);
         add(p, "PASS");
@@ -94,7 +97,9 @@ switch (profile) {
     await command("HARNESS-FORMAT", [
       "node_modules/prettier/bin/prettier.cjs",
       "--check",
-      "harness/*.{mjs,cjs,json}",
+      "harness/**/*.{mjs,cjs,json}",
+      "--ignore-path",
+      ".gitignore",
     ]);
     await command("HARNESS-SELFTEST", ["harness/selftest.mjs"]);
     await command("FORMAT", [
@@ -136,15 +141,20 @@ switch (profile) {
       "apps/web",
     ]);
     if (required(["TEST_DATABASE_URL", "TEST_REDIS_URL"], "INTEGRATION"))
-      await command("INTEGRATION-COVERAGE", ["harness/cases.mjs", "--collect"]);
+      await command("INTEGRATION-COVERAGE", [
+        "harness/suites/cases.mjs",
+        "--collect",
+      ]);
     if (required(["TEST_DATABASE_URL"], "BROWSER-E2E"))
-      await command("BROWSER-E2E", ["harness/browser-cases.mjs"]);
+      await command("BROWSER-E2E", ["harness/suites/browser-cases.mjs"]);
     break;
   case "staging":
     await staging();
     if (required(["EMAIL_TEST_TO", "RESEND_API_KEY"], "STAGING-FULL"))
-      await command("STAGING-FULL", ["harness/staging.mjs"]);
-    await command("STAGING-BROWSER-ROLES", ["harness/browser-roles.cjs"]);
+      await command("STAGING-FULL", ["harness/suites/staging.mjs"]);
+    await command("STAGING-BROWSER-ROLES", [
+      "harness/collectors/browser-roles.cjs",
+    ]);
     break;
   case "providers":
     if (process.env.HARNESS_LIVE_PROVIDERS !== "true")
@@ -249,7 +259,7 @@ switch (profile) {
       ]),
     );
     if (process.env.HARNESS_REBOOT_HOST === "true")
-      await command("HOST-RESTART", ["harness/host-restart.mjs"]);
+      await command("HOST-RESTART", ["harness/collectors/host-restart.mjs"]);
     else
       blocked(
         "HOST-RESTART",
@@ -345,7 +355,7 @@ switch (profile) {
       } else blocked(required, "No matching commit/config run");
     }
     const registry = JSON.parse(
-      await readFile("harness/requirements.json", "utf8"),
+      await readFile("harness/registries/requirements.json", "utf8"),
     );
     const receipts = [];
     await mkdir(`${directory}/receipts`, { recursive: true });

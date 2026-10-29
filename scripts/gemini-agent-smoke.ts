@@ -2,18 +2,16 @@ import "dotenv/config";
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import { writeFile } from "node:fs/promises";
-import { createDataSource } from "../libs/platform/src/database/data-source";
+import { AiService } from "../libs/modules/ai/src/application/ai.service";
 import {
-  TicketsService,
-  Actor,
-} from "../libs/modules/tickets/src/tickets.service";
-import { AiService } from "../libs/modules/ai/src/ai.service";
-import {
-  GoogleGeminiProvider,
   GeminiProvider,
+  GoogleGeminiProvider,
   ProviderRequest,
-} from "../libs/modules/ai/src/gemini.provider";
-import { CatalogService } from "../libs/modules/catalog/src/catalog.service";
+} from "../libs/modules/ai/src/adapters/gemini.provider";
+import { CatalogService } from "../libs/modules/catalog/src/application/catalog.service";
+import { Actor } from "../libs/modules/tickets/src/tickets.contracts";
+import { TicketsService } from "../libs/modules/tickets/src/application/tickets.service";
+import { createDataSource } from "../libs/platform/src/database/data-source";
 
 async function main() {
   assert(

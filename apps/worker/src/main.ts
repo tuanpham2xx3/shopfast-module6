@@ -1,16 +1,14 @@
-import "reflect-metadata";
 import { Module } from "@nestjs/common";
-import { NestFactory } from "@nestjs/core";
 import { ConfigModule } from "@nestjs/config";
+import { NestFactory } from "@nestjs/core";
+import "reflect-metadata";
+import { RuntimeServices } from "../../../libs/modules/runtime/src/composition/runtime.runtime";
+import { RuntimeModule } from "../../../libs/modules/runtime/src/runtime.module";
 import { parseEnvironment } from "../../../libs/platform/src/config/environment";
 import {
   FoundationWorker,
   registerOutboxSubscriber,
 } from "./foundation-worker";
-import {
-  RuntimeModule,
-  RuntimeServices,
-} from "../../../libs/modules/runtime/src/runtime.module";
 
 @Module({
   providers: [FoundationWorker],

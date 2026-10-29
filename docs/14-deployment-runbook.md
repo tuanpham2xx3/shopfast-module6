@@ -35,7 +35,7 @@ Login giới hạn5/IP/phút. Các browser tests dùng chung IP phải đọc429
 
 ## Backup và restore
 
-Daily systemd timer chạy19:00UTC (02:00Asia/Bangkok ngày sau), persistent catch-up, jitter5phút. Backup upload pg_dump custom archive + checksum ra S3 private/encrypted/versioned `backups/`; loại schema fixture `harness_*`/`test_*`, giữ local3ngày, S3 lifecycle30ngày. IAM role lấy credentials tạm từ EC2.
+Daily systemd timer chạy19:00UTC (02:00Asia/Bangkok ngày sau), persistent catch-up, jitter5phút. Backup upload pg*dump custom archive + checksum ra S3 private/encrypted/versioned `backups/`; loại schema fixture `harness*_`/`test\__`, giữ local3ngày, S3 lifecycle30ngày. IAM role lấy credentials tạm từ EC2.
 
 ```bash
 sudo systemctl status shopfast-backup.timer

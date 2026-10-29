@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { DataSource } from "typeorm";
 import { createDataSource } from "../../libs/platform/src/database/data-source";
-import { CatalogService } from "../../libs/modules/catalog/src/catalog.service";
+import { CatalogService } from "../../libs/modules/catalog/src/application/catalog.service";
 
 describe("catalog and inventory integration", () => {
   let source: DataSource;

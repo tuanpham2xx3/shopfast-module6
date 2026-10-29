@@ -44,9 +44,9 @@ jobs:
       - run: npm run harness:check
       - run: npm run harness:selftest
       - name: Verify image secret scanner negative cases
-        run: python3 harness/image-secrets.py --self-test
+        run: python3 harness/collectors/image-secrets.py --self-test
       - name: Validate deployment scripts
-        run: for script in deploy/*.sh; do bash -n "$script"; done
+        run: find deploy -type f -name '*.sh' -print0 | xargs -0 -n1 bash -n
       - run: npx playwright install --with-deps chromium
       - run: npm run check
       - run: npm run test:unit:coverage
@@ -54,5 +54,5 @@ jobs:
       - run: npm run test:e2e
       - name: Build Linux runtime and web images
         run: |
-          docker build -f deploy/Dockerfile --target runtime -t shopfast-ci-app .
-          docker build -f deploy/Dockerfile --target web -t shopfast-ci-web .
+          docker build -f deploy/containers/Dockerfile --target runtime -t shopfast-ci-app .
+          docker build -f deploy/containers/Dockerfile --target web -t shopfast-ci-web .

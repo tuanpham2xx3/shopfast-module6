@@ -2,7 +2,7 @@
 import { readFile, writeFile, mkdir, copyFile } from "node:fs/promises";
 import { resolve, relative, isAbsolute } from "node:path";
 import { createHash } from "node:crypto";
-import { verifyArtifact } from "./evidence.mjs";
+import { verifyArtifact } from "./core/evidence.mjs";
 import { format } from "prettier";
 const source = process.argv[2];
 if (!source)

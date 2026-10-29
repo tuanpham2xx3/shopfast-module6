@@ -1,9 +1,9 @@
+import { HttpEmailAdapter } from "../../libs/modules/jobs/src/adapters/email.adapters";
+import { renderInvoice } from "../../libs/modules/jobs/src/adapters/invoice.renderer";
 import {
   businessDate,
   retryDelay,
-  renderInvoice,
-  HttpEmailAdapter,
-} from "../../libs/modules/jobs/src/jobs.service";
+} from "../../libs/modules/jobs/src/application/jobs.service";
 describe("jobs contracts", () => {
   it("uses Bangkok business dates across UTC midnight", () => {
     expect(businessDate(new Date("2026-10-17T18:00:00Z"))).toBe("2026-10-18");

@@ -2,6 +2,10 @@
 
 ## 1. Decision log
 
+### D29 — Chuẩn hóa theo trách nhiệm, giữ hợp đồng runtime
+
+29/10/2026: người dùng yêu cầu hoàn tất plan cấu trúc và deploy sau kiểm chứng. Giữ monolith và API/schema; tách HTTP/application/persistence/composition, nhóm frontend/harness/deploy. Google provider được dựng trong composition, application nhận provider qua injection; default không cấu hình trả lỗi an toàn thay vì tự gọi Google. Production API/worker được wiring adapter Google như trước. Các entrypoint đã cài trên VPS giữ nguyên đường dẫn để SSM/systemd và rollback còn hoạt động. Test/evidence lịch sử không di chuyển hoặc sửa hash. Chi tiết ở [plan R0–R6](21-repository-refactor-plan.md).
+
 | ID  | Quyết định                                                              | Nguồn/trạng thái                | Lý do                                                                       |
 | --- | ----------------------------------------------------------------------- | ------------------------------- | --------------------------------------------------------------------------- |
 | D01 | Gemini Developer API, key Google AI Studio                              | Người dùng đã chọn              | Dịch vụ AI thống nhất                                                       |

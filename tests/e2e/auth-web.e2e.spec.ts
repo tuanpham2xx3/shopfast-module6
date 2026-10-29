@@ -70,6 +70,9 @@ test("preserves password input and theme preference on mobile", async ({
 });
 
 test("registers, verifies and shows the current account", async ({ page }) => {
+  await page.route("**/api/v1/cart", (route) =>
+    route.fulfill({ status: 200, json: { data: { items: [], subtotal: 0 } } }),
+  );
   await page.route("**/api/v1/auth/refresh", (route) =>
     route.fulfill({
       status: 401,
@@ -109,7 +112,11 @@ test("registers, verifies and shows the current account", async ({ page }) => {
     page.getByRole("heading", { name: "Xác minh email" }),
   ).toBeVisible();
   await page.getByLabel("Mã xác minh").fill("123456");
+  const cartLoaded = page.waitForResponse((response) =>
+    new URL(response.url()).pathname.endsWith("/cart"),
+  );
   await page.getByRole("button", { name: "Xác minh" }).click();
+  expect((await cartLoaded).ok()).toBe(true);
 
   await expect(
     page.getByRole("heading", { name: "Chào Nguyễn Demo" }),

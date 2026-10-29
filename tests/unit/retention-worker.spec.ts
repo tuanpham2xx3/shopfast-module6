@@ -1,5 +1,5 @@
 import { FoundationWorker } from "../../apps/worker/src/foundation-worker";
-import { RetentionService } from "../../libs/modules/jobs/src/retention.service";
+import { RetentionService } from "../../libs/modules/jobs/src/application/retention.service";
 
 it("does not block business scheduling on retention and prevents overlap", async () => {
   let release!: () => void;
