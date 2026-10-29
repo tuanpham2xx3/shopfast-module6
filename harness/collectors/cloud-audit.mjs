@@ -1,8 +1,8 @@
 ﻿import { execFileSync } from "node:child_process";
 import { mkdir, writeFile, readFile } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
-import { harnessContext } from "./context.mjs";
-import { digest } from "./evidence.mjs";
+import { harnessContext } from "../core/context.mjs";
+import { digest } from "../core/evidence.mjs";
 const context = harnessContext();
 const aws =
   process.env.AWS_CLI_PATH ??
@@ -361,7 +361,7 @@ try {
           caseId: `GATE-${gate}`,
           status: passed ? "PASS" : "FAIL",
           exitCode: passed ? 0 : 1,
-          command: ["node", "harness/cloud-audit.mjs"],
+          command: ["node", "harness/collectors/cloud-audit.mjs"],
           assertions: selected,
           artifacts: [
             { path: artifactPath, bytes: bytes.length, sha256: digest(bytes) },

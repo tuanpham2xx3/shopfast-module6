@@ -1,8 +1,8 @@
 import { readFile, readdir, mkdir, writeFile } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
-import { harnessContext } from "./context.mjs";
-import { digest } from "./evidence.mjs";
+import { harnessContext } from "../core/context.mjs";
+import { digest } from "../core/evidence.mjs";
 const context = harnessContext(),
   runId = randomUUID(),
   executedAt = new Date().toISOString();
@@ -60,8 +60,8 @@ const paths = [
   "nest-cli.json",
   "jest.business.config.js",
   "jest.unit-business.config.js",
-  "harness/remote-evidence.mjs",
-  "harness/requirements.json",
+  "harness/core/remote-evidence.mjs",
+  "harness/registries/requirements.json",
 ];
 const compatibility = paths.map((path) => ({
   path,
@@ -160,7 +160,7 @@ await writeFile(
       caseId: "GATE-published-coverage-restore",
       status: passed ? "PASS" : "FAIL",
       exitCode: passed ? 0 : 1,
-      command: ["node", "harness/published-artifacts.mjs"],
+      command: ["node", "harness/collectors/published-artifacts.mjs"],
       artifacts: [{ path, bytes: bytes.length, sha256: digest(bytes) }],
     },
     null,

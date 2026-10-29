@@ -1,13 +1,13 @@
 ﻿import { readFile, writeFile, mkdir, readdir } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
-import { assessRequirements, digest } from "./evidence.mjs";
-import { harnessContext } from "./context.mjs";
+import { assessRequirements, digest } from "./core/evidence.mjs";
+import { harnessContext } from "./core/context.mjs";
 export async function deriveRequirements(context = harnessContext()) {
   const registry = JSON.parse(
-    await readFile("harness/requirements.json", "utf8"),
+    await readFile("harness/registries/requirements.json", "utf8"),
   );
   const mapping = JSON.parse(
-    await readFile("harness/requirement-map.json", "utf8"),
+    await readFile("harness/registries/requirement-map.json", "utf8"),
   );
   if (
     JSON.stringify(mapping.requirements.map((r) => r.id).sort()) !==

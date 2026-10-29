@@ -1,8 +1,8 @@
 ﻿import { spawnSync } from "node:child_process";
 import { mkdir, writeFile } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
-import { harnessContext } from "./context.mjs";
-import { digest } from "./evidence.mjs";
+import { harnessContext } from "../core/context.mjs";
+import { digest } from "../core/evidence.mjs";
 const context = harnessContext(),
   runId = randomUUID(),
   executedAt = new Date().toISOString();
@@ -217,7 +217,7 @@ for (const [gate, names] of Object.entries({
         targetCommit: manifest?.commit,
         status: passed ? "PASS" : "FAIL",
         exitCode: passed ? 0 : 1,
-        command: ["node", "harness/runtime-audit.mjs"],
+        command: ["node", "harness/collectors/runtime-audit.mjs"],
         assertions: selected,
         artifacts: [{ path, bytes: bytes.length, sha256: digest(bytes) }],
       },

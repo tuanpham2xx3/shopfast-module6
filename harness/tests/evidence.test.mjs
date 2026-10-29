@@ -3,7 +3,11 @@ import assert from "node:assert/strict";
 import { mkdtemp, writeFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { assessRequirements, digest, verifyArtifact } from "./evidence.mjs";
+import {
+  assessRequirements,
+  digest,
+  verifyArtifact,
+} from "../core/evidence.mjs";
 test("acceptance detects omitted requirements, stale receipts and forged/missing artifacts", async () => {
   const root = await mkdtemp(join(tmpdir(), "shopfast-evidence-"));
   try {
@@ -134,7 +138,7 @@ test("PASS requires every requirement and acceptance case; latest failure wins",
 import { readFile } from "node:fs/promises";
 test("real SRS registry includes every source bullet and all acceptance cases", async () => {
   const registry = JSON.parse(
-    await readFile("harness/requirements.json", "utf8"),
+    await readFile("harness/registries/requirements.json", "utf8"),
   );
   const result = await assessRequirements({
     registry,

@@ -92,7 +92,7 @@ const registry = {
   },
 };
 await writeFile(
-  "harness/requirements.json",
+  "harness/registries/requirements.json",
   JSON.stringify(registry, null, 2) + "\n",
 );
 console.log(

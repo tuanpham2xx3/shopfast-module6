@@ -6,8 +6,10 @@ const {
 } = require("/app/dist-tools/libs/platform/src/database/data-source.js");
 const {
   JobsService,
+} = require("/app/dist-tools/libs/modules/jobs/src/application/jobs.service.js");
+const {
   DevelopmentEmailAdapter,
-} = require("/app/dist-tools/libs/modules/jobs/src/jobs.service.js");
+} = require("/app/dist-tools/libs/modules/jobs/src/adapters/email.adapters.js");
 const schema = process.env.DATABASE_SCHEMA;
 if (!/^harness_recovery_[0-9]+$/.test(schema || ""))
   throw new Error("Isolated recovery schema required");

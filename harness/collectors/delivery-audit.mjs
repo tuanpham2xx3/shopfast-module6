@@ -1,9 +1,9 @@
 import { execFileSync } from "node:child_process";
 import { readFile, writeFile, mkdir, readdir, stat } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
-import { harnessContext } from "./context.mjs";
-import { digest } from "./evidence.mjs";
-import { assertRegisteredGates } from "./gate-registry.mjs";
+import { harnessContext } from "../core/context.mjs";
+import { digest } from "../core/evidence.mjs";
+import { assertRegisteredGates } from "../core/gate-registry.mjs";
 const context = harnessContext(),
   runId = randomUUID(),
   executedAt = new Date().toISOString();
@@ -284,7 +284,7 @@ for (const [gate, assertions] of Object.entries(gates)) {
             ? "BLOCKED"
             : "FAIL",
         exitCode: passed ? 0 : 1,
-        command: ["node", "harness/delivery-audit.mjs"],
+        command: ["node", "harness/collectors/delivery-audit.mjs"],
         assertions,
         artifacts: [{ path, bytes: bytes.length, sha256: digest(bytes) }],
       },

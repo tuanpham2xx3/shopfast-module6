@@ -1,9 +1,9 @@
 ﻿import "dotenv/config";
 import { readFile, writeFile, mkdir, stat } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
-import { runCommand } from "./core.mjs";
-import { harnessContext } from "./context.mjs";
-import { digest } from "./evidence.mjs";
+import { runCommand } from "../core/core.mjs";
+import { harnessContext } from "../core/context.mjs";
+import { digest } from "../core/evidence.mjs";
 const context = harnessContext(),
   runId = randomUUID(),
   executedAt = new Date().toISOString();

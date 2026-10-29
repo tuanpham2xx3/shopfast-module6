@@ -1,6 +1,6 @@
 ﻿import test from "node:test";
 import assert from "node:assert/strict";
-import { validateRemote } from "./remote-evidence.mjs";
+import { validateRemote } from "../core/remote-evidence.mjs";
 test("performance evidence requires actual sample sizes, thresholds, duration and error counts", () => {
   const report = {
     status: "PASS",

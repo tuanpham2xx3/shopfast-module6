@@ -1,7 +1,7 @@
 ﻿import { readdir } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
-const files = (await readdir("harness"))
-  .filter((file) => /\.(mjs|cjs)$/.test(file))
+const files = (await readdir("harness", { recursive: true }))
+  .filter((file) => !file.startsWith("reports") && /\.(mjs|cjs)$/.test(file))
   .sort();
 for (const file of files)
   execFileSync(process.execPath, ["--check", "harness/" + file], {

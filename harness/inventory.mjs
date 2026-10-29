@@ -1,8 +1,8 @@
 ﻿import { execFileSync } from "node:child_process";
 import { readFile, writeFile, mkdir } from "node:fs/promises";
-import { assessRequirements } from "./evidence.mjs";
+import { assessRequirements } from "./core/evidence.mjs";
 const registry = JSON.parse(
-  await readFile("harness/requirements.json", "utf8"),
+  await readFile("harness/registries/requirements.json", "utf8"),
 );
 const commit = execFileSync("git", ["rev-parse", "HEAD"], {
   encoding: "utf8",

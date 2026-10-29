@@ -3,10 +3,10 @@ import { resolve, relative } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { randomUUID } from "node:crypto";
 const { harnessContext } = await import(
-  pathToFileURL(resolve("harness/context.mjs")).href
+  pathToFileURL(resolve("harness/core/context.mjs")).href
 );
 const { digest, verifyArtifact } = await import(
-  pathToFileURL(resolve("harness/evidence.mjs")).href
+  pathToFileURL(resolve("harness/core/evidence.mjs")).href
 );
 const context = harnessContext(),
   runId = randomUUID(),
@@ -53,7 +53,7 @@ const assertions = [
       fresh &&
       !command.timedOut &&
       [0, 1].includes(command.exitCode) &&
-      command.command?.includes("harness/staging.mjs"),
+      command.command?.includes("harness/suites/staging.mjs"),
   },
   {
     name: "live worker email and verification completed",

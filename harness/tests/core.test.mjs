@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { aggregate, assertFixture, runCommand } from "./core.mjs";
+import { aggregate, assertFixture, runCommand } from "../core/core.mjs";
 test("missing or blocked checks cannot pass acceptance", () => {
   assert.equal(aggregate([]), "BLOCKED");
   assert.equal(aggregate([{ status: "BLOCKED" }]), "BLOCKED");
@@ -66,7 +66,7 @@ test("full output is retained with a verifiable hash while the console excerpt s
 });
 test("a silent successful command retains execution evidence without inventing stdout", async () => {
   const { readFile } = await import("node:fs/promises");
-  const { verifyArtifact } = await import("./evidence.mjs");
+  const { verifyArtifact } = await import("../core/evidence.mjs");
   const result = await runCommand(process.execPath, ["-e", "process.exit(0)"]);
   assert.equal(result.output, "");
   assert.equal(await verifyArtifact(result.artifact), true);

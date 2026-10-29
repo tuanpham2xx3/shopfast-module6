@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
 import { once } from "node:events";
-import { fetchRespectingRateLimit } from "./http-retry.mjs";
+import { fetchRespectingRateLimit } from "../core/http-retry.mjs";
 test("actual HTTP 429 honors Retry-After before a successful retry", async () => {
   let calls = 0;
   const server = createServer((request, response) => {

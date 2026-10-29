@@ -47,15 +47,15 @@
     "test:unit:coverage": "jest --config jest.unit-business.config.js --runInBand",
     "harness:all": "node harness/all.mjs",
     "harness:inventory": "node harness/inventory.mjs",
-    "harness:cases": "node harness/cases.mjs",
-    "harness:browser-cases": "node harness/browser-cases.mjs",
-    "harness:cloud-audit": "node harness/cloud-audit.mjs",
-    "harness:deploy-continuity": "node harness/deploy-continuity.mjs",
+    "harness:cases": "node harness/suites/cases.mjs",
+    "harness:browser-cases": "node harness/suites/browser-cases.mjs",
+    "harness:cloud-audit": "node harness/collectors/cloud-audit.mjs",
+    "harness:deploy-continuity": "node harness/suites/deploy-continuity.mjs",
     "harness:selftest": "node harness/selftest.mjs",
-    "harness:platform-cases": "node harness/platform-cases.mjs",
+    "harness:platform-cases": "node harness/suites/platform-cases.mjs",
     "harness:derive": "node harness/derive.mjs",
-    "harness:check": "prettier --check \"harness/*.{mjs,cjs,json}\" && node harness/check-source.mjs",
-    "architecture:check": "node tools/scripts/check-architecture.mjs"
+    "harness:check": "prettier --ignore-path .gitignore --check \"harness/**/*.{mjs,cjs,json}\" && node harness/check-source.mjs",
+    "architecture:check": "node --test tools/scripts/check-architecture.test.mjs && node tools/scripts/check-architecture.mjs"
   },
   "dependencies": {
     "@nestjs/common": "10.4.22",

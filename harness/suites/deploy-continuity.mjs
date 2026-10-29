@@ -4,13 +4,13 @@ import { spawn } from "node:child_process";
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { chromium, expect } from "@playwright/test";
 import { io } from "socket.io-client";
-import { submitBrowserLogin } from "./browser-login.mjs";
-import { runCommand } from "./core.mjs";
-import { harnessContext } from "./context.mjs";
-import { digest } from "./evidence.mjs";
+import { submitBrowserLogin } from "../collectors/browser-login.mjs";
+import { runCommand } from "../core/core.mjs";
+import { harnessContext } from "../core/context.mjs";
+import { digest } from "../core/evidence.mjs";
 import { randomUUID } from "node:crypto";
-import { fetchRespectingRateLimit } from "./http-retry.mjs";
-import { observeOrderSubscription } from "./continuity-observer.mjs";
+import { fetchRespectingRateLimit } from "../core/http-retry.mjs";
+import { observeOrderSubscription } from "../core/continuity-observer.mjs";
 const executionContext = harnessContext();
 const base = "https://shopfast.tuanpq.com",
   candidate =
@@ -247,7 +247,7 @@ try {
     executedAt: result.executedAt,
     status: result.status,
     exitCode: result.status === "PASS" ? 0 : 1,
-    command: ["node", "harness/deploy-continuity.mjs"],
+    command: ["node", "harness/suites/deploy-continuity.mjs"],
     assertions: [
       {
         name: "authenticated HTTP reads across promotion/rollback",

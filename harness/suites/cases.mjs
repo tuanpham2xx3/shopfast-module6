@@ -1,17 +1,19 @@
 ﻿import "dotenv/config";
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { createHash, randomUUID } from "node:crypto";
-import { runCommand } from "./core.mjs";
-import { harnessContext } from "./context.mjs";
-import { digest } from "./evidence.mjs";
+import { runCommand } from "../core/core.mjs";
+import { harnessContext } from "../core/context.mjs";
+import { digest } from "../core/evidence.mjs";
 const context = harnessContext(),
   runId = randomUUID(),
   executedAt = new Date().toISOString();
 await mkdir("harness/reports/receipts", { recursive: true });
 const registry = JSON.parse(
-  await readFile("harness/requirements.json", "utf8"),
+  await readFile("harness/registries/requirements.json", "utf8"),
 );
-const map = JSON.parse(await readFile("harness/acceptance-map.json", "utf8"));
+const map = JSON.parse(
+  await readFile("harness/registries/acceptance-map.json", "utf8"),
+);
 if (
   JSON.stringify(registry.cases.map((c) => c.id).sort()) !==
   JSON.stringify(map.cases.map((c) => c.id).sort())

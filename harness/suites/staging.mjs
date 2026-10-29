@@ -5,7 +5,7 @@ import { readFile, mkdir, writeFile } from "node:fs/promises";
 import { spawnSync } from "node:child_process";
 import dotenv from "dotenv";
 import { io } from "socket.io-client";
-import { submitBrowserLogin } from "./browser-login.mjs";
+import { submitBrowserLogin } from "../collectors/browser-login.mjs";
 const base = "https://shopfast.tuanpq.com",
   checks = [],
   aiAttempts = [];

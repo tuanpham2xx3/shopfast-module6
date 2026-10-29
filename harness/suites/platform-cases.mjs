@@ -2,8 +2,8 @@
 import { randomUUID } from "node:crypto";
 import { writeFile, mkdir } from "node:fs/promises";
 import Redis from "ioredis";
-import { runCommand } from "./core.mjs";
-import { harnessContext } from "./context.mjs";
+import { runCommand } from "../core/core.mjs";
+import { harnessContext } from "../core/context.mjs";
 const context = harnessContext(),
   runId = randomUUID(),
   executedAt = new Date().toISOString();
@@ -100,7 +100,7 @@ const receipt = {
   executedAt,
   status,
   exitCode: status === "PASS" ? 0 : 1,
-  command: ["node", "harness/platform-cases.mjs"],
+  command: ["node", "harness/suites/platform-cases.mjs"],
   assertions,
   artifacts,
 };

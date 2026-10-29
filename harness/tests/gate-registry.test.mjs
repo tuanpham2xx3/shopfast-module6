@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { assertRegisteredGates } from "./gate-registry.mjs";
+import { assertRegisteredGates } from "../core/gate-registry.mjs";
 test("quality receipts use the actual SRS registry gate labels", async () => {
   await assert.doesNotReject(() =>
     assertRegisteredGates([

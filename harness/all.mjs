@@ -3,21 +3,39 @@ import { spawn } from "node:child_process";
 const profiles = [
   "preflight",
   "ci",
-  { name: "platform-evidence", script: "harness/platform-cases.mjs" },
-  { name: "runtime-evidence", script: "harness/runtime-audit.mjs" },
-  { name: "scheduler-evidence", script: "harness/scheduler-audit.mjs" },
-  { name: "secret-history-images", script: "harness/secret-audit.mjs" },
-  { name: "cloud-audit", script: "harness/cloud-audit.mjs" },
-  { name: "delivery-evidence", script: "harness/delivery-audit.mjs" },
+  { name: "platform-evidence", script: "harness/suites/platform-cases.mjs" },
+  { name: "runtime-evidence", script: "harness/collectors/runtime-audit.mjs" },
+  {
+    name: "scheduler-evidence",
+    script: "harness/collectors/scheduler-audit.mjs",
+  },
+  {
+    name: "secret-history-images",
+    script: "harness/collectors/secret-audit.mjs",
+  },
+  { name: "cloud-audit", script: "harness/collectors/cloud-audit.mjs" },
+  {
+    name: "delivery-evidence",
+    script: "harness/collectors/delivery-audit.mjs",
+  },
   "deploy-rollback",
   "providers",
   "staging",
-  { name: "staging-components", script: "harness/staging-components.mjs" },
-  { name: "active-deploy-continuity", script: "harness/deploy-continuity.mjs" },
+  {
+    name: "staging-components",
+    script: "harness/collectors/staging-components.mjs",
+  },
+  {
+    name: "active-deploy-continuity",
+    script: "harness/suites/deploy-continuity.mjs",
+  },
   "resilience",
   "backup-restore",
   "performance",
-  { name: "published-evidence", script: "harness/published-artifacts.mjs" },
+  {
+    name: "published-evidence",
+    script: "harness/collectors/published-artifacts.mjs",
+  },
   "report",
 ];
 let failures = 0;

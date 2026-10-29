@@ -1,7 +1,10 @@
 import { readFile } from "node:fs/promises";
 export async function assertRegisteredGates(labels) {
   const map = JSON.parse(
-    await readFile(new URL("./requirement-map.json", import.meta.url), "utf8"),
+    await readFile(
+      new URL("../registries/requirement-map.json", import.meta.url),
+      "utf8",
+    ),
   );
   const registered = new Set(
     map.requirements.flatMap((item) => item.externalGates),

@@ -4,7 +4,7 @@ import { createServer } from "node:http";
 import { once } from "node:events";
 import { Server } from "socket.io";
 import { io } from "socket.io-client";
-import { observeOrderSubscription } from "./continuity-observer.mjs";
+import { observeOrderSubscription } from "../core/continuity-observer.mjs";
 async function fixture(handler, run) {
   const http = createServer(),
     server = new Server(http);

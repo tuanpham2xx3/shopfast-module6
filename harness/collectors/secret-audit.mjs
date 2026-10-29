@@ -2,8 +2,8 @@ import "dotenv/config";
 import { execFileSync, spawnSync } from "node:child_process";
 import { readFile, mkdir, writeFile } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
-import { digest } from "./evidence.mjs";
-import { harnessContext } from "./context.mjs";
+import { digest } from "../core/evidence.mjs";
+import { harnessContext } from "../core/context.mjs";
 const context = harnessContext(),
   runId = randomUUID(),
   executedAt = new Date().toISOString();
@@ -62,11 +62,14 @@ const remote = spawnSync(
       "PUBLIC_TEST_KEYS = " +
       JSON.stringify(
         JSON.parse(
-          await readFile("harness/public-test-key-allowlist.json", "utf8"),
+          await readFile(
+            "harness/registries/public-test-key-allowlist.json",
+            "utf8",
+          ),
         ),
       ) +
       "\n" +
-      (await readFile("harness/image-secrets.py", "utf8")),
+      (await readFile("harness/collectors/image-secrets.py", "utf8")),
     encoding: "utf8",
     timeout: 180000,
     maxBuffer: 1024 * 1024,
@@ -127,7 +130,7 @@ await writeFile(
       caseId: "GATE-secret-history-image-bundle",
       status: passed ? "PASS" : "FAIL",
       exitCode: passed ? 0 : 1,
-      command: ["node", "harness/secret-audit.mjs"],
+      command: ["node", "harness/collectors/secret-audit.mjs"],
       artifacts: [{ path, bytes: bytes.length, sha256: digest(bytes) }],
     },
     null,
