@@ -6,7 +6,7 @@ Dùng Gemini Developer API, API key lấy từ Google AI Studio. Không dùng Op
 
 Baseline triển khai: adapter gọi REST `generateContent` chính thức bằng backend header `x-goog-api-key`; không cần cài SDK để giữ cùng API/provider. Câu trả lời factual hiển thị từ dữ liệu tool DB của lượt hiện tại, không dùng prose model làm bằng chứng cho chính nó. Gemini vẫn lựa chọn tool, phân loại và đề xuất; HTTP xác nhận mới thực thi proposal.
 
-Key chỉ nằm ở backend, qua `GEMINI_API_KEY`; không đặt biến VITE_ hoặc đưa key vào browser, seed, docs hay log. Quota/phí phụ thuộc tài khoản Google; không giả định API luôn miễn phí.
+Key chỉ nằm ở backend, qua `GEMINI_API_KEY`; không đặt biến VITE\_ hoặc đưa key vào browser, seed, docs hay log. Quota/phí phụ thuộc tài khoản Google; không giả định API luôn miễn phí.
 
 Tài liệu tham chiếu chính thức, kiểm tra ngày 18/10/2026:
 

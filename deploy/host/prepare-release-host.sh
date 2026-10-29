@@ -7,7 +7,7 @@ if [ ! -L releases/current ]; then
   ln -s initial releases/current
 fi
 if [ ! -f nginx/default.conf ]; then
-  sed 's|/usr/share/nginx/html|/srv/releases/current/web|g' source/deploy/nginx.conf > nginx/default.conf
+  sed 's|/usr/share/nginx/html|/srv/releases/current/web|g' source/deploy/nginx/nginx.conf > nginx/default.conf
 fi
 docker compose -f compose.infra.yml -f compose.app.yml up -d --no-deps web
 curl --fail --silent --max-time 15 https://shopfast.tuanpq.com/api/v1/health/live >/dev/null

@@ -22,4 +22,4 @@ CMD ["node","dist/apps/api/src/main.js"]
 
 FROM nginx:stable-bookworm AS web
 COPY --from=build /app/apps/web/dist /usr/share/nginx/html
-COPY deploy/nginx.conf /etc/nginx/conf.d/default.conf
+COPY deploy/nginx/nginx.conf /etc/nginx/conf.d/default.conf

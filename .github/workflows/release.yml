@@ -22,8 +22,8 @@ jobs:
         run: echo "$GH_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
       - name: Build and publish exact commit
         run: |
-          docker build -f deploy/Dockerfile --target runtime -t ghcr.io/tuanpham2xx3/shopfast-module6-app:$GITHUB_SHA .
-          docker build -f deploy/Dockerfile --target web -t ghcr.io/tuanpham2xx3/shopfast-module6-web:$GITHUB_SHA .
+          docker build -f deploy/containers/Dockerfile --target runtime -t ghcr.io/tuanpham2xx3/shopfast-module6-app:$GITHUB_SHA .
+          docker build -f deploy/containers/Dockerfile --target web -t ghcr.io/tuanpham2xx3/shopfast-module6-web:$GITHUB_SHA .
           docker push ghcr.io/tuanpham2xx3/shopfast-module6-app:$GITHUB_SHA
           docker push ghcr.io/tuanpham2xx3/shopfast-module6-web:$GITHUB_SHA
   deploy:

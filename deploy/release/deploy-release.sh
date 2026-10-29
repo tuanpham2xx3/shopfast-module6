@@ -47,7 +47,7 @@ test "$ready" = true || { docker stop "$api"; echo 'Candidate not ready; old rel
 docker run --rm --network shopfast_default --env-file .env -v /opt/shopfast/migrate.cjs:/tmp/migrate.cjs:ro "$app" node /tmp/migrate.cjs
 previous=$(readlink releases/current || true)
 cp nginx/default.conf nginx/previous.conf.bak
-sed "s|http://api:3000|http://$api:3000|g; s|/usr/share/nginx/html|/srv/releases/current/web|g" source/deploy/nginx.conf > nginx/candidate.conf.tmp
+sed "s|http://api:3000|http://$api:3000|g; s|/usr/share/nginx/html|/srv/releases/current/web|g" source/deploy/nginx/nginx.conf > nginx/candidate.conf.tmp
 mv nginx/candidate.conf.tmp nginx/default.conf
 ln -sfn "$sha" releases/next
 mv -Tf releases/next releases/current
