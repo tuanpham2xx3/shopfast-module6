@@ -12,6 +12,7 @@ ShopFast là bài Defense Case Study Module 6: backend thương mại điện t�
 - [Acceptance checklist](docs/08-acceptance.md)
 - [Cấu trúc repository và ranh giới phụ thuộc](docs/19-repository-structure.md)
 - [Mở project và thứ tự trình bày source](docs/22-project-tour.md)
+- [Hướng dẫn đọc code, giải thích luồng và chuẩn bị Q&A](docs/23-huong-dan-doc-du-an.md)
 - [Slide HTML/PDF và ghi chú bảo vệ](docs/defense/README.md)
 - [Bàn giao và kết quả kiểm chứng mới nhất](docs/20-delivery-status.md)
 

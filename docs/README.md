@@ -8,6 +8,8 @@ Nguồn yêu cầu: `../Module 06 – Software Requirement Specification (SRS).d
 
 Chuẩn bị trình bày: [cây thư mục gọn và thứ tự mở source](22-project-tour.md).
 
+Đọc sâu trước buổi nói: [hướng dẫn đọc dự án, luồng code và Q&A](23-huong-dan-doc-du-an.md).
+
 1. [Đặc tả sản phẩm và nghiệp vụ](01-product-spec.md).
 2. [Mô hình dữ liệu và ranh giới module](02-data-architecture.md).
 3. [Hợp đồng HTTP API](03-api-contract.md).
