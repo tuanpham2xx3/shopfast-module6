@@ -80,7 +80,7 @@ Mở lần lượt:
 
 ## 5. Luồng auth: vì sao route được bảo vệ?
 
-**Thứ tự đọc:** [AuthController](../libs/modules/auth/src/http/auth.controllers.ts) → [DTO](../libs/modules/auth/src/http/auth.dto.ts) → [AuthService](../libs/modules/auth/src/application/auth.service.ts) → [AuthRepository](../libs/modules/auth/src/persistence/auth.repository.ts) → [guards](../libs/modules/auth/src/http/auth.guards.ts).
+**Thứ tự đọc:** [AuthController](../libs/modules/auth/src/http/auth.controllers.ts) → [DTO](../libs/modules/auth/src/http/auth.dto.ts) → [module auth — tìm lớp AuthService](../libs/modules/auth/src) → [AuthRepository](../libs/modules/auth/src/persistence/auth.repository.ts) → [guards](../libs/modules/auth/src/http/auth.guards.ts).
 
 Tìm trong service: `register`, `confirmVerification`, `login`, `refresh`, `currentUser`, `logout`.
 
