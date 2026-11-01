@@ -38,6 +38,8 @@
     "tools/references/**": true,
     "tools/reports/**": true
   },
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
   "explorer.compactFolders": false,
   "explorer.fileNesting.enabled": false
 }

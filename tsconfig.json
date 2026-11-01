@@ -10,13 +10,12 @@
     "target": "ES2022",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "paths": {
-      "@shopfast/platform/*": ["BE/platform/src/*"]
+      "@shopfast/platform/*": ["./BE/platform/src/*"]
     },
     "rootDir": "."
   },
