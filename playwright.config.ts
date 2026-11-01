@@ -5,7 +5,7 @@ process.env.E2E_SCHEMA ??= `test_e2e_${randomUUID().replace(/-/g, "")}`;
 const database = process.env.TEST_DATABASE_URL;
 
 export default defineConfig({
-  testDir: "tests/e2e",
+  testDir: "BE/tests/e2e",
   fullyParallel: false,
   retries: process.env.CI ? 1 : 0,
   reporter: [
@@ -13,7 +13,7 @@ export default defineConfig({
     ["json", { outputFile: "harness/reports/playwright-results.json" }],
   ],
   workers: 1,
-  globalSetup: database ? "./tests/e2e/setup.ts" : undefined,
+  globalSetup: database ? "./BE/tests/e2e/setup.ts" : undefined,
   use: {
     baseURL: "http://127.0.0.1:4173",
     browserName: "chromium",
@@ -23,7 +23,7 @@ export default defineConfig({
   webServer: [
     {
       command:
-        "node node_modules/vite/bin/vite.js apps/web --host 127.0.0.1 --port 4173",
+        "node node_modules/vite/bin/vite.js FE --host 127.0.0.1 --port 4173",
       url: "http://127.0.0.1:4173",
       reuseExistingServer: !process.env.CI,
       env: {
@@ -34,7 +34,7 @@ export default defineConfig({
     ...(database
       ? [
           {
-            command: "node dist/apps/api/src/main.js",
+            command: "node dist/BE/api/src/main.js",
             url: "http://127.0.0.1:4300/api/v1/health/live",
             reuseExistingServer: false,
             env: {

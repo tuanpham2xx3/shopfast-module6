@@ -18,13 +18,13 @@ Có thể mở đầu bằng đoạn này:
 
 | Thư mục             | Vai trò                                                                    | Cách giải thích                                       |
 | ------------------- | -------------------------------------------------------------------------- | ----------------------------------------------------- |
-| `apps/api`          | Chạy HTTP API và tích hợp realtime                                         | Nơi khởi động và ghép module                          |
-| `apps/worker`       | Chạy worker, scheduler, outbox processing                                  | Tách vòng đời xử lý nền khỏi request                  |
-| `apps/web`          | React, TypeScript, Vite                                                    | Client gọi HTTP/Socket.IO, không giữ key Gemini       |
-| `libs/modules`      | Các module auth/catalog/orders/tickets/ai/jobs/runtime/realtime/operations | Chia theo trách nhiệm nghiệp vụ hoặc hạ tầng ứng dụng |
-| `libs/platform`     | Database, config, health, outbox dùng chung                                | Hạ tầng chung, không phụ thuộc ngược module nghiệp vụ |
-| `database`          | Migration và seed                                                          | Constraint và lịch sử thay đổi DB                     |
-| `tests`             | Unit, contract, integration, runtime, browser                              | Kiểm tra rule, lỗi, race và hành vi người dùng        |
+| `BE/api`            | Chạy HTTP API và tích hợp realtime                                         | Nơi khởi động và ghép module                          |
+| `BE/worker`         | Chạy worker, scheduler, outbox processing                                  | Tách vòng đời xử lý nền khỏi request                  |
+| `FE`                | React, TypeScript, Vite                                                    | Client gọi HTTP/Socket.IO, không giữ key Gemini       |
+| `BE/modules`        | Các module auth/catalog/orders/tickets/ai/jobs/runtime/realtime/operations | Chia theo trách nhiệm nghiệp vụ hoặc hạ tầng ứng dụng |
+| `BE/platform`       | Database, config, health, outbox dùng chung                                | Hạ tầng chung, không phụ thuộc ngược module nghiệp vụ |
+| `BE/database`       | Migration và seed                                                          | Constraint và lịch sử thay đổi DB                     |
+| `BE/tests`          | Unit, contract, integration, runtime, browser                              | Kiểm tra rule, lỗi, race và hành vi người dùng        |
 | `harness`           | Chạy kiểm chứng, gom assertion/artifact/receipt                            | Kết quả phải có phạm vi và SHA                        |
 | `deploy`            | Docker Linux, Nginx, release, backup, vận hành                             | Code triển khai và khôi phục                          |
 | `.github/workflows` | CI và release pipeline                                                     | Kiểm tra PR, build image và triển khai                |
@@ -71,16 +71,16 @@ Khi trình bày, nói rõ đây là sơ đồ logic. Thực tế production hi�
 
 Mở lần lượt:
 
-1. [API main](../apps/api/src/main.ts): điểm chạy API.
-2. [API bootstrap](../apps/api/src/bootstrap.ts): ghép module, validation, xử lý lỗi, response envelope và lifecycle. Tìm `createApiApp`, `ValidationPipe`, `requestId`.
-3. [Data source](../libs/platform/src/database/data-source.ts): cấu hình PostgreSQL và migration.
-4. [Worker main](../apps/worker/src/main.ts) rồi [FoundationWorker](../apps/worker/src/foundation-worker.ts): khởi tạo và shutdown tiến trình nền.
+1. [API main](../BE/api/src/main.ts): điểm chạy API.
+2. [API bootstrap](../BE/api/src/bootstrap.ts): ghép module, validation, xử lý lỗi, response envelope và lifecycle. Tìm `createApiApp`, `ValidationPipe`, `requestId`.
+3. [Data source](../BE/platform/src/database/data-source.ts): cấu hình PostgreSQL và migration.
+4. [Worker main](../BE/worker/src/main.ts) rồi [FoundationWorker](../BE/worker/src/foundation-worker.ts): khởi tạo và shutdown tiến trình nền.
 
 Điểm cần nói: request có validation và response/lỗi thống nhất; không để mỗi controller tự định dạng tùy ý. Swagger được bật trong bootstrap khi môi trường không phải production; đừng hứa mở Swagger production nếu cấu hình hiện tại không bật.
 
 ## 5. Luồng auth: vì sao route được bảo vệ?
 
-**Thứ tự đọc:** [AuthController](../libs/modules/auth/src/http/auth.controllers.ts) → [DTO](../libs/modules/auth/src/http/auth.dto.ts) → [module auth — tìm lớp AuthService](../libs/modules/auth/src) → [AuthRepository](../libs/modules/auth/src/persistence/auth.repository.ts) → [guards](../libs/modules/auth/src/http/auth.guards.ts).
+**Thứ tự đọc:** [AuthController](../BE/modules/auth/src/http/auth.controllers.ts) → [DTO](../BE/modules/auth/src/http/auth.dto.ts) → [module auth — tìm lớp AuthService](../BE/modules/auth/src) → [AuthRepository](../BE/modules/auth/src/persistence/auth.repository.ts) → [guards](../BE/modules/auth/src/http/auth.guards.ts).
 
 Tìm trong service: `register`, `confirmVerification`, `login`, `refresh`, `currentUser`, `logout`.
 
@@ -94,11 +94,11 @@ Ba lớp guard cần hiểu:
 
 **Câu cần nói:** “Guard bảo vệ route; service vẫn kiểm quyền trên tài nguyên cụ thể. Khách hàng đăng nhập không có nghĩa là được đọc đơn của người khác.”
 
-**Minh chứng:** [auth integration](../tests/integration/auth.integration.spec.ts), [auth HTTP](../tests/integration/auth-http.integration.spec.ts), [guard unit tests](../tests/unit/auth-guards.spec.ts).
+**Minh chứng:** [auth integration](../BE/tests/integration/auth.integration.spec.ts), [auth HTTP](../BE/tests/integration/auth-http.integration.spec.ts), [guard unit tests](../BE/tests/unit/auth-guards.spec.ts).
 
 ## 6. Luồng quan trọng nhất: checkout và tồn kho
 
-Mở [OrdersController](../libs/modules/orders/src/http/orders.controllers.ts), sau đó [OrderService](../libs/modules/orders/src/application/order.service.ts). Dùng tìm kiếm trong file với `checkout`, `idem`, `transition`, `expireDue`. Khi cần xem SQL, mở [OrderRepository](../libs/modules/orders/src/persistence/order.repository.ts).
+Mở [OrdersController](../BE/modules/orders/src/http/orders.controllers.ts), sau đó [OrderService](../BE/modules/orders/src/application/order.service.ts). Dùng tìm kiếm trong file với `checkout`, `idem`, `transition`, `expireDue`. Khi cần xem SQL, mở [OrderRepository](../BE/modules/orders/src/persistence/order.repository.ts).
 
 Đọc `checkout` theo thứ tự sau:
 
@@ -119,21 +119,21 @@ Sau đó đọc `transition`: kiểm ownership/role, expected version và trạn
 
 **Câu cần nói:** “Đặt hàng giữ tồn trước. Thanh toán hiện là mô phỏng; em không tích hợp cổng thanh toán thương mại thật.”
 
-**Minh chứng:** [orders integration](../tests/integration/orders.integration.spec.ts) và [catalog/inventory integration](../tests/integration/catalog.integration.spec.ts). Mở tên case về race, oversell, promotion hoặc replay rồi đọc expected/assertion, không chỉ chỉ vào chữ PASS.
+**Minh chứng:** [orders integration](../BE/tests/integration/orders.integration.spec.ts) và [catalog/inventory integration](../BE/tests/integration/catalog.integration.spec.ts). Mở tên case về race, oversell, promotion hoặc replay rồi đọc expected/assertion, không chỉ chỉ vào chữ PASS.
 
 ## 7. Realtime: đúng người, đúng đơn và kết nối lại
 
-Mở [OrderRealtime gateway](../libs/modules/realtime/src/adapters/realtime.gateway.ts), tìm `/orders`, `order.subscribe`, `subscribe`, `validate`. Sau đó xem [Orders UI](../apps/web/src/features/orders/orders.tsx).
+Mở [OrderRealtime gateway](../BE/modules/realtime/src/adapters/realtime.gateway.ts), tìm `/orders`, `order.subscribe`, `subscribe`, `validate`. Sau đó xem [Orders UI](../FE/src/features/orders/orders.tsx).
 
 Luồng cần hiểu: handshake nhận token → xác thực session → client đăng ký đơn → server kiểm quyền đọc đơn → join room phù hợp → nhận `order.status.updated`.
 
 Khi mất mạng, client kết nối lại và đăng ký lại; đọc REST để đồng bộ trạng thái DB. Socket event không thay thế DB và không được broadcast mọi đơn cho toàn bộ khách hàng.
 
-**Minh chứng:** [realtime integration](../tests/integration/realtime.integration.spec.ts), [browser purchase/reconnect](../tests/e2e/catalog-live.e2e.spec.ts), [production continuity](evidence/2026-10-29-structure-production.md).
+**Minh chứng:** [realtime integration](../BE/tests/integration/realtime.integration.spec.ts), [browser purchase/reconnect](../BE/tests/e2e/catalog-live.e2e.spec.ts), [production continuity](evidence/2026-10-29-structure-production.md).
 
 ## 8. Background jobs: vì sao request không phải chờ email/PDF?
 
-Đọc [enqueueOutbox và publisher](../libs/platform/src/outbox/outbox.ts) → [FoundationWorker](../apps/worker/src/foundation-worker.ts) → [JobsService](../libs/modules/jobs/src/application/jobs.service.ts) → [JobsRepository](../libs/modules/jobs/src/persistence/jobs.repository.ts).
+Đọc [enqueueOutbox và publisher](../BE/platform/src/outbox/outbox.ts) → [FoundationWorker](../BE/worker/src/foundation-worker.ts) → [JobsService](../BE/modules/jobs/src/application/jobs.service.ts) → [JobsRepository](../BE/modules/jobs/src/persistence/jobs.repository.ts).
 
 Tìm `enqueueOutbox`, `consume`, `tick`, `catchUp`, `execute`, `retryDelay`. Theo một event từ lúc ghi DB đến khi được xử lý; phân biệt outbox event với job execution.
 
@@ -142,15 +142,15 @@ Tìm `enqueueOutbox`, `consume`, `tick`, `catchUp`, `execute`, `retryDelay`. The
 - Lease, retry và dedup xử lý lỗi/crash; không chỉ dựa vào một biến trong RAM.
 - Scheduler có reminder, expiry và revenue report; kiểm clock/timezone trong code và test.
 
-Mở [Resend adapter](../libs/modules/jobs/src/adapters/resend-email.ts), [invoice renderer](../libs/modules/jobs/src/adapters/invoice.renderer.ts), [retention service](../libs/modules/jobs/src/application/retention.service.ts) nếu hội đồng hỏi sâu.
+Mở [Resend adapter](../BE/modules/jobs/src/adapters/resend-email.ts), [invoice renderer](../BE/modules/jobs/src/adapters/invoice.renderer.ts), [retention service](../BE/modules/jobs/src/application/retention.service.ts) nếu hội đồng hỏi sâu.
 
 **Câu cần nói:** “Retry không đồng nghĩa gửi lại side effect vô điều kiện. Email cần idempotency và trạng thái delivery; em không hứa exactly-once tuyệt đối với mọi dịch vụ ngoài.”
 
-**Minh chứng:** [jobs](../tests/integration/jobs.integration.spec.ts), [outbox](../tests/integration/outbox.integration.spec.ts), [Resend](../tests/integration/resend.integration.spec.ts), [retention](../tests/integration/retention.integration.spec.ts). Đối tác tồn kho hiện là demo có version/idempotency, không phải đối tác thương mại thật.
+**Minh chứng:** [jobs](../BE/tests/integration/jobs.integration.spec.ts), [outbox](../BE/tests/integration/outbox.integration.spec.ts), [Resend](../BE/tests/integration/resend.integration.spec.ts), [retention](../BE/tests/integration/retention.integration.spec.ts). Đối tác tồn kho hiện là demo có version/idempotency, không phải đối tác thương mại thật.
 
 ## 9. Gemini: công cụ đọc thật và xác nhận của con người
 
-Đọc [TicketsController](../libs/modules/tickets/src/http/tickets.controllers.ts) → [TicketsService](../libs/modules/tickets/src/application/tickets.service.ts) → [AiService](../libs/modules/ai/src/application/ai.service.ts) → [Gemini adapter](../libs/modules/ai/src/adapters/gemini.provider.ts).
+Đọc [TicketsController](../BE/modules/tickets/src/http/tickets.controllers.ts) → [TicketsService](../BE/modules/tickets/src/application/tickets.service.ts) → [AiService](../BE/modules/ai/src/application/ai.service.ts) → [Gemini adapter](../BE/modules/ai/src/adapters/gemini.provider.ts).
 
 Trong `AiService`, tìm:
 
@@ -168,30 +168,30 @@ Với proposal ghi dữ liệu: model đề xuất → người có quyền xem 
 
 **Câu cần nói:** “Gemini được gọi từ backend bằng key Google AI Studio. Model hỗ trợ phân loại và đề xuất; authorization, transaction và quyết định ghi dữ liệu vẫn ở hệ thống.”
 
-**Minh chứng:** [tickets/AI integration](../tests/integration/tickets-ai.integration.spec.ts), [AI unit tests](../tests/unit/ai-service.spec.ts), [provider tests](../tests/unit/gemini-provider.spec.ts). Đọc cả case ngoài phạm vi, truy cập sai tài nguyên, replay và proposal chưa xác nhận.
+**Minh chứng:** [tickets/AI integration](../BE/tests/integration/tickets-ai.integration.spec.ts), [AI unit tests](../BE/tests/unit/ai-service.spec.ts), [provider tests](../BE/tests/unit/gemini-provider.spec.ts). Đọc cả case ngoài phạm vi, truy cập sai tài nguyên, replay và proposal chưa xác nhận.
 
 Khi demo, giữ quota đã cấu hình. Nếu provider unavailable, nói rõ trạng thái và mở evidence cũ có ngày/SHA; không giả vờ đó là câu trả lời live.
 
 ## 10. Cache và rate limit
 
-**Cache:** mở [CatalogService](../libs/modules/catalog/src/application/catalog.service.ts) → [CatalogCache](../libs/modules/runtime/src/catalog-cache.ts) → [catalog invalidation](../libs/modules/runtime/src/catalog-invalidation.ts). Tìm `remember`, `invalidate`, `generation`, `bypass`.
+**Cache:** mở [CatalogService](../BE/modules/catalog/src/application/catalog.service.ts) → [CatalogCache](../BE/modules/runtime/src/catalog-cache.ts) → [catalog invalidation](../BE/modules/runtime/src/catalog-invalidation.ts). Tìm `remember`, `invalidate`, `generation`, `bypass`.
 
 Giải thích cache-aside, invalidation theo phạm vi/tag và chống ghi lại dữ liệu cũ sau invalidation. Khi Redis lỗi, xem fallback/bypass thực tế. Cache tăng tốc tra cứu; transaction mua hàng vẫn đọc DB để bảo vệ tồn và giá.
 
-**Rate limit:** mở [RuntimeRateInterceptor](../libs/modules/runtime/src/http/runtime.interceptor.ts), [RuntimeLimiter](../libs/modules/runtime/src/limiter.ts) và [RuntimeServices](../libs/modules/runtime/src/composition/runtime.runtime.ts). Giải thích lớp giới hạn chung và lớp bảo vệ nghiệp vụ nhạy cảm, 429 và `Retry-After`.
+**Rate limit:** mở [RuntimeRateInterceptor](../BE/modules/runtime/src/http/runtime.interceptor.ts), [RuntimeLimiter](../BE/modules/runtime/src/limiter.ts) và [RuntimeServices](../BE/modules/runtime/src/composition/runtime.runtime.ts). Giải thích lớp giới hạn chung và lớp bảo vệ nghiệp vụ nhạy cảm, 429 và `Retry-After`.
 
-**Minh chứng:** [cache/Redis integration](../tests/integration/cache-redis.integration.spec.ts), [limiter integration](../tests/runtime/limiter.integration.spec.ts), [performance/restore đã đo](evidence/verified-performance-restore.md). Chỉ dùng số p95 theo đúng lần đo và phạm vi trong evidence; không suy ra năng lực 200.000 người đồng thời.
+**Minh chứng:** [cache/Redis integration](../BE/tests/integration/cache-redis.integration.spec.ts), [limiter integration](../BE/tests/runtime/limiter.integration.spec.ts), [performance/restore đã đo](evidence/verified-performance-restore.md). Chỉ dùng số p95 theo đúng lần đo và phạm vi trong evidence; không suy ra năng lực 200.000 người đồng thời.
 
 ## 11. Frontend và route: mở gì để giải thích nhanh?
 
-1. [main.tsx](../apps/web/src/main.tsx): mount React và BrowserRouter.
-2. [App](../apps/web/src/app/App.tsx), [routing](../apps/web/src/app/routing.ts), [navigation](../apps/web/src/app/navigation.tsx): ghép màn hình, session và điều hướng.
-3. [API client](../apps/web/src/shared/api/client.ts): gọi API, session refresh và lỗi chung.
-4. [features](../apps/web/src/features): mở catalog/cart/orders hoặc tickets theo luồng đang demo.
+1. [main.tsx](../FE/src/main.tsx): mount React và BrowserRouter.
+2. [App](../FE/src/app/App.tsx), [routing](../FE/src/app/routing.ts), [navigation](../FE/src/app/navigation.tsx): ghép màn hình, session và điều hướng.
+3. [API client](../FE/src/shared/api/client.ts): gọi API, session refresh và lỗi chung.
+4. [features](../FE/src/features): mở catalog/cart/orders hoặc tickets theo luồng đang demo.
 
 Giải thích route guard trên UI giúp điều hướng đúng; backend vẫn quyết định quyền. Đừng dùng việc UI giấu nút làm bằng chứng bảo mật. Với giỏ hàng, chỉ vào pending state và cập nhật dữ liệu mà không thay toàn bộ trang.
 
-**Minh chứng:** [route tests](../tests/e2e/routes.e2e.spec.ts), [popup/cart tests](../tests/e2e/product-dialog.e2e.spec.ts), [auth UI tests](../tests/e2e/auth-web.e2e.spec.ts).
+**Minh chứng:** [route tests](../BE/tests/e2e/routes.e2e.spec.ts), [popup/cart tests](../BE/tests/e2e/product-dialog.e2e.spec.ts), [auth UI tests](../BE/tests/e2e/auth-web.e2e.spec.ts).
 
 ## 12. CI/CD, triển khai và cách đọc evidence
 
@@ -256,45 +256,45 @@ Nếu cần chạy checks local trước buổi, dùng các lệnh trong `packag
 
 | SRS / mã truy vết | Yêu cầu cần chứng minh                                             | Phần đáp ứng và mục đọc trong hướng dẫn                                                      | Test / minh chứng cần mở                                                                                                   |
 | ----------------- | ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| F01 / REQ-F01-01  | Tự động phân loại ticket                                           | Mục 9: `AiService.classify`, JobsService xử lý `ticket.classify`, version của ticket         | `tests/integration/tickets-ai.integration.spec.ts`; tách kết quả fake-provider test khỏi gọi Google thật                   |
+| F01 / REQ-F01-01  | Tự động phân loại ticket                                           | Mục 9: `AiService.classify`, JobsService xử lý `ticket.classify`, version của ticket         | `BE/tests/integration/tickets-ai.integration.spec.ts`; tách kết quả fake-provider test khỏi gọi Google thật                |
 | F01 / REQ-F01-02  | Hai tool lấy dữ liệu thật: trạng thái đơn và tồn kho theo SKU      | Mục 9: `AiService.tool`, `get_order_status`, `check_inventory`, TicketsService và repository | Tickets/AI integration; staging 29/10 có Gemini hai tool đọc dữ liệu thật                                                  |
-| F01 / REQ-F01-03  | Từ chối ngoài phạm vi, không bịa dữ liệu đơn chưa tra cứu          | Mục 9: `run`, tool evidence, schema/validation của kết quả AI                                | `tests/unit/ai-service.spec.ts`, tickets/AI integration; không dùng riêng câu trả lời trông hợp lý để chứng minh           |
+| F01 / REQ-F01-03  | Từ chối ngoài phạm vi, không bịa dữ liệu đơn chưa tra cứu          | Mục 9: `run`, tool evidence, schema/validation của kết quả AI                                | `BE/tests/unit/ai-service.spec.ts`, tickets/AI integration; không dùng riêng câu trả lời trông hợp lý để chứng minh        |
 | F01 / REQ-F01-04  | Ghi dữ liệu qua xác nhận con người                                 | Mục 9: proposal và `AiService.decide`; UI staff ticket; backend kiểm quyền/version/replay    | Tickets/AI integration; demo proposal trước và sau xác nhận, phân biệt bản nháp với tin đã gửi                             |
-| F02 / REQ-F02-01  | Kho đổi trạng thái, khách nhận ngay không reload                   | Mục 7: OrderService event/outbox → gateway → Orders UI                                       | `tests/integration/realtime.integration.spec.ts`, `tests/e2e/catalog-live.e2e.spec.ts`                                     |
+| F02 / REQ-F02-01  | Kho đổi trạng thái, khách nhận ngay không reload                   | Mục 7: OrderService event/outbox → gateway → Orders UI                                       | `BE/tests/integration/realtime.integration.spec.ts`, `BE/tests/e2e/catalog-live.e2e.spec.ts`                               |
 | F02 / REQ-F02-02  | Chỉ gửi đến người theo dõi đúng đơn                                | Mục 7: private order room và subscribe/forward                                               | Realtime integration: isolation giữa đơn/người dùng; không chỉ demo hai tab cùng tài khoản                                 |
 | F02 / REQ-F02-03  | Xác thực handshake và ownership                                    | Mục 7: gateway middleware, `validate`, `subscribe`; AuthService                              | Realtime integration: token sai/hết hạn, subscribe đơn không được phép                                                     |
 | F02 / REQ-F02-04  | Tự reconnect và đăng ký lại                                        | Mục 7: Orders UI reconnect/resync                                                            | Browser purchase/offline recovery; continuity 29/10 có 3 subscriptions, 57 lượt đọc không lỗi                              |
-| F03 / REQ-F03-01  | Global limit; limit chặt hơn cho login, gửi mã, đặt đơn khuyến mãi | Mục 10: RuntimeRateInterceptor, RuntimeLimiter; auth và checkout protections                 | `tests/runtime/limiter.integration.spec.ts`, auth HTTP và order integration                                                |
+| F03 / REQ-F03-01  | Global limit; limit chặt hơn cho login, gửi mã, đặt đơn khuyến mãi | Mục 10: RuntimeRateInterceptor, RuntimeLimiter; auth và checkout protections                 | `BE/tests/runtime/limiter.integration.spec.ts`, auth HTTP và order integration                                             |
 | F03 / REQ-F03-02  | Key theo tài khoản khi đã đăng nhập, theo IP khi chưa đăng nhập    | Mục 10: principal/định danh trong interceptor và limiter                                     | Limiter integration; chỉ rõ cách chọn key, không giải thích bằng một IP cố định trong demo                                 |
 | F03 / REQ-F03-03  | HTTP429, thời gian chờ, thông điệp Việt                            | Mục 4/10: exception filter, interceptor, `Retry-After`, API client                           | Limiter/HTTP tests; browser login helper đã thực sự chờ Retry-After trong continuity                                       |
 | F03 / REQ-F03-04  | Chặn leo thang theo tài khoản bị dò mật khẩu                       | Mục 5/10: AuthService và `RuntimeLimiter.loginTarget`                                        | Limiter integration có rolling window, escalation và clear sau thành công                                                  |
 | F04 / REQ-F04-01  | Cache product detail/list có filter; lần đọc thứ hai <20ms         | Mục 10: CatalogService → CatalogCache.remember; cache keys theo query                        | Cache integration kiểm hành vi; ngưỡng thời gian phải mở performance evidence lịch sử ở mục 16.3                           |
-| F04 / REQ-F04-02  | Giá/tồn đổi thì invalidation mọi cache liên quan                   | Mục 6/10: catalog invalidation, tag/generation, outbox                                       | `tests/integration/cache-redis.integration.spec.ts`; outage/recovery 29/10 kiểm giá mới từ DB                              |
-| F04 / REQ-F04-03  | Chống stampede và dò key không tồn tại                             | Mục 10: cơ chế lock/coalescing và negative cache trong CatalogCache                          | `tests/runtime/cache.spec.ts`, cache/Redis integration                                                                     |
+| F04 / REQ-F04-02  | Giá/tồn đổi thì invalidation mọi cache liên quan                   | Mục 6/10: catalog invalidation, tag/generation, outbox                                       | `BE/tests/integration/cache-redis.integration.spec.ts`; outage/recovery 29/10 kiểm giá mới từ DB                           |
+| F04 / REQ-F04-03  | Chống stampede và dò key không tồn tại                             | Mục 10: cơ chế lock/coalescing và negative cache trong CatalogCache                          | `BE/tests/runtime/cache.spec.ts`, cache/Redis integration                                                                  |
 | F04 / REQ-F04-04  | Redis lỗi vẫn phục vụ có kiểm soát                                 | Mục 10: fallback/bypass; DB vẫn là source of truth                                           | Redis process outage/recovery 29/10: 4 checks PASS; không hứa mọi chức năng phụ trợ vẫn chạy như bình thường               |
 | F05 / REQ-F05-01  | Email, hóa đơn, partner sync qua queue                             | Mục 8: outbox → BullMQ → JobsService.execute → adapters                                      | Jobs/outbox integration; live email/invoice staging; partner là demo versioned theo D25                                    |
-| F05 / REQ-F05-02  | Retry/backoff và lưu thất bại riêng kèm lý do                      | Mục 8: retryDelay, execution state, failed jobs và admin retry                               | `tests/integration/jobs.integration.spec.ts`; queue UI và recovery evidence                                                |
+| F05 / REQ-F05-02  | Retry/backoff và lưu thất bại riêng kèm lý do                      | Mục 8: retryDelay, execution state, failed jobs và admin retry                               | `BE/tests/integration/jobs.integration.spec.ts`; queue UI và recovery evidence                                             |
 | F05 / REQ-F05-03  | Lặp job không nhân đôi side effect/email                           | Mục 8: business key, lease/dedup, Resend idempotency/delivery state                          | Jobs/Resend integration; crash/restart 29/10 dùng PostgreSQL-backed sink có nhãn rõ, không phải Resend thật                |
 | F05 / REQ-F05-04  | Nhắc sau 30 phút, báo cáo doanh thu hằng đêm                       | Mục 8: JobsService.catchUp, worker scheduler, Bangkok business date                          | Controlled-clock PostgreSQL tests và scheduler audit 29/10; hook/test không chứng minh một đêm production chưa tới đã chạy |
 | F06 / REQ-F06-01  | Lọc category/giá/brand, phân trang                                 | Mục 6/10: CatalogController → CatalogService → CatalogRepository; Catalog UI                 | Catalog integration/HTTP và browser route/filter tests                                                                     |
 | F06 / REQ-F06-02  | Giỏ hàng/checkout kiểm tồn, không oversell                         | Mục 6: cart, checkout, row lock/reservation/constraint                                       | Order integration: race/oversell/idempotency; staging mua hàng thật                                                        |
 | F06 / REQ-F06-03  | Lịch sử đơn của khách; kho cập nhật trạng thái                     | Mục 6/7: list/detail/transition, ownership, order history                                    | Orders/realtime integration và browser purchase; demo customer và warehouse riêng                                          |
 | F06 / REQ-F06-04  | Token và phân biệt vai trò                                         | Mục 5: AccessGuard/VerifiedGuard/RolesGuard, authorization trong service                     | Auth/guard/ownership tests; bốn role đăng nhập và mở workspace ở release 29/10                                             |
-| F07 / REQ-F07-01  | Health phản ánh PostgreSQL và Redis                                | Mục 4/12: readiness/dependency probes, OperationsController                                  | `tests/unit/readiness.spec.ts`, runtime audit; phân biệt live với ready                                                    |
-| F07 / REQ-F07-02  | Queue có số waiting/active/completed/failed                        | Mục 8/11: queueSnapshot, JobsAdminController, OperationsSummary                              | `tests/e2e/ui-cleanup.e2e.spec.ts` kiểm số lấy từ API và trạng thái lỗi; live admin UI snapshot                            |
-| F07 / REQ-F07-03  | API docs tự sinh, truy cập ở môi trường thử nghiệm                 | Mục 4: SwaggerModule trong createApiApp, DTO/controller metadata                             | `tests/contract/api.contract.spec.ts`; mở môi trường non-production đã bật docs, không trỏ nhầm production                 |
+| F07 / REQ-F07-01  | Health phản ánh PostgreSQL và Redis                                | Mục 4/12: readiness/dependency probes, OperationsController                                  | `BE/tests/unit/readiness.spec.ts`, runtime audit; phân biệt live với ready                                                 |
+| F07 / REQ-F07-02  | Queue có số waiting/active/completed/failed                        | Mục 8/11: queueSnapshot, JobsAdminController, OperationsSummary                              | `BE/tests/e2e/ui-cleanup.e2e.spec.ts` kiểm số lấy từ API và trạng thái lỗi; live admin UI snapshot                         |
+| F07 / REQ-F07-03  | API docs tự sinh, truy cập ở môi trường thử nghiệm                 | Mục 4: SwaggerModule trong createApiApp, DTO/controller metadata                             | `BE/tests/contract/api.contract.spec.ts`; mở môi trường non-production đã bật docs, không trỏ nhầm production              |
 | F07 / REQ-F07-04  | Backup tự động hằng ngày, tách khỏi server                         | Mục 12: `deploy/host/shopfast-backup.timer`, `deploy/backup/backup.sh`, S3                   | Timer/config/cloud evidence và restore 29/10; file backup tồn tại một mình chưa đủ chứng minh lịch tự động                 |
 
 ### 16.2. Công nghệ, kiến trúc và phạm vi chung
 
 | Mã registry / phần SRS              | Phần đáp ứng                                                       | Cách trình bày và phạm vi xác nhận                                                                                                                                                         |
 | ----------------------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| REQ-GENERAL-01–04 / mô tả chung     | Bốn vai trò, EC2/Nginx HTTPS, DB/Redis nội bộ, seed                | Mục 1–3/12; `database/seeds`, Compose/Nginx, role browser/runtime audit. Con số 200.000 khách trong đề không có nghĩa 200.000 kết nối đồng thời đã được chứng minh                         |
+| REQ-GENERAL-01–04 / mô tả chung     | Bốn vai trò, EC2/Nginx HTTPS, DB/Redis nội bộ, seed                | Mục 1–3/12; `BE/database/seeds`, Compose/Nginx, role browser/runtime audit. Con số 200.000 khách trong đề không có nghĩa 200.000 kết nối đồng thời đã được chứng minh                      |
 | REQ-TECH-01 / stack bắt buộc        | NestJS10, TypeScript, PostgreSQL16, Redis7; Node20 trong Docker/CI | `package.json`, `deploy/containers/Dockerfile`, Compose, runtime audit. Local Node22 được engine cho phép nhưng không dùng nó để nói production chạy Node20 nếu chưa nhìn runtime evidence |
 | REQ-TECH-02 / Docker và Compose     | Dockerfile nhiều stage, Compose API/worker/web/PG/Redis            | `deploy/containers`; CI Linux build hai image và VPS chạy Docker. Windows native là cách dev đã thống nhất, không tuyên bố dev đang chạy Compose                                           |
 | REQ-TECH-03 / GitHub và PR          | Git repo, required checks, PR22 và workflows                       | Mở PR/checks theo link trong evidence; không chỉ đưa một ảnh terminal commit                                                                                                               |
 | REQ-TECH-04 / Clean Code, tách tầng | HTTP/application/persistence/composition/adapters; app roots riêng | Mục 2/4–9; `docs/19-repository-structure.md`, architecture checker và review refactor. Chỉ vào một request cụ thể để chứng minh tách trách nhiệm                                           |
-| REQ-UI-01 / có UI web               | React app, route, màn hình của bốn vai trò, desktop/mobile         | Mục 11; browser tests/live UI. Đẹp mắt không thay thế kiểm chứng nghiệp vụ                                                                                                                 |
+| REQ-UI-01 / có UI web               | React app, route, màn hình của bốn vai trò, desktop/mobile         | Mục 11; browser BE/tests/live UI. Đẹp mắt không thay thế kiểm chứng nghiệp vụ                                                                                                              |
 
 ### 16.3. Hiệu năng: ngưỡng trong đề và lần đo tương ứng
 

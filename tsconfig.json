@@ -15,14 +15,11 @@
     "skipLibCheck": true,
     "strict": true,
     "noUncheckedIndexedAccess": true,
-    "paths": { "@shopfast/platform/*": ["libs/platform/src/*"] }
+    "paths": {
+      "@shopfast/platform/*": ["BE/platform/src/*"]
+    },
+    "rootDir": "."
   },
-  "include": [
-    "apps/**/*.ts",
-    "libs/**/*.ts",
-    "tests/**/*.ts",
-    "database/**/*.ts",
-    "scripts/**/*.ts"
-  ],
-  "exclude": ["node_modules", "dist", "apps/web"]
+  "include": ["BE/**/*.ts"],
+  "exclude": ["node_modules", "dist", "FE"]
 }

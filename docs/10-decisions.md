@@ -2,6 +2,10 @@
 
 ## 1. Decision log
 
+### D30 — Nhóm source thành BE và FE
+
+02/11/2026: theo yêu cầu người dùng, backend gom trong `BE/` (api, worker, modules, platform, database, tests, scripts), React trong `FE/`. Docs/deploy/harness/tools và cấu hình orchestration giữ tại gốc; npm workspace frontend là `FE`, dependency cài từ gốc. Source backend nằm trong `BE`, compiler root giữ ở gốc repository để Nest dev/start tìm đúng compiled entrypoint `dist/BE/api/src/main.js` và `dist/BE/worker/src/main.js`; consumer Docker/harness đã được sửa. Tắt Explorer file nesting để hiển thị folder bình thường. Không thay nghiệp vụ/API/schema và không tự deploy lần sắp xếp local này. Các chỉnh sửa Auth đã có trước task được giữ ngoài commit cơ học.
+
 ### D29 — Chuẩn hóa theo trách nhiệm, giữ hợp đồng runtime
 
 29/10/2026: người dùng yêu cầu hoàn tất plan cấu trúc và deploy sau kiểm chứng. Giữ monolith và API/schema; tách HTTP/application/persistence/composition, nhóm frontend/harness/deploy. Google provider được dựng trong composition, application nhận provider qua injection; default không cấu hình trả lỗi an toàn thay vì tự gọi Google. Production API/worker được wiring adapter Google như trước. Các entrypoint đã cài trên VPS giữ nguyên đường dẫn để SSM/systemd và rollback còn hoạt động. Test/evidence lịch sử không di chuyển hoặc sửa hash. Chi tiết ở [plan R0–R6](21-repository-refactor-plan.md).
@@ -60,7 +64,7 @@ Thiết kế sau phải xử lý migration tương thích khi chạy hai version
 
 ### D26 — Chuẩn hóa module và composition root
 
-28/10/2026: theo yêu cầu chuẩn hóa cấu trúc dự án, source mỗi feature nằm trong `libs/modules/<feature>/src`. Worker orchestration chuyển từ platform về `apps/worker/src`; platform không phụ thuộc nghiệp vụ. Thêm architecture check vào CI. Không đổi contract HTTP/socket, database schema, quyền, transaction hoặc khóa idempotency. Xem [cấu trúc repository](19-repository-structure.md).
+28/10/2026: theo yêu cầu chuẩn hóa cấu trúc dự án, source mỗi feature nằm trong `BE/modules/<feature>/src`. Worker orchestration chuyển từ platform về `BE/worker/src`; platform không phụ thuộc nghiệp vụ. Thêm architecture check vào CI. Không đổi contract HTTP/socket, database schema, quyền, transaction hoặc khóa idempotency. Xem [cấu trúc repository](19-repository-structure.md).
 
 ### D27 — URL thật cho các màn hình frontend
 

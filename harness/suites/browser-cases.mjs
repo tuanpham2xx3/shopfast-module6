@@ -40,7 +40,7 @@ try {
   }
   walk(report.suites ?? []);
 } catch {}
-const sourcePath = "tests/e2e/catalog-live.e2e.spec.ts",
+const sourcePath = "BE/tests/e2e/catalog-live.e2e.spec.ts",
   source = await readFile(sourcePath);
 const safePath = `harness/reports/artifacts/${runId}-browser.json`,
   safe = Buffer.from(

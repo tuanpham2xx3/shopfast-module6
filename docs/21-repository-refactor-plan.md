@@ -40,10 +40,10 @@ libs/
     adapters/                  tích hợp ngoài nếu feature có sử dụng
     <feature>.module.ts        wiring NestJS
   platform/src/               config, DB, outbox, health dùng chung
-database/
+BE/database/
   migrations/                  giữ nguyên tên và thứ tự migration
   seeds/
-tests/
+BE/tests/
   unit/                      theo module/use case
   integration/               PostgreSQL/Redis/provider adapter
   contract/                  HTTP và quyền
@@ -54,7 +54,7 @@ harness/
   suites/                    staging, provider, resilience, performance...
   collectors/                browser, host, cloud, artifact collectors
   registries/                requirements và acceptance mapping
-  tests/                     self-test harness
+  BE/tests/                     self-test harness
   run.mjs                    CLI công khai ổn định
 deploy/
   containers/                Dockerfile, Compose
@@ -64,7 +64,7 @@ deploy/
   release/                   deploy, migration, seed, rollback
   backup/                    backup và restore
   checks/                    remote performance/resilience rehearsal
-scripts/                     entrypoint dev và smoke provider
+BE/scripts/                     entrypoint dev và smoke provider
 tools/                       tooling phát triển, không runtime sản phẩm
 docs/                        giữ spec, runbook, evidence và link hiện tại
 .github/workflows/

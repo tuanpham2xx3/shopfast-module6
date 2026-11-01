@@ -12,7 +12,7 @@ services:
       retries: 12
   worker:
     image: ${APP_IMAGE:?Set APP_IMAGE}
-    command: [node, dist/apps/worker/src/main.js]
+    command: [node, dist/BE/worker/src/main.js]
     env_file: app.env
     restart: unless-stopped
     stop_grace_period: 60s

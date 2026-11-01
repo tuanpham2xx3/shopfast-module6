@@ -1,17 +1,17 @@
 # Mở project khi trình bày
 
-Mở thư mục repository bằng VS Code/Cursor. Workspace settings trong `.vscode/settings.json` ẩn dependency, build/report, runtime portable và secrets khỏi cây Explorer; gom cấu hình dưới `package.json`, SRS gốc và hướng dẫn agent dưới `README.md`. Đây là cách hiển thị: dữ liệu vẫn ở nguyên đường dẫn, không xóa receipt, database hoặc credential.
+Mở thư mục repository bằng VS Code/Cursor: `BE/` chứa backend, `FE/` chứa frontend. Workspace settings ẩn dependency, output, runtime và secrets; đã tắt file nesting để cây thư mục hiển thị bình thường. Report/evidence và dữ liệu local vẫn được giữ nguyên.
 
 ## Thứ tự mở source
 
 | Phần trình bày | Đường dẫn                                                            | Nội dung                                                                |
 | -------------- | -------------------------------------------------------------------- | ----------------------------------------------------------------------- |
 | Tổng quan      | [README](../README.md), [cấu trúc](19-repository-structure.md)       | Stack, phạm vi và ranh giới ứng dụng                                    |
-| API / worker   | [API](../apps/api/src), [worker](../apps/worker/src)                 | Bootstrap, composition và scheduler                                     |
-| Nghiệp vụ      | [Modules](../libs/modules)                                           | Chọn orders/tickets/ai; đi từ HTTP → application → persistence/adapters |
-| Database       | [Migrations](../database/migrations)                                 | Constraint, version, transaction và dữ liệu seed                        |
-| Frontend       | [Web](../apps/web/src)                                               | app, features và shared                                                 |
-| Kiểm thử       | [Tests](../tests), [harness](../harness)                             | Unit/integration/browser; receipt có SHA và gate rõ ràng                |
+| API / worker   | [API](../BE/api/src), [worker](../BE/worker/src)                     | Bootstrap, composition và scheduler                                     |
+| Nghiệp vụ      | [Modules](../BE/modules)                                             | Chọn orders/tickets/ai; đi từ HTTP → application → persistence/adapters |
+| Database       | [Migrations](../BE/database/migrations)                              | Constraint, version, transaction và dữ liệu seed                        |
+| Frontend       | [Web](../FE/src)                                                     | app, features và shared                                                 |
+| Kiểm thử       | [Tests](../BE/tests), [harness](../harness)                          | Unit/integration/browser; receipt có SHA và gate rõ ràng                |
 | Triển khai     | [Deploy](../deploy), [CI/CD](../.github/workflows)                   | Containers, Nginx, release/backup và workflow                           |
 | Minh chứng     | [Release đã kiểm chứng](evidence/2026-10-29-structure-production.md) | Phạm vi PASS, retry Gemini và giới hạn của lần chạy 29/10               |
 

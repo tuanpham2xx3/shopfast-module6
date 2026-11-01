@@ -50,11 +50,9 @@ const combined = JSON.parse(
 );
 const restore = manifest.receipts.find((r) => r.caseId === "GATE-s3-restore");
 const paths = [
-  "apps",
-  "libs",
-  "database",
+  "BE",
+  "FE",
   "deploy",
-  "tests",
   "package.json",
   "package-lock.json",
   "tsconfig.json",

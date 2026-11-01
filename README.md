@@ -2,6 +2,13 @@
 
 ShopFast là bài Defense Case Study Module 6: backend thương mại điện tử bằng NestJS/PostgreSQL, bổ sung Gemini AI Agent, realtime order tracking, rate limiting, Redis cache, BullMQ background jobs và UI web tối thiểu để demo.
 
+## Hai phần source
+
+- [BE — Backend](BE/README.md): API, worker, modules, platform, database, tests và scripts.
+- [FE — Frontend](FE/README.md): React app, route, features, shared và public assets.
+
+`docs/`, `deploy/`, `harness/`, `tools/` và CI/config dùng chung ở gốc. Cài dependency và chạy các lệnh `npm run ...` từ gốc repository; chưa cần tách hai bộ cài đặt riêng.
+
 ## Trạng thái
 
 Ứng dụng chạy tại <https://shopfast.tuanpq.com>, gồm auth, catalog/kho/đơn, BullMQ jobs/invoice PDF, Socket.IO, cache/fallback, rate limit, ticket/support và Gemini với human confirmation. Đã có smoke provider thật, CI/CD và các phép đo hiệu năng/restore theo từng SHA. [Chỉ mục evidence](docs/evidence/harness-evidence-index.md) ghi phạm vi đã kiểm chứng; [plan hoàn tất SRS](docs/16-srs-completion-plan.md) giữ các gate chưa đạt. Chưa tuyên bố toàn bộ SRS hoàn tất.
@@ -54,7 +61,7 @@ npm run dev:worker
 npm run dev:web
 ```
 
-Với runtime portable của dự án, chạy `powershell -File scripts/local-postgres.ps1 start` và `powershell -File scripts/local-memurai.ps1 start` trước. Helpers dùng port trong `.env`, chỉ bind loopback; Memurai lưu data riêng theo port. Nếu dùng service native đã cài riêng, cấu hình URL tương ứng và không cần helpers portable. `SHOPFAST_RUNTIME_DIR` cho phép worktree trỏ tới runtime native đã có, không commit binary/data/credential.
+Với runtime portable của dự án, chạy `powershell -File BE/scripts/local-postgres.ps1 start` và `powershell -File BE/scripts/local-memurai.ps1 start` trước. Helpers dùng port trong `.env`, chỉ bind loopback; Memurai lưu data riêng theo port. Nếu dùng service native đã cài riêng, cấu hình URL tương ứng và không cần helpers portable. `SHOPFAST_RUNTIME_DIR` cho phép worktree trỏ tới runtime native đã có, không commit binary/data/credential.
 
 - API: `http://127.0.0.1:3000/api/v1/health/live`
 - Readiness: `http://127.0.0.1:3000/api/v1/health/ready` (503 nếu DB lỗi; Redis lỗi trả degraded).
@@ -67,7 +74,7 @@ Với runtime portable của dự án, chạy `powershell -File scripts/local-po
 
 `npm run check` chạy format/lint/typecheck/unit/HTTP contract/build. Integration yêu cầu `TEST_DATABASE_URL` và `TEST_REDIS_URL` riêng rồi chạy `npm run test:integration`; test tạo schema/key/queue riêng và dọn sau khi chạy, không dùng FLUSHDB.
 
-Runtime portable, dữ liệu local và credential nằm trong `tools/.runtime`/file ignored; đường dẫn trên máy agent không phải điều kiện cho một máy mới. Cách quản lý PostgreSQL portable: `powershell -File scripts/local-postgres.ps1 start` hoặc `stop`. Memurai phải chạy native và bind loopback; xem [tooling](docs/11-development-tooling.md). Cùng integration suite đã được chạy với Memurai API7 và Redis7Linux; kết quả giữ endpoint/config của từng lần.
+Runtime portable, dữ liệu local và credential nằm trong `tools/.runtime`/file ignored; đường dẫn trên máy agent không phải điều kiện cho một máy mới. Cách quản lý PostgreSQL portable: `powershell -File BE/scripts/local-postgres.ps1 start` hoặc `stop`. Memurai phải chạy native và bind loopback; xem [tooling](docs/11-development-tooling.md). Cùng integration suite đã được chạy với Memurai API7 và Redis7Linux; kết quả giữ endpoint/config của từng lần.
 
 [Nguồn public và lịch sử CI](https://github.com/tuanpham2xx3/shopfast-module6), [harness guide](docs/17-harness-guide.md) và [kịch bản nghiệm thu](docs/18-defense-walkthrough.md) là các điểm bắt đầu để kiểm tra bản bàn giao. Tài liệu evidence theo mốc cũ chỉ là lịch sử, không tự đại diện release mới.
 
