@@ -105,12 +105,12 @@ switch (profile) {
     await command("FORMAT", [
       "node_modules/prettier/bin/prettier.cjs",
       "--check",
-      "{apps,libs,database,tests,scripts}/**/*.{ts,tsx,js,json}",
+      "{BE/api,BE/worker,BE/modules,BE/platform,database,tests,BE/scripts}/**/*.{ts,tsx,js,json}",
       "*.{json,js}",
     ]);
     await command("LINT", [
       "node_modules/eslint/bin/eslint.js",
-      "{apps,libs,database,tests,scripts}/**/*.{ts,tsx}",
+      "{BE/api,BE/worker,BE/modules,BE/platform,database,tests,BE/scripts}/**/*.{ts,tsx}",
     ]);
     await command("TYPECHECK", ["node_modules/typescript/bin/tsc", "--noEmit"]);
     await command("UNIT", ["node_modules/jest/bin/jest.js", "--runInBand"]);
@@ -133,12 +133,12 @@ switch (profile) {
     await command("TYPECHECK-WEB", [
       "node_modules/typescript/bin/tsc",
       "--build",
-      "apps/web/tsconfig.json",
+      "FE/tsconfig.json",
     ]);
     await command("BUILD-WEB", [
       "node_modules/vite/bin/vite.js",
       "build",
-      "apps/web",
+      "FE",
     ]);
     if (required(["TEST_DATABASE_URL", "TEST_REDIS_URL"], "INTEGRATION"))
       await command("INTEGRATION-COVERAGE", [
@@ -171,7 +171,10 @@ switch (profile) {
       )
         await command(
           "AI-01",
-          ["node_modules/ts-node/dist/bin.js", "scripts/gemini-agent-smoke.ts"],
+          [
+            "node_modules/ts-node/dist/bin.js",
+            "BE/scripts/gemini-agent-smoke.ts",
+          ],
           {
             ...process.env,
             GEMINI_AGENT_REPORT_PATH: `${directory}/gemini-agent.json`,
@@ -180,7 +183,7 @@ switch (profile) {
       if (required(["RESEND_API_KEY", "EMAIL_TEST_TO"], "JOB-EMAIL"))
         await command(
           "JOB-EMAIL",
-          ["node_modules/ts-node/dist/bin.js", "scripts/resend-smoke.ts"],
+          ["node_modules/ts-node/dist/bin.js", "BE/scripts/resend-smoke.ts"],
           {
             ...process.env,
             RESEND_SMOKE_REPORT_PATH: `${directory}/resend.json`,
@@ -194,7 +197,7 @@ switch (profile) {
       )
         await command("JOB-EMAIL-CRASH", [
           "node_modules/ts-node/dist/bin.js",
-          "scripts/resend-crash-smoke.ts",
+          "BE/scripts/resend-crash-smoke.ts",
         ]);
     }
     break;

@@ -67,7 +67,7 @@ worker="shopfast-worker-$sha"
 old_worker=$(docker ps --format '{{.Names}}' | grep '^shopfast-worker-' | head -n1 || true)
 if [ "$old_worker" != "$worker" ]; then
   [ -z "$old_worker" ] || docker stop --time 60 "$old_worker" >/dev/null
-  if ! (docker inspect "$worker" >/dev/null 2>&1 && docker start "$worker" >/dev/null || docker run -d --name "$worker" --network shopfast_default --env-file app.env --restart unless-stopped --memory 768m "$app" node dist/apps/worker/src/main.js); then
+  if ! (docker inspect "$worker" >/dev/null 2>&1 && docker start "$worker" >/dev/null || docker run -d --name "$worker" --network shopfast_default --env-file app.env --restart unless-stopped --memory 768m "$app" node dist/BE/worker/src/main.js); then
     [ -z "$old_worker" ] || docker start "$old_worker" >/dev/null
     rollback; exit 1
   fi

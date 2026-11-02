@@ -20,7 +20,7 @@ worker="shopfast-worker-$sha"
 printf 'release\\t%s\\n' "$sha"
 printf 'running\\t'; docker inspect -f '{{.State.Running}}' "$worker"
 printf 'command\\t'; docker inspect -f '{{json .Config.Cmd}}' "$worker"
-printf 'compiled\\t'; docker exec "$worker" node -e 'const W=require("/app/dist/apps/worker/src/foundation-worker.js").FoundationWorker; const J=require("/app/dist/libs/modules/jobs/src/application/jobs.service.js").JobsService; const R=require("/app/dist/libs/modules/jobs/src/persistence/jobs.repository.js").JobsRepository; const init=W.prototype.onModuleInit.toString(), tick=W.prototype.tick.toString(), catchup=J.prototype.catchUp.toString()+Object.getOwnPropertyNames(R.prototype).filter(n=>n.startsWith("catchUp")).map(n=>R.prototype[n].toString()).join(""); console.log(JSON.stringify({timer:init.includes("setInterval")&&init.includes("250"),catchUpPolling:tick.includes("catchUp")&&tick.includes("15000"),reminder30Minutes:catchup.includes("1800000")&&catchup.includes("payment.remind"),bangkokDaily:catchup.includes("Asia/Bangkok")&&catchup.includes("revenue.daily")&&catchup.includes("generate_series")}))'
+printf 'compiled\\t'; docker exec "$worker" node -e 'const W=require("/app/dist/BE/worker/src/foundation-worker.js").FoundationWorker; const J=require("/app/dist/BE/modules/jobs/src/application/jobs.service.js").JobsService; const R=require("/app/dist/BE/modules/jobs/src/persistence/jobs.repository.js").JobsRepository; const init=W.prototype.onModuleInit.toString(), tick=W.prototype.tick.toString(), catchup=J.prototype.catchUp.toString()+Object.getOwnPropertyNames(R.prototype).filter(n=>n.startsWith("catchUp")).map(n=>R.prototype[n].toString()).join(""); console.log(JSON.stringify({timer:init.includes("setInterval")&&init.includes("250"),catchUpPolling:tick.includes("catchUp")&&tick.includes("15000"),reminder30Minutes:catchup.includes("1800000")&&catchup.includes("payment.remind"),bangkokDaily:catchup.includes("Asia/Bangkok")&&catchup.includes("revenue.daily")&&catchup.includes("generate_series")}))'
 `;
 const remote = spawnSync(
   "ssh",
@@ -72,7 +72,7 @@ const assertions = [
       remote.status === 0 &&
       values.release === context.commit &&
       values.running === "true" &&
-      command?.includes("dist/apps/worker/src/main.js") &&
+      command?.includes("dist/BE/worker/src/main.js") &&
       compiled &&
       Object.values(compiled).every((v) => v === true),
   },

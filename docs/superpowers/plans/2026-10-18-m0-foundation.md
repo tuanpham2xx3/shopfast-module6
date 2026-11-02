@@ -30,7 +30,7 @@
 
 ### Task 1: Runnable workspace and HTTP contract
 
-**Files:** root workspace config; `apps/api/**`; `apps/worker/**`; `apps/web/**`; `libs/platform/src/config/**`; API contract tests.
+**Files:** root workspace config; `BE/api/**`; `BE/worker/**`; `FE/**`; `BE/platform/src/config/**`; API contract tests.
 
 **Interfaces:** Produces `createApiApp()`, validated `AppEnvironment`, `/health/live`, `/health/ready`, request ID middleware, and global error envelope.
 
@@ -41,7 +41,7 @@
 
 ### Task 2: PostgreSQL foundation
 
-**Files:** `libs/platform/src/database/**`; `database/migrations/**`; `database/seeds/**`; integration tests and doctor scripts.
+**Files:** `BE/platform/src/database/**`; `BE/database/migrations/**`; `BE/database/seeds/**`; integration tests and doctor scripts.
 
 **Interfaces:** Produces a TypeORM data source, repeatable migration command, initial outbox/job tables, small development seed, and PostgreSQL readiness probe.
 
@@ -52,7 +52,7 @@
 
 ### Task 3: Redis, queue, and transactional outbox slice
 
-**Files:** `libs/platform/src/redis/**`; `libs/platform/src/queue/**`; `libs/platform/src/outbox/**`; worker handlers; contract/integration tests.
+**Files:** `BE/platform/src/redis/**`; `BE/platform/src/queue/**`; `BE/platform/src/outbox/**`; worker handlers; contract/integration tests.
 
 **Interfaces:** Produces Redis and BullMQ connectivity probes, delayed/retry smoke, outbox leasing publisher, idempotent fake adapters, and worker health.
 

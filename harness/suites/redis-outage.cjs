@@ -2,13 +2,13 @@ const fs = require("fs");
 const Redis = require("ioredis");
 const {
   createDataSource,
-} = require("/app/dist-tools/libs/platform/src/database/data-source.js");
+} = require("/app/dist-tools/BE/platform/src/database/data-source.js");
 const {
   CatalogService,
-} = require("/app/dist-tools/libs/modules/catalog/src/application/catalog.service.js");
+} = require("/app/dist-tools/BE/modules/catalog/src/application/catalog.service.js");
 const {
   CatalogCache,
-} = require("/app/dist-tools/libs/modules/runtime/src/catalog-cache.js");
+} = require("/app/dist-tools/BE/modules/runtime/src/catalog-cache.js");
 const schema = process.env.DATABASE_SCHEMA;
 if (!/^harness_recovery_[0-9]+$/.test(schema || ""))
   throw new Error("Isolated schema required");

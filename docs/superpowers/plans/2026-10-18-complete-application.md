@@ -4,9 +4,9 @@ User directive: implement all remaining application features now; defer live Red
 
 ## Work packages
 
-1. Jobs and operations: typed outbox routing, leased/idempotent processing, fake development adapters explicitly labeled, invoice PDF and authorized download, reminder/expiry/revenue catch-up, failed-job archive/retry and queue health. Own `libs/modules/jobs`, migration 1780000500000, worker adapter and focused tests.
-2. Tickets and Gemini: ticket/message/claim/state/ownership; provider adapter with backend-only key, bounded tool loop and grounded outputs, real DB tools, classification; immutable expiring proposal/confirmation transaction, dedup. Own `libs/modules/tickets`, `libs/modules/ai`, migration 1780000600000 and focused tests.
-3. Runtime: cache with targeted invalidation/race protection/fallback; atomic sensitive and general limiters, login target-account protection. Own `libs/modules/runtime`, migration 1780000700000 and focused tests.
+1. Jobs and operations: typed outbox routing, leased/idempotent processing, fake development adapters explicitly labeled, invoice PDF and authorized download, reminder/expiry/revenue catch-up, failed-job archive/retry and queue health. Own `BE/modules/jobs`, migration 1780000500000, worker adapter and focused tests.
+2. Tickets and Gemini: ticket/message/claim/state/ownership; provider adapter with backend-only key, bounded tool loop and grounded outputs, real DB tools, classification; immutable expiring proposal/confirmation transaction, dedup. Own `BE/modules/tickets`, `BE/modules/ai`, migration 1780000600000 and focused tests.
+3. Runtime: cache with targeted invalidation/race protection/fallback; atomic sensitive and general limiters, login target-account protection. Own `BE/modules/runtime`, migration 1780000700000 and focused tests.
 4. Integration: connect modules to API, config, migrations and worker; authenticated realtime order subscription, reconnect/resync UI; admin catalog/promotions/operations and ticket/support/AI screens; complete cart/order UX.
 5. Verification/review: format/lint/typecheck/build, native PostgreSQL and deterministic provider tests, browser flows, independent security/invariant review. Add explicit live-test commands and NOT_RUN evidence for Redis/Gemini/email/performance; never label these passing without execution.
 

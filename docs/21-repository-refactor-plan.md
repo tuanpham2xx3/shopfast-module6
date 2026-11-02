@@ -1,6 +1,6 @@
 # 21 — Kế hoạch chuẩn hóa cấu trúc và phân tầng
 
-Ngày lập: 29/10/2026. Trạng thái: **R0–R5 đã triển khai và kiểm tra local/VPS config; R6 đang review/CI/deploy**.
+Ngày lập: 29/10/2026. Trạng thái: **R0–R6 hoàn tất và deploy release `ffcb599` — [nghiệm thu](evidence/2026-10-29-structure-production.md)**.
 
 ## Mục tiêu và baseline
 
@@ -40,10 +40,10 @@ libs/
     adapters/                  tích hợp ngoài nếu feature có sử dụng
     <feature>.module.ts        wiring NestJS
   platform/src/               config, DB, outbox, health dùng chung
-database/
+BE/database/
   migrations/                  giữ nguyên tên và thứ tự migration
   seeds/
-tests/
+BE/tests/
   unit/                      theo module/use case
   integration/               PostgreSQL/Redis/provider adapter
   contract/                  HTTP và quyền
@@ -54,7 +54,7 @@ harness/
   suites/                    staging, provider, resilience, performance...
   collectors/                browser, host, cloud, artifact collectors
   registries/                requirements và acceptance mapping
-  tests/                     self-test harness
+  BE/tests/                     self-test harness
   run.mjs                    CLI công khai ổn định
 deploy/
   containers/                Dockerfile, Compose
@@ -64,7 +64,7 @@ deploy/
   release/                   deploy, migration, seed, rollback
   backup/                    backup và restore
   checks/                    remote performance/resilience rehearsal
-scripts/                     entrypoint dev và smoke provider
+BE/scripts/                     entrypoint dev và smoke provider
 tools/                       tooling phát triển, không runtime sản phẩm
 docs/                        giữ spec, runbook, evidence và link hiện tại
 .github/workflows/
@@ -125,4 +125,4 @@ Nếu đợt lỗi: dừng ở branch/PR đó, sửa hoặc revert commit đợt
 - [x] R3 frontend theo feature — [evidence và screenshot](evidence/2026-10-29-structure-r3-web.md).
 - [x] R4 harness — [evidence](evidence/2026-10-29-structure-r4-r5.md).
 - [x] R5 deploy source/config — [evidence](evidence/2026-10-29-structure-r4-r5.md); production rehearsal ở R6.
-- [ ] R6 kiểm chứng và bàn giao.
+- [x] R6 kiểm chứng và bàn giao — [CI, production smoke, continuity/rollback và S3 restore](evidence/2026-10-29-structure-production.md).

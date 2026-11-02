@@ -6,6 +6,10 @@ Nguồn yêu cầu: `../Module 06 – Software Requirement Specification (SRS).d
 
 ## Cách đọc
 
+Chuẩn bị trình bày: [cây thư mục gọn và thứ tự mở source](22-project-tour.md).
+
+Đọc sâu trước buổi nói: [hướng dẫn đọc dự án, luồng code và Q&A](23-huong-dan-doc-du-an.md).
+
 1. [Đặc tả sản phẩm và nghiệp vụ](01-product-spec.md).
 2. [Mô hình dữ liệu và ranh giới module](02-data-architecture.md).
 3. [Hợp đồng HTTP API](03-api-contract.md).
@@ -39,7 +43,7 @@ Nguồn yêu cầu: `../Module 06 – Software Requirement Specification (SRS).d
 
 ## Đối chiếu gần nhất
 
-- [Plan chuẩn hóa cấu trúc và phân tầng](21-repository-refactor-plan.md): source R0–R5 đã triển khai; R6 theo dõi review, CI và release verification.
+- [Plan chuẩn hóa cấu trúc và phân tầng](21-repository-refactor-plan.md): R0–R6 hoàn tất, [release và evidence](evidence/2026-10-29-structure-production.md) theo SHA `ffcb599`.
 
 - [Bàn giao và trạng thái nghiệm thu hiện tại](20-delivery-status.md).
 

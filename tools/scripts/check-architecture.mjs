@@ -89,22 +89,24 @@ async function inspect(folder) {
           )
         )
           violations.push(`${file}: configure Google provider in composition`);
-        const inBackend = /^(libs|apps\/(api|worker))\//.test(file);
+        const inBackend = /^BE\//.test(file);
         const message =
           file.includes("/persistence/") &&
           /\/(application|http|composition)\//.test(target)
             ? "persistence cannot depend on application, HTTP or composition"
-            : file.startsWith("libs/") &&
-                /^(apps|tests|scripts|harness|tools)\//.test(target)
+            : (file.startsWith("BE/modules/") ||
+                  file.startsWith("BE/platform/")) &&
+                /^(FE|BE\/(api|worker|tests|scripts)|harness|tools)\//.test(
+                  target,
+                )
               ? "libraries cannot depend on application composition, tests or tooling"
-              : file.startsWith("libs/platform/") &&
-                  (target.startsWith("libs/modules/") ||
+              : file.startsWith("BE/platform/") &&
+                  (target.startsWith("BE/modules/") ||
                     spec.startsWith("@shopfast/modules"))
                 ? "platform cannot depend on business modules"
-                : file.startsWith("apps/web/") &&
-                    /^(libs|apps\/(api|worker)|database)\//.test(target)
+                : file.startsWith("FE/") && /^BE\//.test(target)
                   ? "browser cannot import backend implementation"
-                  : inBackend && target.startsWith("apps/web/")
+                  : inBackend && target.startsWith("FE/")
                     ? "backend cannot import browser implementation"
                     : null;
         if (message) violations.push(`${file}: ${spec}: ${message}`);
@@ -114,8 +116,8 @@ async function inspect(folder) {
     visit(source);
   }
 }
-await inspect("apps");
-await inspect("libs");
+await inspect("BE");
+await inspect("FE");
 const visiting = new Set(),
   visited = new Set();
 function visitDependencies(file, chain = []) {
@@ -133,16 +135,14 @@ function visitDependencies(file, chain = []) {
   visited.add(file);
 }
 for (const file of graph.keys()) visitDependencies(file);
-for (const feature of await readdir(resolve(root, "libs/modules"), {
+for (const feature of await readdir(resolve(root, "BE/modules"), {
   withFileTypes: true,
 })) {
   if (!feature.isDirectory()) continue;
-  for (const item of await readdir(
-    resolve(root, "libs/modules", feature.name),
-  )) {
+  for (const item of await readdir(resolve(root, "BE/modules", feature.name))) {
     if (item.endsWith(".ts"))
       violations.push(
-        `libs/modules/${feature.name}/${item}: source belongs in src/`,
+        `BE/modules/${feature.name}/${item}: source belongs in src/`,
       );
   }
 }

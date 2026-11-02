@@ -97,16 +97,16 @@ Deadlock/serialization retry tối đa 2 lần cho transaction chưa commit vớ
 ## 6. Tổ chức source dự kiến
 
 ```text
-apps/api/             bootstrap HTTP + realtime
-apps/worker/          bootstrap jobs + outbox + schedules
-apps/web/             customer/staff UI
-libs/modules/         auth, catalog, inventory, cart, orders, promotions, tickets, ai
-libs/platform/        database, redis, cache, queue, logging, metrics
-libs/contracts/       DTO/schema/event types chia sẻ, không chứa secret
-database/migrations/
-database/seeds/
-tests/integration/
-tests/e2e/
+BE/api/             bootstrap HTTP + realtime
+BE/worker/          bootstrap jobs + outbox + schedules
+FE/             customer/staff UI
+BE/modules/         auth, catalog, inventory, cart, orders, promotions, tickets, ai
+BE/platform/        database, redis, cache, queue, logging, metrics
+BE/modules/*/src/*.contracts.ts  Type/error contract theo module, không chứa secret
+BE/database/migrations/
+BE/database/seeds/
+BE/tests/integration/
+BE/tests/e2e/
 docs/evidence/
 ```
 

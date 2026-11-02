@@ -4,7 +4,7 @@ const { randomUUID } = require("crypto");
 const jwt = require("jsonwebtoken");
 const {
   createDataSource,
-} = require("/app/dist-tools/libs/platform/src/database/data-source.js");
+} = require("/app/dist-tools/BE/platform/src/database/data-source.js");
 const { io } = require("socket.io-client");
 const mode = process.argv[2];
 const schema = process.env.DATABASE_SCHEMA;

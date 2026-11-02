@@ -33,10 +33,10 @@ Ngày28/10/2026. Yêu cầu: làm giao diện đẹp, đầy đủ hơn và tả
 
 ## Ảnh và font
 
-- [Manifest ảnh local](../apps/web/public/images/products/sources.json), [trang credit](../apps/web/public/images/products/credits.html).
+- [Manifest ảnh local](../FE/public/images/products/sources.json), [trang credit](../FE/public/images/products/credits.html).
 - Tai nghe và micro: ảnh Evan-Amos, public domain. Loa: Pittigrilli, CC BY-SA4.0; credit và license link đi kèm.
 - Ảnh dùng minh họa demo, không khẳng định model/nhãn hiệu trong ảnh là sản phẩm đang bán.
-- [Font license](../apps/web/public/licenses/be-vietnam-pro-OFL.txt), [Fontsource Be Vietnam Pro](https://fontsource.org/fonts/be-vietnam-pro/install).
+- [Font license](../FE/public/licenses/be-vietnam-pro-OFL.txt), [Fontsource Be Vietnam Pro](https://fontsource.org/fonts/be-vietnam-pro/install).
 
 ## Kiểm tra và evidence
 

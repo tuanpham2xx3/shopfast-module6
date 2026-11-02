@@ -58,8 +58,8 @@ for (const target of targets) {
       "jest.integration.config.js",
       "--runInBand",
       "--runTestsByPath",
-      "tests/integration/redis.integration.spec.ts",
-      "tests/integration/cache-redis.integration.spec.ts",
+      "BE/tests/integration/redis.integration.spec.ts",
+      "BE/tests/integration/cache-redis.integration.spec.ts",
     ];
     const result = await runCommand(process.execPath, command, {
       env: { ...process.env, TEST_REDIS_URL: target.url },

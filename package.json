@@ -3,19 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "workspaces": [
-    "apps/*"
+    "FE"
   ],
   "engines": {
     "node": ">=20.18.1 <23"
   },
   "scripts": {
-    "smoke:api": "node scripts/smoke-api.mjs",
-    "smoke:gemini": "ts-node scripts/gemini-smoke.ts",
-    "smoke:gemini-agent": "ts-node scripts/gemini-agent-smoke.ts",
-    "dev:doctor": "ts-node scripts/dev-doctor.ts",
+    "smoke:api": "node BE/scripts/smoke-api.mjs",
+    "smoke:gemini": "ts-node BE/scripts/gemini-smoke.ts",
+    "smoke:gemini-agent": "ts-node BE/scripts/gemini-agent-smoke.ts",
+    "dev:doctor": "ts-node BE/scripts/dev-doctor.ts",
     "check": "npm run format:check && npm run architecture:check && npm run lint && npm run typecheck && npm test && npm run build",
-    "db:migrate": "ts-node database/migrate.ts",
-    "db:seed": "ts-node database/seeds/development.ts",
+    "db:migrate": "ts-node BE/database/migrate.ts",
+    "db:seed": "ts-node BE/database/seeds/development.ts",
     "test:integration": "jest --config jest.integration.config.js --runInBand",
     "test:coverage": "jest --config jest.business.config.js --runInBand",
     "test:e2e": "playwright test",
@@ -26,15 +26,15 @@
     "dev:api": "nest start api --watch",
     "dev:worker": "nest start worker --watch",
     "dev:web": "npm run dev --workspace @shopfast/web",
-    "format": "prettier --write \"{apps,libs,database,tests,scripts}/**/*.{ts,tsx,js,json}\" \"*.{json,js}\"",
-    "format:check": "prettier --check \"{apps,libs,database,tests,scripts}/**/*.{ts,tsx,js,json}\" \"*.{json,js}\"",
-    "lint": "eslint \"{apps,libs,database,tests,scripts}/**/*.{ts,tsx}\"",
+    "format": "prettier --write \"{BE,FE}/**/*.{ts,tsx,js,json}\" \"*.{json,js}\"",
+    "format:check": "prettier --check \"{BE,FE}/**/*.{ts,tsx,js,json}\" \"*.{json,js}\"",
+    "lint": "eslint \"{BE,FE}/**/*.{ts,tsx}\"",
     "test": "jest --runInBand",
     "test:unit": "jest --runInBand --testPathIgnorePatterns=contract",
     "test:contract": "jest --runInBand --testPathPattern=contract",
     "typecheck": "tsc --noEmit",
-    "start:api": "node dist/apps/api/src/main.js",
-    "start:worker": "node dist/apps/worker/src/main.js",
+    "start:api": "node dist/BE/api/src/main.js",
+    "start:worker": "node dist/BE/worker/src/main.js",
     "harness:preflight": "node harness/run.mjs preflight",
     "harness:ci": "node harness/run.mjs ci",
     "harness:staging": "node harness/run.mjs staging",
@@ -55,7 +55,7 @@
     "harness:platform-cases": "node harness/suites/platform-cases.mjs",
     "harness:derive": "node harness/derive.mjs",
     "harness:check": "prettier --ignore-path .gitignore --check \"harness/**/*.{mjs,cjs,json}\" && node harness/check-source.mjs",
-    "architecture:check": "node --test tools/scripts/check-architecture.test.mjs && node tools/scripts/check-architecture.mjs"
+    "architecture:check": "node --test tools/scripts/check-architecture.test.mjs tools/scripts/check-start-paths.test.mjs && node tools/scripts/check-architecture.mjs"
   },
   "dependencies": {
     "@nestjs/common": "10.4.22",

@@ -24,7 +24,7 @@ Trạng thái 18/10/2026: đang triển khai trên `feat/m0-foundation`; xem [ev
 
 - Tạo branch triển khai riêng; không làm trực tiếp trên `main` của repository cha.
 - Tạo workspace theo file 02, config validation, error envelope, requestId và OpenAPI.
-- PostgreSQL 16 native trên Windows và Memurai native tương thích Redis API v7; chỉ bind loopback, dùng database/user riêng cho ShopFast và không mở firewall ra mạng ngoài.
+- PostgreSQL 16 native trên Windows và Memurai native tương thích Redis API v7; chỉ bind loopback, dùng BE/database/user riêng cho ShopFast và không mở firewall ra mạng ngoài.
 - Script `dev:doctor` kiểm tra version/connectivity; contract smoke kiểm tra Redis commands, Lua, Pub/Sub và BullMQ delayed/retry trước khi phụ thuộc vào Memurai.
 - Migration runner, seed nhỏ cho dev, test harness PostgreSQL/Redis và cleanup độc lập.
 - Outbox table, publisher/worker skeleton và fake adapters cho email/storage/partner để M1 có thể gửi job.

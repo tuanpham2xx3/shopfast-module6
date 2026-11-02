@@ -29,7 +29,7 @@ function probe(files, expected) {
 test("rejects database calls in HTTP", () =>
   probe(
     {
-      "libs/modules/catalog/src/http/__architecture_probe__.ts":
+      "BE/modules/catalog/src/http/__architecture_probe__.ts":
         "export const run = (db: {query: () => void}) => db.query();",
     },
     /HTTP adapters cannot query databases/,
@@ -37,7 +37,7 @@ test("rejects database calls in HTTP", () =>
 test("rejects direct SQL in application", () =>
   probe(
     {
-      "libs/modules/catalog/src/application/__architecture_probe__.ts":
+      "BE/modules/catalog/src/application/__architecture_probe__.ts":
         "export const run = (db: {query: () => void}) => db.query();",
     },
     /application must use persistence adapters/,
@@ -45,7 +45,7 @@ test("rejects direct SQL in application", () =>
 test("rejects persistence depending on application", () =>
   probe(
     {
-      "libs/modules/catalog/src/persistence/__architecture_probe__.ts":
+      "BE/modules/catalog/src/persistence/__architecture_probe__.ts":
         'import { CatalogService } from "../application/catalog.service"; export {CatalogService};',
     },
     /persistence cannot depend/,
@@ -53,7 +53,7 @@ test("rejects persistence depending on application", () =>
 test("rejects provider construction dependency in application", () =>
   probe(
     {
-      "libs/modules/catalog/src/application/__architecture_probe__.ts":
+      "BE/modules/catalog/src/application/__architecture_probe__.ts":
         'import { GoogleGeminiProvider } from "../../../ai/src/adapters/gemini.provider"; export { GoogleGeminiProvider };',
     },
     /configure Google provider in composition/,
@@ -61,15 +61,15 @@ test("rejects provider construction dependency in application", () =>
 test("rejects dependency cycles", () =>
   probe(
     {
-      "apps/web/src/app/__architecture_probe_a.ts":
+      "FE/src/app/__architecture_probe_a.ts":
         'import "./__architecture_probe_b"; export const a = 1;',
-      "apps/web/src/app/__architecture_probe_b.ts":
+      "FE/src/app/__architecture_probe_b.ts":
         'import "./__architecture_probe_a"; export const b = 1;',
     },
     /dependency cycle/,
   ));
 test("accepts application depending on its contracts", () =>
   probe({
-    "libs/modules/catalog/src/application/__architecture_probe__.ts":
+    "BE/modules/catalog/src/application/__architecture_probe__.ts":
       'import { CatalogError } from "../catalog.contracts"; export {CatalogError};',
   }));

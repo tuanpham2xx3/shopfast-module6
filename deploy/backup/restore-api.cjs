@@ -6,7 +6,7 @@ if (process.argv[2] === "server") {
   const database = new URL(process.env.DATABASE_URL);
   database.pathname = "/" + fixture;
   process.env.DATABASE_URL = database.href;
-  require("/app/dist/apps/api/src/main.js");
+  require("/app/dist/BE/api/src/main.js");
 } else {
   const values = Object.fromEntries(
     fs

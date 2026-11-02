@@ -1,41 +1,28 @@
 # 19 — Cấu trúc repository và ranh giới phụ thuộc
 
-Bố cục dưới đây mô tả source sau các đợt R1–R5 của [plan chuẩn hóa](21-repository-refactor-plan.md). Nghiệm thu release theo R6 và evidence, không suy cấu trúc thư mục thành all-SRS PASS.
+Source hiện được gom vật lý thành BE/FE, giữ ranh giới nghiệp vụ sau các đợt R1–R5 của [plan chuẩn hóa](21-repository-refactor-plan.md). Nghiệm thu release theo R6 và evidence, không suy cấu trúc thư mục thành all-SRS PASS.
 
 ## Bố cục
 
 ```text
-apps/
-  api/src/             HTTP, bootstrap, composition của API
-  worker/src/          Composition, scheduler và vòng đời worker
-  web/src/
-    main.tsx           Mount React
-    app/               App, routing và navigation
-    features/          Auth/account/catalog/cart/orders/tickets/admin
-    shared/            API client, presentation và global styles
-libs/
-  modules/<feature>/src/
-    http/              Controller, DTO, guard/interceptor nếu có
-    application/       Use case, quyền nghiệp vụ và transaction orchestration
-    persistence/       SQL, query builder và mapping dữ liệu
-    composition/       Runtime provider, khởi tạo adapter và lifecycle
-    adapters/          Gemini, email, PDF hoặc gateway tùy module
-    *.contracts.ts     Type/error contract dùng chung trong module
-    *.module.ts        Nest wiring
-  platform/src/          Config, DB, outbox, health dùng chung
-database/              Migration và seed có kiểm soát
-tests/                 Unit, integration, contract, runtime, browser
-deploy/                containers/nginx/aws/host/release/backup/checks
-harness/               run.mjs và CLI ổn định tại gốc
-  core/                Context, gate, receipt, artifact verification
-  suites/              Cases và các profile kiểm chứng
-  collectors/          Browser, host, cloud và evidence collectors
-  registries/          Requirement, acceptance và gate mappings
-  tests/               Self-test của harness
-scripts/               Entrypoint phát triển và smoke provider
-tools/                 Công cụ phát triển, không thuộc runtime sản phẩm
-docs/                  Spec, quyết định, runbook, bàn giao và evidence
-.github/workflows/     Required checks, build và deploy
+BE/
+  api/                 HTTP bootstrap và composition
+  worker/              Worker, scheduler và outbox processing
+  modules/             HTTP/application/persistence/composition/adapters theo feature
+  platform/            Config, database, health và outbox dùng chung
+  database/            Migration và seed
+  tests/               Unit, contract, integration, runtime và browser
+  scripts/             Native services, doctor và smoke helpers
+FE/
+  src/app/             App, routing và navigation
+  src/features/        Các màn hình theo nghiệp vụ
+  src/shared/          API client, presentation và styles
+  public/              Asset và license
+docs/                  Spec, hướng dẫn và evidence
+deploy/                Containers, Nginx, AWS, host, release, backup, checks
+harness/               Core, suites, collectors, registries và self-tests
+tools/                 Công cụ phát triển/native runtime (ignored)
+.github/workflows/     CI/CD
 ```
 
 `dist`, `coverage`, `test-results`, `harness/reports`, `tools/.runtime` là kết quả sinh ra và được ignore. `.env` và `.secrets` chỉ chứa cấu hình/credential cục bộ, không phải nơi đặt source sản phẩm. Không di chuyển evidence lịch sử để đổi tên đường dẫn đã được hash; bundle giữ nguyên nội dung lần thực thi gốc.
@@ -44,7 +31,7 @@ docs/                  Spec, quyết định, runbook, bàn giao và evidence
 
 API/worker là composition root. Thư viện không import ứng dụng, test, harness hoặc công cụ. Platform không import nghiệp vụ; nghiệp vụ dùng platform. Browser không import implementation backend hoặc database. Chia module theo chức năng auth/catalog/orders/tickets/ai/jobs/runtime/realtime/operations, không tạo thư mục `utils` chung để gom mọi trách nhiệm.
 
-Scheduler phối hợp jobs/retention/outbox và quản lý tiến trình worker nằm tại `apps/worker/src/foundation-worker.ts`; đặt nó trong platform sẽ tạo phụ thuộc ngược từ platform sang nghiệp vụ. Service nghiệp vụ vẫn dùng transaction và quyền tại server; việc sắp xếp thư mục không đổi API, schema hoặc idempotency key.
+Scheduler phối hợp jobs/retention/outbox và quản lý tiến trình worker nằm tại `BE/worker/src/foundation-worker.ts`; đặt nó trong platform sẽ tạo phụ thuộc ngược từ platform sang nghiệp vụ. Service nghiệp vụ vẫn dùng transaction và quyền tại server; việc sắp xếp thư mục không đổi API, schema hoặc idempotency key.
 
 `npm run architecture:check` chạy sáu negative/positive fixture rồi dùng TypeScript AST kiểm import/export, literal require/dynamic import và dependency vòng trong apps/libs. Check chặn query tại HTTP/application, persistence import ngược và application tự phụ thuộc Google provider implementation. Rule không thay thế review transaction; import tính toán không được xem là đã phân tích đầy đủ. Runtime cache/limiter là hạ tầng nội bộ, không phải module nghiệp vụ mới.
 

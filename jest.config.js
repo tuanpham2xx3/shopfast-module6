@@ -13,13 +13,14 @@ module.exports = {
   testRegex: ".*\\.spec\\.ts$",
   transform: { "^.+\\.(t|j)s$": ["ts-jest", { tsconfig: "tsconfig.json" }] },
   collectCoverageFrom: [
-    "apps/api/**/*.ts",
-    "apps/worker/**/*.ts",
-    "libs/**/*.ts",
+    "BE/api/**/*.ts",
+    "BE/worker/**/*.ts",
+    "BE/modules/**/*.ts",
+    "BE/platform/**/*.ts",
   ],
   coverageDirectory: "coverage",
   testEnvironment: "node",
   moduleNameMapper: {
-    "^@shopfast/platform/(.*)$": "<rootDir>/libs/platform/src/$1",
+    "^@shopfast/platform/(.*)$": "<rootDir>/BE/platform/src/$1",
   },
 };

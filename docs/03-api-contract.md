@@ -120,6 +120,11 @@ Response checkout: id, code, status, paymentStatus, subtotal, discount, total, e
 | POST /staff/ai-proposals/:id/confirm     | Proposal actor/Admin   | confirm=true, expectedVersion → kết quả thay đổi ticket                                    |
 | POST /staff/ai-proposals/:id/reject      | Proposal actor/Admin   | reject → trạng thái REJECTED                                                               |
 
+Đề xuất trùng nhãn hiện tại không được tạo; assistant trả `status=OK`,
+`proposal=null` và thông báo không cần đổi nhãn từ dữ liệu DB. Confirm proposal
+cũ trùng nhãn trả HTTP 409 `CATEGORY_UNCHANGED` sau kiểm tra quyền/version,
+không cập nhật ticket. Confirm proposal đã EXECUTED vẫn replay kết quả cũ.
+
 AI contract đầy đủ ở file 05. clientMessageId unique theo session để tránh lặp lượt khi UI retry. Confirm có transaction và dedup theo proposal ID; admin vẫn phải có quyền ticket hiện tại.
 
 ## 6. Operations
