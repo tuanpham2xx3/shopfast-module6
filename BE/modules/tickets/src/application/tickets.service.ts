@@ -133,8 +133,17 @@ export class TicketsService {
     const [r] = await this.repository.detailTicketMessagesSelect2(this.source, [
       id,
     ]);
+    const [linkedOrder] = t.orderId
+      ? await this.repository.orderOrdersSelect(
+          this.source.manager,
+          [t.customerId, t.orderId],
+          false,
+          false,
+        )
+      : [];
     return {
       ...t,
+      orderCode: linkedOrder?.orderCode ?? null,
       messages: { items: messages, page, pageSize, total: r.total },
     };
   }

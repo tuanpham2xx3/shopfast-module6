@@ -50,6 +50,7 @@ async function fixture(page: Page, expireOnCreate = false) {
       }
       created = {
         ...body,
+        orderCode: body.orderId ? "SF20261102DEMO01" : null,
         id: ticketId,
         status: "OPEN",
         category: "OTHER",
@@ -83,6 +84,9 @@ test("creates an unlinked ticket with trimmed fields and no empty order UUID", a
     .fill("  Tôi cần tư vấn trước khi đặt hàng.  ");
   await page.getByRole("button", { name: "Gửi yêu cầu", exact: true }).click();
   await expect(page).toHaveURL(new RegExp(`/tickets/${ticketId}$`));
+  await expect(
+    page.getByText("Chưa liên kết đơn hàng", { exact: true }),
+  ).toBeVisible();
   expect(f.submitted).toHaveLength(1);
   expect(f.submitted[0]!.body).toEqual({
     subject: "Hỗ trợ mua hàng",
@@ -113,6 +117,9 @@ test("shows the customer's order code, submits its UUID, and restores an expired
   expect(f.submitted[1]!.body).toEqual(f.submitted[0]!.body);
   expect(f.submitted[1]!.authorization).toBe("Bearer renewed-token");
   expect(f.refreshes()).toBe(2);
+  await expect(page.getByText("Đơn liên quan:")).toContainText(
+    "SF20261102DEMO01",
+  );
   await expect(
     page.getByRole("heading", { name: "Kiểm tra giao hàng", exact: true }),
   ).toBeVisible();
