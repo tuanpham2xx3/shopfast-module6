@@ -1,5 +1,7 @@
 # 18 — Kịch bản bàn giao và bảo vệ ShopFast
 
+Bản lời thoại chi tiết cập nhật 02/11/2026: [kịch bản nói và demo 10 phút](defense/10-minute-script.md).
+
 Ngày: 28/10/2026 (Asia/Bangkok). Đây là kịch bản diễn tập, chưa phải bằng chứng người dùng đã diễn tập hoặc đạt Q&A. Không đánh PASS gate bảo vệ chỉ vì tài liệu này tồn tại.
 
 ## Mở đúng bằng chứng

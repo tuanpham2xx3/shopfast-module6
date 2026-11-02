@@ -12,6 +12,7 @@ type OrderLookup = {
   updatedAt: string;
   version: number;
 };
+type CustomerOrder = { id: string; code: string; status: string };
 type Ticket = {
   id: string;
   subject: string;
@@ -81,7 +82,43 @@ export function Tickets({
   const [statusFilter, setStatusFilter] = useState("");
   const [lookup, setLookup] = useState<OrderLookup | null>(null);
   const [creating, setCreating] = useState(false);
+  const [customerOrders, setCustomerOrders] = useState<CustomerOrder[]>([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
+  const [ordersError, setOrdersError] = useState("");
   const prefix = staff ? "/staff/tickets" : "/tickets";
+  useEffect(() => {
+    if (!creating || staff) return;
+    let active = true;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 10000);
+    setOrdersLoading(true);
+    setOrdersError("");
+    api<{ items: CustomerOrder[] }>(
+      "/orders?page=1&pageSize=100",
+      { signal: controller.signal },
+      token,
+    )
+      .then((result) => {
+        if (active) setCustomerOrders(result.items);
+      })
+      .catch(() => {
+        if (active) {
+          setCustomerOrders([]);
+          setOrdersError(
+            "Chưa tải được danh sách đơn hàng. Bạn vẫn có thể gửi yêu cầu không liên kết đơn.",
+          );
+        }
+      })
+      .finally(() => {
+        clearTimeout(timer);
+        if (active) setOrdersLoading(false);
+      });
+    return () => {
+      active = false;
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [creating, staff, api, token]);
   useEffect(() => {
     setTicket(null);
     setError("");
@@ -164,8 +201,23 @@ export function Tickets({
   async function create(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
-    const data = Object.fromEntries(new FormData(form));
-    if (!data.orderId) delete data.orderId;
+    const fields = new FormData(form);
+    const subject = String(fields.get("subject") ?? "").trim();
+    const body = String(fields.get("body") ?? "").trim();
+    const orderId = String(fields.get("orderId") ?? "").trim();
+    if (subject.length < 5 || subject.length > 150) {
+      setError(
+        "Tiêu đề cần có từ 5 đến 150 ký tự, không tính khoảng trắng đầu và cuối.",
+      );
+      return;
+    }
+    if (!body || body.length > 4000) {
+      setError(
+        "Nội dung cần có từ 1 đến 4000 ký tự, không chỉ gồm khoảng trắng.",
+      );
+      return;
+    }
+    const data = { subject, body, ...(orderId ? { orderId } : {}) };
     const created = (await mutate("/tickets", data)) as Ticket | null;
     if (created) {
       form.reset();
@@ -245,10 +297,26 @@ export function Tickets({
             <textarea name="body" minLength={1} maxLength={4000} required />
           </label>
           <label>
-            ID đơn liên quan (tùy chọn)
-            <input name="orderId" />
+            Đơn hàng liên quan (tùy chọn)
+            <select name="orderId" disabled={ordersLoading} defaultValue="">
+              <option value="">
+                {ordersLoading
+                  ? "Đang tải đơn hàng…"
+                  : "Không liên kết đơn hàng"}
+              </option>
+              {customerOrders.map((order) => (
+                <option key={order.id} value={order.id}>
+                  {order.code} · {displayLabel(order.status)}
+                </option>
+              ))}
+            </select>
           </label>
-          <button disabled={busy}>Gửi yêu cầu</button>
+          <p className="muted">
+            Chọn trong tối đa 100 đơn gần nhất của bạn. Có thể để trống nếu yêu
+            cầu không liên quan đến đơn hàng.
+          </p>
+          {ordersError && <p role="status">{ordersError}</p>}
+          <button disabled={busy || ordersLoading}>Gửi yêu cầu</button>
           <button
             type="button"
             className="switch"

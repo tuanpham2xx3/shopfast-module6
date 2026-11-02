@@ -6,6 +6,10 @@ Nguồn yêu cầu: `../Module 06 – Software Requirement Specification (SRS).d
 
 ## Cách đọc
 
+Thuyết trình: [kịch bản nói và demo 10 phút](defense/10-minute-script.md).
+
+Bảo vệ quyết định: [học và tự kiểm theo rubric](defense/technical-decisions-qa.md).
+
 Chuẩn bị trình bày: [cây thư mục gọn và thứ tự mở source](22-project-tour.md).
 
 Đọc sâu trước buổi nói: [hướng dẫn đọc dự án, luồng code và Q&A](23-huong-dan-doc-du-an.md).
