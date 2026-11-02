@@ -148,6 +148,43 @@ describe("tickets and AI ownership/confirmation integration", () => {
     );
     expect((await tickets.detail(customer, t.id)).messages.total).toBe(1);
   });
+  it("returns current DB order evidence despite malformed model final JSON", async () => {
+    const t = await assigned();
+    const code = `GROUND-${randomUUID().slice(0, 8)}`;
+    await source.query(
+      `INSERT INTO "${schema}".orders(id,code,customer_id,status,payment_status,subtotal,discount,total,address_snapshot,expires_at) VALUES($1,$2,$3,'CONFIRMED','PAID',100,0,100,'{}',now()+interval '1 hour')`,
+      [randomUUID(), code, customer.id],
+    );
+    const fake = new Fake([
+      [
+        {
+          functionCall: { name: "get_order_status", args: { orderCode: code } },
+        },
+      ],
+      [{ text: "{answer:delivered,status:OK,claims:[]}" }],
+    ]);
+    const ai = new AiService(tickets, fake);
+    const s = await ai.createSession(support, t.id);
+    const key = randomUUID();
+    const result = await ai.message(support, s.sessionId, "Check order", key);
+    expect(result).toMatchObject({
+      status: "OK",
+      evidence: [
+        {
+          tool: "get_order_status",
+          resourceId: code,
+          resultSummary: { status: "CONFIRMED", paymentStatus: "PAID" },
+        },
+      ],
+    });
+    expect(result.answer).toContain("CONFIRMED");
+    expect(result.answer).not.toContain("delivered");
+    expect(await ai.message(support, s.sessionId, "Check order", key)).toEqual(
+      result,
+    );
+    expect(fake.calls).toBe(2);
+    expect((await tickets.detail(customer, t.id)).messages.total).toBe(0);
+  });
   it("hides customer ownership and serializes competing claims", async () => {
     const t = await tickets.create(customer, {
       subject: "Order support",
