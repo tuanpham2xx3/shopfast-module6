@@ -1,4 +1,9 @@
-// Fictional demo variants; the existing licensed photos illustrate each family.
+// Fictional demo variants with a distinct, attributed product photo per SKU.
+const imageBySku = new Map(
+  require("../../FE/public/images/products/catalog-v2/sources.json").map(
+    (entry) => [entry.sku, `catalog-v2/${entry.file}`],
+  ),
+);
 const groups = [
   {
     key: "HP",
@@ -92,7 +97,9 @@ const products = groups.flatMap((g, family) =>
     description: `Sản phẩm dữ liệu mẫu ${g.category.toLowerCase()} ${name} để thử mua hàng, lọc và phân trang trong ShopFast. Ảnh minh họa dòng sản phẩm; đây không phải thông số hàng thương mại thực.`,
     categorySlug: g.slug,
     brandSlug: brands[(index + family) % brands.length].slug,
-    image: g.image,
+    image: imageBySku.get(
+      `SF-DEMO-${g.key}-${String(index + 1).padStart(2, "0")}`,
+    ),
     price: g.prices[index],
     stock: index % 7 === 5 ? 0 : 12 + ((index * 7 + family * 11) % 70),
   })),
