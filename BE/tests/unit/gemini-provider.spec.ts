@@ -5,29 +5,27 @@
 } from "../../modules/ai/src/adapters/gemini.provider";
 describe("Gemini provider boundaries", () => {
   it("requires a tool decision, including clarification and scope refusal, for assistant turns", async () => {
-    const transport = jest
-      .spyOn(globalThis, "fetch")
-      .mockResolvedValue(
-        new Response(
-          JSON.stringify({
-            candidates: [
-              {
-                content: {
-                  parts: [
-                    {
-                      functionCall: {
-                        name: "request_more_information",
-                        args: {},
-                      },
+    const transport = jest.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          candidates: [
+            {
+              content: {
+                parts: [
+                  {
+                    functionCall: {
+                      name: "request_more_information",
+                      args: {},
                     },
-                  ],
-                },
+                  },
+                ],
               },
-            ],
-          }),
-          { status: 200 },
-        ),
-      );
+            },
+          ],
+        }),
+        { status: 200 },
+      ),
+    );
     try {
       await new GoogleGeminiProvider(
         "synthetic-test-key",
