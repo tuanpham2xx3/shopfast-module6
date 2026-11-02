@@ -1,5 +1,10 @@
 # 06 — UI web và luồng sử dụng
 
+Chi tiết ticket hiển thị mã đơn liên quan (`orderCode`) lấy từ API sau kiểm tra
+quyền xem ticket và ownership đơn. Không liên kết thì hiện “Chưa liên kết đơn
+hàng”; có liên kết nhưng không đọc được mã thì báo “Chưa tra được mã đơn liên
+quan”, không suy đoán mã từ nội dung. Không mở rộng quyền xem/sửa đơn.
+
 UI phục vụ hoàn thành nghiệp vụ và minh họa tính năng; không xây landing page hoặc trang tính năng không hoạt động. React/TypeScript, responsive desktop/mobile, nhãn tiếng Việt, format tiền VND và giờ Asia/Bangkok.
 
 ## 1. Bản đồ màn hình

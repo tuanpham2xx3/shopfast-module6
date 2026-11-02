@@ -15,6 +15,8 @@ type OrderLookup = {
 type CustomerOrder = { id: string; code: string; status: string };
 type Ticket = {
   id: string;
+  orderId?: string | null;
+  orderCode?: string | null;
   subject: string;
   body: string;
   status: string;
@@ -390,6 +392,17 @@ export function Tickets({
             </button>
             <h2>{ticket.subject}</h2>
             <p>{ticket.body}</p>
+            <p>
+              {ticket.orderCode ? (
+                <>
+                  Đơn liên quan: <strong>{ticket.orderCode}</strong>
+                </>
+              ) : ticket.orderId ? (
+                "Chưa tra được mã đơn liên quan"
+              ) : (
+                "Chưa liên kết đơn hàng"
+              )}
+            </p>
             <p>
               {displayLabel(ticket.status)} · {displayLabel(ticket.category)}
             </p>

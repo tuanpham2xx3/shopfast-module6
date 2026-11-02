@@ -116,6 +116,11 @@ describe("customer ticket creation HTTP contract", () => {
       .send({ ...body, orderId: ownOrder })
       .expect(201);
     expect(created.body.data.orderId).toBe(ownOrder);
+    const detail = await request(app.getHttpServer())
+      .get(`/api/v1/tickets/${created.body.data.id}`)
+      .set("Authorization", `Bearer ${access}`)
+      .expect(200);
+    expect(detail.body.data.orderCode).toBe("SF-TICKET-OWN");
   });
   it("accepts an omitted optional order and still rejects a foreign or blank UUID", async () => {
     const created = await request(app.getHttpServer())
@@ -124,6 +129,11 @@ describe("customer ticket creation HTTP contract", () => {
       .send(body)
       .expect(201);
     expect(created.body.data.orderId).toBeNull();
+    const detail = await request(app.getHttpServer())
+      .get(`/api/v1/tickets/${created.body.data.id}`)
+      .set("Authorization", `Bearer ${access}`)
+      .expect(200);
+    expect(detail.body.data.orderCode).toBeNull();
     await request(app.getHttpServer())
       .post("/api/v1/tickets")
       .set("Authorization", `Bearer ${access}`)
