@@ -1,5 +1,7 @@
 # Bộ trình bày bảo vệ
 
+- [Giải thích quyết định kỹ thuật theo rubric và câu hỏi sự cố](technical-decisions-qa.md).
+
 Bản thiết kế lại 02/11/2026: 10 slide theo mạch **bài toán → luồng sản phẩm → giải pháp → demo AI → kiến trúc → kiểm chứng → kết quả**. Font và ảnh đóng gói tại chỗ; mở được offline.
 
 - [Kịch bản nói và thao tác đủ khung 10 phút](10-minute-script.md): lời thoại theo từng slide, câu hỏi Gemini để copy, tab evidence và phương án khi demo chậm.
