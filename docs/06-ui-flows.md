@@ -1,5 +1,10 @@
 # 06 — UI web và luồng sử dụng
 
+Danh sách ticket tự tải nền mỗi 10 giây khi tab hiển thị và khi người dùng quay
+lại tab. Giữ nguyên bộ lọc, trang, ticket đang mở và bản nháp trả lời; không tải
+lại document. Không gửi request chồng nhau; dữ liệu giống nhau giữ nguyên state.
+Đây là polling danh sách, không phải socket hay tự ghi đè chi tiết đang chỉnh.
+
 Chi tiết ticket hiển thị mã đơn liên quan (`orderCode`) lấy từ API sau kiểm tra
 quyền xem ticket và ownership đơn. Không liên kết thì hiện “Chưa liên kết đơn
 hàng”; có liên kết nhưng không đọc được mã thì báo “Chưa tra được mã đơn liên
