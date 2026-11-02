@@ -39,6 +39,23 @@ interface Evidence {
   observedAt: string;
   resultSummary: Record<string, unknown>;
 }
+function orderSummary(code: string, result: Record<string, unknown>) {
+  const orderStates: Record<string, string> = {
+    PENDING_PAYMENT: "đang chờ thanh toán",
+    CONFIRMED: "đã được xác nhận",
+    PROCESSING: "đang được chuẩn bị",
+    SHIPPING: "đang được giao",
+    DELIVERED: "đã giao hàng",
+    CANCELLED: "đã bị hủy",
+    EXPIRED: "đã hết hạn thanh toán",
+  };
+  const paymentStates: Record<string, string> = {
+    UNPAID: "chưa thanh toán",
+    PAID: "đã thanh toán",
+    REFUNDED: "đã được hoàn tiền",
+  };
+  return `Đơn ${code} ${orderStates[String(result.status)] ?? "chưa xác định trạng thái giao hàng"} và ${paymentStates[String(result.paymentStatus)] ?? "chưa xác định trạng thái thanh toán"}.`;
+}
 interface Session {
   id: string;
   ticketId: string;
@@ -295,7 +312,7 @@ export class AiService {
                 ? evidence
                     .map((e) =>
                       e.tool === "get_order_status"
-                        ? `Đơn ${e.resourceId}: ${e.resultSummary.status}; thanh toán ${e.resultSummary.paymentStatus}; phiên bản ${e.resultSummary.version}.`
+                        ? orderSummary(e.resourceId, e.resultSummary)
                         : `SKU ${e.resourceId}: khả dụng ${e.resultSummary.available}; đang bán ${e.resultSummary.active}; phiên bản tồn ${e.resultSummary.inventoryVersion}. Tồn tại thời điểm tra cứu không phải giữ hàng.`,
                     )
                     .join("\n")
@@ -390,7 +407,7 @@ export class AiService {
         ? evidence
             .map((e) =>
               e.tool === "get_order_status"
-                ? `Đơn ${e.resourceId}: ${e.resultSummary.status}; thanh toán ${e.resultSummary.paymentStatus}; phiên bản ${e.resultSummary.version}.`
+                ? orderSummary(e.resourceId, e.resultSummary)
                 : `SKU ${e.resourceId}: khả dụng ${e.resultSummary.available}; đang bán ${e.resultSummary.active}; phiên bản tồn ${e.resultSummary.inventoryVersion}. Tồn tại thời điểm tra cứu không phải giữ hàng.`,
             )
             .join("\n")

@@ -177,7 +177,8 @@ describe("tickets and AI ownership/confirmation integration", () => {
         },
       ],
     });
-    expect(result.answer).toContain("CONFIRMED");
+    expect(result.answer).toContain("đã được xác nhận và đã thanh toán");
+    expect(result.answer).not.toMatch(/CONFIRMED|PAID|phiên bản/);
     expect(result.answer).not.toContain("delivered");
     expect(await ai.message(support, s.sessionId, "Check order", key)).toEqual(
       result,
