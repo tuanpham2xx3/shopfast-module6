@@ -18,7 +18,7 @@ function sql(query) {
     [
       "-i",
       ".secrets/shopfast-ec2.pem",
-      "ubuntu@3.27.169.177",
+      process.env.SHOPFAST_SSH_TARGET || "ubuntu@15.135.168.32",
       "cd /opt/shopfast && sudo docker compose -f compose.infra.yml exec -T postgres psql -U shopfast -d shopfast -At",
     ],
     { input: query, encoding: "utf8" },
@@ -252,11 +252,13 @@ try {
       method: "POST",
       role: "customer",
       body: {
-        subject: "Harness order support",
-        body: "Kiểm tra đơn giao thành công giúp tôi.",
+        subject: `Kiểm tra giao hàng đơn ${order.code}`,
+        body: `Tôi đã nhận đơn ${order.code}, sản phẩm SKU ${product.sku}. Nhờ ShopFast xác nhận lại trạng thái giao hàng và thanh toán của đơn này.`,
+        orderId: order.id,
       },
     })
   ).data;
+  assert.equal(ticket.orderId, order.id);
   const claimed = (
     await request(`/staff/tickets/${ticket.id}/claim`, {
       method: "POST",
@@ -268,11 +270,11 @@ try {
   await request(`/staff/tickets/${ticket.id}/messages`, {
     method: "POST",
     role: "support",
-    body: { body: "ShopFast đã tiếp nhận yêu cầu kiểm tra." },
+    body: { body: `ShopFast đã tiếp nhận yêu cầu kiểm tra đơn ${order.code}.` },
   });
   checks.push("TKT-customer-support-claim-reply");
   let session, clientMessageId, answer;
-  const message = `Tra cứu trạng thái đơn ${order.code} và tồn kho SKU ${product.sku} bằng cả hai tool. Trả JSON đúng hợp đồng với claims cho cả hai resource.`;
+  const message = `Tra cứu trạng thái đơn ${order.code} và tồn kho SKU ${product.sku}. Hãy kiểm tra cả hai từ dữ liệu hiện tại.`;
   const beforeAi = (
     await request(`/tickets/${ticket.id}`, { role: "customer" })
   ).data;

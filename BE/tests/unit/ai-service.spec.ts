@@ -149,6 +149,57 @@ const answer = (claims: unknown[] = [], status = "OK") => [
   },
 ];
 describe("AI policy, grounding and human approval decisions", () => {
+  it.each([
+    ["DELIVERED", "PAID", "đã giao hàng và đã thanh toán"],
+    ["SHIPPING", "PAID", "đang được giao và đã thanh toán"],
+    ["PENDING_PAYMENT", "UNPAID", "đang chờ thanh toán và chưa thanh toán"],
+    ["CANCELLED", "REFUNDED", "đã bị hủy và đã được hoàn tiền"],
+  ])(
+    "renders Vietnamese order/payment wording for %s/%s without internal versions",
+    async (status, paymentStatus, expected) => {
+      const f = fixture([
+        [
+          {
+            functionCall: {
+              name: "get_order_status",
+              args: { orderCode: "OWN" },
+            },
+          },
+        ],
+      ]);
+      const original = f.query.getMockImplementation()!;
+      f.query.mockImplementation(async (sql, args = []) =>
+        sql.includes('FROM "public".orders')
+          ? [
+              {
+                orderCode: "OWN",
+                status,
+                paymentStatus,
+                version: 5,
+                updatedAt: new Date().toISOString(),
+              },
+            ]
+          : original(sql, args),
+      );
+      const r = await f.ai.message(
+        actor,
+        f.session.id,
+        "Kiểm tra đơn này",
+        randomUUID(),
+      );
+      expect(r.answer).toBe(`Đơn OWN ${expected}.`);
+      expect(r.answer).not.toMatch(/DELIVERED|PAID|UNPAID|REFUNDED|phiên bản/);
+      expect(r.evidence).toEqual([
+        expect.objectContaining({
+          resultSummary: expect.objectContaining({
+            status,
+            paymentStatus,
+            version: 5,
+          }),
+        }),
+      ]);
+    },
+  );
   it("asks for missing details for a vague support request without inventing facts", async () => {
     const f = fixture([
       [{ functionCall: { name: "request_more_information", args: {} } }],
