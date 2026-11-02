@@ -219,7 +219,11 @@ export class AiService {
         parts: [
           {
             text: JSON.stringify({
-              ticket: { subject: t.subject, body: t.body },
+              ticket: {
+                subject: t.subject,
+                body: t.body,
+                category: t.category,
+              },
               message,
             }),
           },
@@ -292,6 +296,7 @@ export class AiService {
         throw new TicketError("TOOL_LIMIT");
       contents.push({ role: "model", parts });
       const responses: Part[] = [];
+      let unchangedCategory: string | undefined;
       for (const p of functions) {
         if (Date.now() >= deadline) throw new TicketError("AI_DEADLINE");
         calls++;
@@ -306,7 +311,12 @@ export class AiService {
             evidence,
             deadline,
           );
-          if (call.name === "propose_ticket_category") proposal = result;
+          if (call.name === "propose_ticket_category") {
+            const outcome = result as { status?: string; category?: string };
+            if (outcome.status === "UNCHANGED")
+              unchangedCategory = outcome.category;
+            else proposal = result;
+          }
         } catch (e) {
           result = {
             error: e instanceof TicketError ? e.code : "TOOL_UNAVAILABLE",
@@ -321,6 +331,21 @@ export class AiService {
         });
       }
       contents.push({ role: "user", parts: responses });
+      if (
+        unchangedCategory &&
+        !proposal &&
+        !evidence.length &&
+        functions.every(
+          (p) => p.functionCall!.name === "propose_ticket_category",
+        )
+      )
+        return {
+          answer: `Ticket đang có nhãn ${unchangedCategory}. Không cần đổi nhãn.`,
+          status: "OK",
+          evidence: [],
+          toolResults: [],
+          proposal: null,
+        };
     }
     throw new TicketError("TOOL_LIMIT");
   }
@@ -383,6 +408,8 @@ export class AiService {
         const t = await this.tickets.ticket(s.ticketId, m, true);
         this.tickets.authorize(t, a, true);
         if (Date.now() >= deadline) throw new TicketError("AI_DEADLINE");
+        if (t.category === d.category)
+          return { status: "UNCHANGED", category: t.category };
         const [p] = await this.repository.toolAiProposalsInsert(m, [
           randomUUID(),
           s.id,
@@ -431,6 +458,8 @@ export class AiService {
       if (expectedVersion !== p.expected_version)
         throw new TicketError("VERSION_CONFLICT");
       this.tickets.version(t, p.expected_version);
+      if (t.category === p.payload.category)
+        throw new TicketError("CATEGORY_UNCHANGED");
       await this.repository.decideTicketsUpdate(m, [t.id, p.payload.category]);
       const result = await this.tickets.ticket(t.id, m);
       await this.tickets.audit(m, t, a, "AI_PROPOSAL_CONFIRMED", {

@@ -460,52 +460,57 @@ export function Tickets({
                         ))}
                       </ul>
                     </details>
-                    {answer.proposal && (
-                      <div className="proposal">
-                        <h4>Đề xuất đổi nhãn</h4>
-                        <p>
-                          {answer.proposal.payload.previousCategory} →{" "}
-                          {answer.proposal.payload.category}
-                        </p>
-                        <p>{answer.proposal.payload.reason}</p>
-                        <p>
-                          Hết hạn:{" "}
-                          {new Date(answer.proposal.expiresAt).toLocaleString(
-                            "vi-VN",
-                          )}
-                        </p>
-                        <button
-                          disabled={busy}
-                          onClick={async () => {
-                            const result = await mutate(
-                              `/staff/ai-proposals/${answer.proposal!.id}/confirm`,
-                              {
-                                confirm: true,
-                                expectedVersion:
-                                  answer.proposal!.expectedVersion,
-                              },
-                            );
-                            if (result)
+                    {answer.proposal &&
+                      answer.proposal.payload.previousCategory !==
+                        answer.proposal.payload.category && (
+                        <div className="proposal">
+                          <h4>Đề xuất đổi nhãn</h4>
+                          <p>
+                            {answer.proposal.payload.previousCategory} →{" "}
+                            {answer.proposal.payload.category}
+                          </p>
+                          <p>
+                            Lý do AI đề xuất (cần kiểm tra):{" "}
+                            {answer.proposal.payload.reason}
+                          </p>
+                          <p>
+                            Hết hạn:{" "}
+                            {new Date(answer.proposal.expiresAt).toLocaleString(
+                              "vi-VN",
+                            )}
+                          </p>
+                          <button
+                            disabled={busy}
+                            onClick={async () => {
+                              const result = await mutate(
+                                `/staff/ai-proposals/${answer.proposal!.id}/confirm`,
+                                {
+                                  confirm: true,
+                                  expectedVersion:
+                                    answer.proposal!.expectedVersion,
+                                },
+                              );
+                              if (result)
+                                setAnswer({ ...answer, proposal: null });
+                            }}
+                          >
+                            Xác nhận đổi nhãn
+                          </button>
+                          <button
+                            className="switch"
+                            disabled={busy}
+                            onClick={async () => {
+                              await mutate(
+                                `/staff/ai-proposals/${answer.proposal!.id}/reject`,
+                                {},
+                              );
                               setAnswer({ ...answer, proposal: null });
-                          }}
-                        >
-                          Xác nhận đổi nhãn
-                        </button>
-                        <button
-                          className="switch"
-                          disabled={busy}
-                          onClick={async () => {
-                            await mutate(
-                              `/staff/ai-proposals/${answer.proposal!.id}/reject`,
-                              {},
-                            );
-                            setAnswer({ ...answer, proposal: null });
-                          }}
-                        >
-                          Từ chối
-                        </button>
-                      </div>
-                    )}
+                            }}
+                          >
+                            Từ chối
+                          </button>
+                        </div>
+                      )}
                   </>
                 )}
                 <form

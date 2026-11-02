@@ -46,7 +46,8 @@ export const tools = [
   },
   {
     name: "propose_ticket_category",
-    description: "Propose category; HTTP human confirmation required",
+    description:
+      "Propose a category only when it differs from the current ticket category; HTTP human confirmation required. This labels the support ticket, never changes or proves an order status.",
     parameters: {
       type: "OBJECT",
       properties: {

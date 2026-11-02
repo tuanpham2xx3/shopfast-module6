@@ -62,10 +62,12 @@ V1 hỗ trợ text, không streaming để đơn giản hóa xác thực output.
 DEC v1 chỉ cho AI đề xuất `SET_TICKET_CATEGORY`; không cho AI hủy đơn, hoàn tiền hoặc sửa tồn.
 
 - Tool `propose_ticket_category {category, reason}` chỉ tạo proposal nội bộ, không sửa ticket. Lấy ticketId/actorId từ session, không nhận từ model.
+- Nếu nhãn đề xuất trùng nhãn hiện tại, kiểm tra dưới khóa ticket rồi trả kết quả `UNCHANGED`; không tạo proposal, không tăng version, không đổi classificationSource. Assistant trả lời từ nhãn DB rằng không cần đổi nhãn, không công bố lý do/phát biểu về đơn hàng do model suy đoán. UI không hiển thị thẻ đổi nhãn trùng từ dữ liệu cũ.
 - Proposal giữ immutable action/payload, expectedVersion ticket, TTL 10 phút và actor; UI hiện category cũ → mới, reason và nút Xác nhận/Từ chối.
 - Chỉ click xác nhận qua HTTP endpoint có JWT mới thực thi; câu “tôi đồng ý” trong chat không được coi là xác nhận.
 - Confirm kiểm tra proposal PENDING/chưa hết hạn, actor và quyền ticket còn hợp lệ, expectedVersion khớp. Khóa proposal và ticket, cập nhật nhãn HUMAN, audit, mark EXECUTED trong một transaction.
 - Version conflict trả 409, yêu cầu tạo đề xuất mới; hết hạn trả 409 PROPOSAL_EXPIRED. Confirm lặp trả kết quả cũ, không ghi lần hai. Reject không sửa dữ liệu nghiệp vụ.
+- Confirm proposal cũ có nhãn đích trùng nhãn hiện tại trả 409 `CATEGORY_UNCHANGED`, sau kiểm tra quyền/version; không ghi ticket hoặc audit xác nhận. Kết quả proposal đã thực thi vẫn được replay như trước.
 - Các lời yêu cầu ghi khác được giải thích là không được hỗ trợ trong phiên bản này; không tạo tool tự do.
 
 ## 6. Lỗi, giới hạn và quan sát

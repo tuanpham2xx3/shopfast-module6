@@ -149,6 +149,68 @@ const answer = (claims: unknown[] = [], status = "OK") => [
   },
 ];
 describe("AI policy, grounding and human approval decisions", () => {
+  it("skips a redundant category proposal without trusting model prose or changing the ticket", async () => {
+    const f = fixture([
+      [
+        {
+          functionCall: {
+            name: "propose_ticket_category",
+            args: {
+              category: "OTHER",
+              reason: "The order was delivered successfully",
+            },
+          },
+        },
+      ],
+    ]);
+    const key = randomUUID();
+    const result = await f.ai.message(actor, f.session.id, "Classify", key);
+    expect(result).toMatchObject({
+      status: "OK",
+      proposal: null,
+      evidence: [],
+    });
+    expect(result.answer).toContain("Không cần đổi nhãn");
+    expect(result.answer).not.toContain("delivered");
+    expect(f.proposal).toBeUndefined();
+    expect(f.ticket).toMatchObject({
+      category: "OTHER",
+      version: 1,
+      classificationSource: "AI",
+    });
+    expect(await f.ai.message(actor, f.session.id, "Classify", key)).toEqual(
+      result,
+    );
+    expect(f.provider.generate).toHaveBeenCalledTimes(1);
+  });
+  it("refuses to confirm a legacy proposal whose target is already the current label", async () => {
+    const f = fixture([
+      [
+        {
+          functionCall: {
+            name: "propose_ticket_category",
+            args: { category: "PAYMENT", reason: "Payment" },
+          },
+        },
+      ],
+      answer(),
+    ]);
+    const r = await f.ai.message(actor, f.session.id, "Classify", randomUUID());
+    const p = r.proposal as { id: string };
+    f.proposal!.payload = {
+      category: "OTHER",
+      previousCategory: "OTHER",
+      reason: "Legacy",
+    };
+    await expect(f.ai.decide(actor, p.id, true, 1)).rejects.toThrow(
+      "CATEGORY_UNCHANGED",
+    );
+    expect(f.ticket).toMatchObject({
+      category: "OTHER",
+      version: 1,
+      classificationSource: "AI",
+    });
+  });
   it("renders current tool facts instead of trusting model prose and replays a stored turn", async () => {
     const f = fixture([
       [

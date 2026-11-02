@@ -267,6 +267,57 @@ describe("tickets and AI ownership/confirmation integration", () => {
       ),
     ).rejects.toThrow("immutable proposal");
   });
+  it("does not persist same-category proposals or execute legacy same-category proposals", async () => {
+    const t = await assigned();
+    const fake = new Fake([
+      [
+        {
+          functionCall: {
+            name: "propose_ticket_category",
+            args: {
+              category: t.category,
+              reason: "Unverified delivery claim",
+            },
+          },
+        },
+      ],
+    ]);
+    const ai = new AiService(tickets, fake);
+    const s = await ai.createSession(support, t.id);
+    const key = randomUUID();
+    const result = await ai.message(support, s.sessionId, "Classify", key);
+    expect(result).toMatchObject({ status: "OK", proposal: null });
+    expect(result.answer).toContain("Không cần đổi nhãn");
+    expect(await ai.message(support, s.sessionId, "Classify", key)).toEqual(
+      result,
+    );
+    expect(fake.calls).toBe(1);
+    const [count] = await source.query(
+      `SELECT count(*)::int AS total FROM "${schema}".ai_proposals WHERE ticket_id=$1`,
+      [t.id],
+    );
+    expect(count.total).toBe(0);
+    const id = randomUUID();
+    await source.query(
+      `INSERT INTO "${schema}".ai_proposals(id,session_id,ticket_id,actor_id,action,payload,expected_version) VALUES($1,$2,$3,$4,'SET_TICKET_CATEGORY',$5,$6)`,
+      [
+        id,
+        s.sessionId,
+        t.id,
+        support.id,
+        JSON.stringify({
+          category: t.category,
+          previousCategory: t.category,
+          reason: "Legacy",
+        }),
+        t.version,
+      ],
+    );
+    await expect(ai.decide(support, id, true, t.version)).rejects.toThrow(
+      "CATEGORY_UNCHANGED",
+    );
+    expect(await tickets.ticket(t.id)).toEqual(t);
+  });
   it("rejects stale, expired and rejected proposals without changing label", async () => {
     const t = await assigned();
     const ai = new AiService(tickets, new Fake([]));
