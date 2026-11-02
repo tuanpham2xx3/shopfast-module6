@@ -2,6 +2,10 @@
 
 ## 1. Decision log
 
+### D32 — Trả kết quả ngay sau tool và hỏi lại yêu cầu mơ hồ
+
+Assistant chọn function bắt buộc, với hai quyết định chỉ đọc bổ sung: hỏi thêm thông tin và từ chối ngoài phạm vi. Sau round có dữ liệu DB/proposal hợp lệ, server trả kết quả từ dữ liệu đã xác thực ngay; không có lượt tổng hợp model tiếp theo. Mã không tìm thấy hoặc yêu cầu như “hỗ trợ tôi” trả NEEDS_INPUT, không dùng thông báo lỗi hạ tầng. Quyền, ownership, giới hạn tool và human confirmation giữ nguyên. D32 thay thế việc chờ lượt tổng hợp ở D31; dữ liệu hội thoại cũ không thay cho tool đọc mới.
+
 ### D31 — Kết quả tool không phụ thuộc JSON tổng hợp của model
 
 Sau khi tool đã kiểm quyền và đọc DB trong lượt hiện tại, lỗi JSON hoặc lỗi provider ở lượt tổng hợp không được làm mất kết quả đó. Backend dùng câu trả lời cố định từ evidence đã lọc hoặc proposal đang chờ xác nhận. Không áp dụng khi chưa có tool success, không sử dụng lời model để điền dữ liệu thiếu, không tự xác nhận proposal và không nới kiểm tra resource claims. Quyết định này xử lý lỗi production ngày 02/11/2026: tool inventory thành công nhưng JSON tổng hợp sai cú pháp khiến UI báo không khả dụng.

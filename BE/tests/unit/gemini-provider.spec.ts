@@ -4,6 +4,51 @@
   ProviderError,
 } from "../../modules/ai/src/adapters/gemini.provider";
 describe("Gemini provider boundaries", () => {
+  it("requires a tool decision, including clarification and scope refusal, for assistant turns", async () => {
+    const transport = jest
+      .spyOn(globalThis, "fetch")
+      .mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            candidates: [
+              {
+                content: {
+                  parts: [
+                    {
+                      functionCall: {
+                        name: "request_more_information",
+                        args: {},
+                      },
+                    },
+                  ],
+                },
+              },
+            ],
+          }),
+          { status: 200 },
+        ),
+      );
+    try {
+      await new GoogleGeminiProvider(
+        "synthetic-test-key",
+        "gemini-3.1-flash-lite",
+      ).generate({ contents: [], signal: new AbortController().signal });
+      const body = JSON.parse(String(transport.mock.calls[0]?.[1]?.body));
+      expect(body.toolConfig.functionCallingConfig.mode).toBe("ANY");
+      expect(
+        body.tools[0].functionDeclarations.map((x: { name: string }) => x.name),
+      ).toEqual(
+        expect.arrayContaining([
+          "get_order_status",
+          "check_inventory",
+          "request_more_information",
+          "respond_out_of_scope",
+        ]),
+      );
+    } finally {
+      transport.mockRestore();
+    }
+  });
   it("declares numeric confidence in the provider classification schema", async () => {
     const transport = jest.spyOn(globalThis, "fetch").mockResolvedValue(
       new Response(
