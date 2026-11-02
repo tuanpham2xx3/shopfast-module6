@@ -38,8 +38,43 @@ browser test verifies this recovery path for the create request.
   scoped source format check and documentation links also PASS.
 
 Browser regression uses routed API fixtures; HTTP contract checks use an isolated
-native PostgreSQL schema, dropped afterward. No production creation/acceptance is
-claimed here; that must be checked after deployment.
+native PostgreSQL schema, dropped afterward. These local checks do not constitute
+production acceptance; the separate post-deployment run is recorded below.
+
+## Production verification — 2026-11-02 16:30 ICT
+
+The older production release `378b747` was still serving the free-text order
+field when the user reported the persistent failure. A fresh authenticated API
+reproduction with the visible SF order code in `orderId` returned HTTP 400
+`BAD_REQUEST`. This identifies a reproducible failure path, not the user's exact
+unrecorded request.
+
+[PR #27](https://github.com/tuanpham2xx3/shopfast-module6/pull/27) passed
+[Application CI](https://github.com/tuanpham2xx3/shopfast-module6/actions/runs/41419848794)
+and Docs checks before merge. Production release
+`d4bb8f8fb7d42cc6ffda846c8b5cb2b620e9cf24` was deployed by
+[Release](https://github.com/tuanpham2xx3/shopfast-module6/actions/runs/41420794751).
+Its app image ID is
+`sha256:73234d860b92050a798087c8ebbac254880df6444e49581b9773908e8452680c`.
+CI log totals: **81 unit/contract**, **156 combined unit/integration** and
+**22 browser** cases passed; Linux runtime/web image builds also passed.
+
+A real Chromium session on `https://shopfast.tuanpq.com` logged in as the existing
+verified synthetic CUSTOMER, selected its own order by displayed code, submitted
+its UUID and received HTTP **201 Created**. The ticket detail heading rendered
+successfully. Synthetic ticket ID: `aa920ea7-c58e-4135-b21d-6f121b12efe9`.
+The request was explicitly labeled a test and did not modify a real customer's
+ticket. [Production screenshot](2026-11-02-ticket-production.png).
+
+This validates linked-order ticket creation for that deployed SHA. No claim is
+made that arbitrary invalid requests should return 201 or that the adjacent
+WAREHOUSE route mismatch was fixed.
+
+After the separate catalog-image release `6e305cb5602637f3a8dd854f45aa997ebe30de7a`,
+a second real Chromium check at 16:38 ICT created an **unlinked** synthetic
+customer ticket `47da5e83-e41c-4ed8-bf52-76525e6c6792`: the POST omitted orderId,
+returned **201**, and rendered the ticket detail. Both optional-link paths have
+therefore been exercised against production, on their explicitly recorded SHAs.
 
 ## Separate finding
 
