@@ -52,6 +52,8 @@ Xem đơn CONFIRMED → mở chi tiết → chọn PROCESSING → SHIPPING → D
 
 ## 4. CSKH và Gemini
 
+Customer tạo yêu cầu bằng tiêu đề/nội dung đã trim và chọn đơn liên quan từ tối đa 100 đơn gần nhất của chính mình. Dropdown hiển thị mã đơn và trạng thái, nhưng gửi UUID nội bộ; không yêu cầu khách nhập ID kỹ thuật. Bỏ trống thì không gửi `orderId`. Form báo rõ lỗi khoảng trắng trước khi POST và giữ dữ liệu khi lỗi. Nếu danh sách đơn chưa tải được, có thể gửi yêu cầu không liên kết đơn; không tự gán một đơn khác. Backend vẫn kiểm UUID/ownership. Access token hết hạn được refresh một lần; nếu refresh thất bại thì yêu cầu đăng nhập lại, không bỏ kiểm tra quyền.
+
 Ticket queue → claim → mở conversation → xem nhãn AI có badge nguồn AI/HUMAN và cần review → mở assistant.
 
 AI panel gồm prompt text, answer, evidence tool và thời điểm tra cứu. Lời giải đáp chỉ là bản nháp; nút “Dùng làm câu trả lời” điền vào composer để support kiểm tra và bấm gửi. Không tự gửi.
