@@ -146,22 +146,44 @@ export function Tickets({
   }, [api, token, prefix, routeId]);
   useEffect(() => {
     let active = true;
-    api<{ items: Ticket[]; total: number }>(
-      `${prefix}?page=${page}&pageSize=20${statusFilter ? `&status=${statusFilter}` : ""}`,
-      {},
-      token,
-    )
-      .then((r) => {
+    let loading = false;
+    const controller = new AbortController();
+    async function refresh(background = false) {
+      if (!active || loading || (background && document.hidden)) return;
+      loading = true;
+      try {
+        const r = await api<{ items: Ticket[]; total: number }>(
+          `${prefix}?page=${page}&pageSize=20${statusFilter ? `&status=${statusFilter}` : ""}`,
+          { signal: controller.signal },
+          token,
+        );
         if (active) {
-          setItems(r.items);
+          setItems((current) =>
+            JSON.stringify(current) === JSON.stringify(r.items)
+              ? current
+              : r.items,
+          );
           setTotal(r.total);
         }
-      })
-      .catch((e) => {
-        if (active) setError(e.message);
-      });
+      } catch (e) {
+        if (active && !background) setError((e as Error).message);
+      } finally {
+        loading = false;
+      }
+    }
+    void refresh();
+    const resync = () => {
+      void refresh(true);
+    };
+    const timer = setInterval(resync, 10000);
+    window.addEventListener("focus", resync);
+    document.addEventListener("visibilitychange", resync);
     return () => {
       active = false;
+      controller.abort();
+      clearInterval(timer);
+      window.removeEventListener("focus", resync);
+      document.removeEventListener("visibilitychange", resync);
     };
   }, [api, token, prefix, page, revision, statusFilter]);
   async function open(id: string) {
@@ -269,7 +291,7 @@ export function Tickets({
         <h1 className="workspace-title">
           {staff ? "Bàn hỗ trợ" : "Yêu cầu hỗ trợ"}
         </h1>
-        <span>{total} yêu cầu</span>
+        <span>{total} yêu cầu · Tự cập nhật mỗi 10 giây</span>
       </header>
       {error && (
         <p role="alert" className="message">
