@@ -247,7 +247,19 @@ export class AiService {
       while (contents.length > 12) contents.splice(0, 2);
       if (JSON.stringify(contents).length > 20000)
         throw new TicketError("CONTEXT_LIMIT");
-      const parts = await this.provider.generate(contents, deadline);
+      let parts: Part[];
+      try {
+        parts = await this.provider.generate(
+          contents,
+          deadline,
+          false,
+          evidence.length || proposal ? 1 : 2,
+        );
+      } catch (error) {
+        if (evidence.length || proposal)
+          return this.groundedResponse(evidence, proposal);
+        throw error;
+      }
       const functions = parts.filter((p) => p.functionCall);
       if (!functions.length) {
         const raw = parts
@@ -258,6 +270,8 @@ export class AiService {
         try {
           parsed = answerSchema.parse(JSON.parse(raw));
         } catch {
+          if (evidence.length || proposal)
+            return this.groundedResponse(evidence, proposal);
           throw new TicketError("UNGROUNDED_OUTPUT");
         }
         if (
@@ -348,6 +362,23 @@ export class AiService {
         };
     }
     throw new TicketError("TOOL_LIMIT");
+  }
+  private groundedResponse(evidence: Evidence[], proposal: unknown) {
+    return {
+      answer: evidence.length
+        ? evidence
+            .map((e) =>
+              e.tool === "get_order_status"
+                ? `Đơn ${e.resourceId}: ${e.resultSummary.status}; thanh toán ${e.resultSummary.paymentStatus}; phiên bản ${e.resultSummary.version}.`
+                : `SKU ${e.resourceId}: khả dụng ${e.resultSummary.available}; đang bán ${e.resultSummary.active}; phiên bản tồn ${e.resultSummary.inventoryVersion}. Tồn tại thời điểm tra cứu không phải giữ hàng.`,
+            )
+            .join("\n")
+        : "Đề xuất phân loại đã được tạo. Hãy kiểm tra và xác nhận bằng nút xác nhận.",
+      status: "OK",
+      evidence,
+      toolResults: evidence,
+      proposal,
+    };
   }
   private async tool(
     a: Actor,

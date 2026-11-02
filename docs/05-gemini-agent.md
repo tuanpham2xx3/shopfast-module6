@@ -39,6 +39,7 @@ Chỉ cập nhật kết quả AI nếu chưa có nhãn HUMAN hoặc classificat
 4. Dispatcher kiểm tra allowlist, JSON args và quyền thực tế, thực thi service rồi gửi function response lại model.
 5. Tối đa 4 vòng tool, 6 tool calls/lượt; tổng timeout 25 giây, mỗi provider call tối đa 12 giây; tool DB timeout 2 giây. Không cho chạy arbitrary SQL/code/URL.
 6. Trả answer và tool evidence đã lọc. Nếu Gemini phát biểu về đơn/tồn mà không có tool success tương ứng trong lượt hiện tại, backend không công bố câu trả lời đó; trả thông báo không thể xác minh và hướng dẫn tra thủ công.
+7. Nếu đã có tool DB thành công hoặc proposal hợp lệ nhưng lượt tổng hợp cuối của provider lỗi/sai JSON, trả bản tóm tắt cố định từ evidence/proposal server đã xác thực, không dùng prose model. Provider lỗi trước khi có dữ liệu vẫn trả UNAVAILABLE; claims hợp lệ về resource chưa đọc vẫn bị từ chối. Lượt tổng hợp sau tool chỉ gọi provider một lần để giữ ngân sách deadline.
 
 V1 hỗ trợ text, không streaming để đơn giản hóa xác thực output. Response `answer`, `evidence[] {tool, resourceId, observedAt, resultSummary}`, `proposal`, `status` (OK/OUT_OF_SCOPE/UNAVAILABLE). Không trả raw prompt hoặc dữ liệu tool chưa lọc cho UI.
 

@@ -2,6 +2,10 @@
 
 ## 1. Decision log
 
+### D31 — Kết quả tool không phụ thuộc JSON tổng hợp của model
+
+Sau khi tool đã kiểm quyền và đọc DB trong lượt hiện tại, lỗi JSON hoặc lỗi provider ở lượt tổng hợp không được làm mất kết quả đó. Backend dùng câu trả lời cố định từ evidence đã lọc hoặc proposal đang chờ xác nhận. Không áp dụng khi chưa có tool success, không sử dụng lời model để điền dữ liệu thiếu, không tự xác nhận proposal và không nới kiểm tra resource claims. Quyết định này xử lý lỗi production ngày 02/11/2026: tool inventory thành công nhưng JSON tổng hợp sai cú pháp khiến UI báo không khả dụng.
+
 ### D30 — Nhóm source thành BE và FE
 
 02/11/2026: theo yêu cầu người dùng, backend gom trong `BE/` (api, worker, modules, platform, database, tests, scripts), React trong `FE/`. Docs/deploy/harness/tools và cấu hình orchestration giữ tại gốc; npm workspace frontend là `FE`, dependency cài từ gốc. Source backend nằm trong `BE`, compiler root giữ ở gốc repository để Nest dev/start tìm đúng compiled entrypoint `dist/BE/api/src/main.js` và `dist/BE/worker/src/main.js`; consumer Docker/harness đã được sửa. Tắt Explorer file nesting để hiển thị folder bình thường. Không thay nghiệp vụ/API/schema và không tự deploy lần sắp xếp local này. Các chỉnh sửa Auth đã có trước task được giữ ngoài commit cơ học.

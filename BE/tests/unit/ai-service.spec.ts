@@ -149,6 +149,59 @@ const answer = (claims: unknown[] = [], status = "OK") => [
   },
 ];
 describe("AI policy, grounding and human approval decisions", () => {
+  it("keeps validated DB results when the model final JSON is malformed", async () => {
+    const f = fixture([
+      [{ functionCall: { name: "check_inventory", args: { sku: "SKU" } } }],
+      [{ text: "{answer:999,status:OK,claims:[]}" }],
+    ]);
+    const r = await f.ai.message(
+      actor,
+      f.session.id,
+      "Check stock",
+      randomUUID(),
+    );
+    expect(r).toMatchObject({ status: "OK", proposal: null });
+    expect(r.evidence).toHaveLength(1);
+    expect(r.answer).toContain("khả dụng 7");
+    expect(r.answer).not.toContain("999");
+  });
+  it("keeps validated results on final-provider failure but never invents evidence on initial failure", async () => {
+    const f = fixture([]);
+    f.provider.generate.mockImplementationOnce(async () => [
+      { functionCall: { name: "check_inventory", args: { sku: "SKU" } } },
+    ]);
+    f.provider.generate.mockRejectedValue(new Error("Provider failure"));
+    const r = await f.ai.message(
+      actor,
+      f.session.id,
+      "Check stock",
+      randomUUID(),
+    );
+    expect(r.status).toBe("OK");
+    expect(r.evidence).toHaveLength(1);
+    const failed = fixture([]);
+    failed.provider.generate.mockRejectedValue(new Error("Provider failure"));
+    expect(
+      (
+        await failed.ai.message(
+          actor,
+          failed.session.id,
+          "Check stock",
+          randomUUID(),
+        )
+      ).status,
+    ).toBe("UNAVAILABLE");
+  });
+  it("still refuses a well-formed claim for an unread resource after a successful tool", async () => {
+    const f = fixture([
+      [{ functionCall: { name: "check_inventory", args: { sku: "SKU" } } }],
+      answer([{ tool: "check_inventory", resourceId: "FOREIGN" }]),
+    ]);
+    expect(
+      (await f.ai.message(actor, f.session.id, "Check stock", randomUUID()))
+        .status,
+    ).toBe("UNAVAILABLE");
+  });
   it("skips a redundant category proposal without trusting model prose or changing the ticket", async () => {
     const f = fixture([
       [
