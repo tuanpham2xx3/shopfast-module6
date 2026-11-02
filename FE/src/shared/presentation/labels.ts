@@ -1,5 +1,6 @@
 const labels: Record<string, string> = {
   UNAVAILABLE: "Tạm thời không khả dụng",
+  NEEDS_INPUT: "Cần thêm thông tin",
   ANSWERED: "Đã có câu trả lời",
   NEEDS_CONFIRMATION: "Cần xác nhận",
   REFUSED: "Không thể xử lý yêu cầu",

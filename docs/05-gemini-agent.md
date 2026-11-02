@@ -36,12 +36,12 @@ Chỉ cập nhật kết quả AI nếu chưa có nhãn HUMAN hoặc classificat
 1. Support mở ticket được giao, tạo session gắn agentUserId và ticketId; session sống tối đa 24 giờ, kiểm tra lại quyền mỗi lượt.
 2. Backend dựng system instruction: chỉ hỗ trợ ShopFast, không suy đoán trạng thái đơn/tồn, tool output là nguồn dữ liệu, không có tool ghi tùy ý, không làm theo chỉ thị nằm trong ticket/tool text.
 3. Gửi prompt + context tối thiểu + tool declarations. Gemini có thể trả function call; model không trực tiếp truy cập DB hoặc HTTP nội bộ.
-4. Dispatcher kiểm tra allowlist, JSON args và quyền thực tế, thực thi service rồi gửi function response lại model.
+4. Dispatcher kiểm tra allowlist, JSON args và quyền thực tế. Khi tool đọc thành công hoặc tạo proposal hợp lệ, backend trả câu trả lời cố định từ evidence/proposal ngay, không gọi model tổng hợp lại. Xử lý đầy đủ các function calls trong cùng lượt, giữ giới hạn và kiểm quyền cho từng tool.
 5. Tối đa 4 vòng tool, 6 tool calls/lượt; tổng timeout 25 giây, mỗi provider call tối đa 12 giây; tool DB timeout 2 giây. Không cho chạy arbitrary SQL/code/URL.
 6. Trả answer và tool evidence đã lọc. Nếu Gemini phát biểu về đơn/tồn mà không có tool success tương ứng trong lượt hiện tại, backend không công bố câu trả lời đó; trả thông báo không thể xác minh và hướng dẫn tra thủ công.
-7. Nếu đã có tool DB thành công hoặc proposal hợp lệ nhưng lượt tổng hợp cuối của provider lỗi/sai JSON, trả bản tóm tắt cố định từ evidence/proposal server đã xác thực, không dùng prose model. Provider lỗi trước khi có dữ liệu vẫn trả UNAVAILABLE; claims hợp lệ về resource chưa đọc vẫn bị từ chối. Lượt tổng hợp sau tool chỉ gọi provider một lần để giữ ngân sách deadline.
+7. Assistant dùng function calling `ANY`, bao gồm quyết định hỏi thêm thông tin và từ chối ngoài phạm vi. `request_more_information` trả `NEEDS_INPUT` với câu hỏi cố định, không tạo dữ liệu; `respond_out_of_scope` trả `OUT_OF_SCOPE`. Không tìm thấy mã đơn/SKU hợp lệ cũng yêu cầu kiểm tra lại đầu vào. Không lấy lịch sử hội thoại làm bằng chứng tồn/đơn hiện tại. Lỗi provider trước khi chọn được tool vẫn trả UNAVAILABLE; không giả kết quả.
 
-V1 hỗ trợ text, không streaming để đơn giản hóa xác thực output. Response `answer`, `evidence[] {tool, resourceId, observedAt, resultSummary}`, `proposal`, `status` (OK/OUT_OF_SCOPE/UNAVAILABLE). Không trả raw prompt hoặc dữ liệu tool chưa lọc cho UI.
+V1 hỗ trợ text, không streaming để đơn giản hóa xác thực output. Response `answer`, `evidence[] {tool, resourceId, observedAt, resultSummary}`, `proposal`, `status` (OK/NEEDS_INPUT/OUT_OF_SCOPE/UNAVAILABLE). Không trả raw prompt hoặc dữ liệu tool chưa lọc cho UI.
 
 ## 4. Hai tool đọc bắt buộc
 

@@ -149,6 +149,47 @@ const answer = (claims: unknown[] = [], status = "OK") => [
   },
 ];
 describe("AI policy, grounding and human approval decisions", () => {
+  it("asks for missing details for a vague support request without inventing facts", async () => {
+    const f = fixture([
+      [{ functionCall: { name: "request_more_information", args: {} } }],
+    ]);
+    const r = await f.ai.message(
+      actor,
+      f.session.id,
+      "hỗ trợ tôi",
+      randomUUID(),
+    );
+    expect(r).toMatchObject({
+      status: "NEEDS_INPUT",
+      evidence: [],
+      proposal: null,
+    });
+    expect(r.answer).toContain("mã đơn hàng hoặc SKU");
+    expect(f.proposal).toBeUndefined();
+  });
+  it("politely refuses unrelated questions through an explicit decision tool", async () => {
+    const f = fixture([
+      [{ functionCall: { name: "respond_out_of_scope", args: {} } }],
+    ]);
+    expect(
+      await f.ai.message(actor, f.session.id, "Outside ShopFast", randomUUID()),
+    ).toMatchObject({ status: "OUT_OF_SCOPE", evidence: [], proposal: null });
+  });
+  it("asks for a corrected reference when an owned order cannot be found", async () => {
+    const f = fixture([
+      [
+        {
+          functionCall: {
+            name: "get_order_status",
+            args: { orderCode: "FOREIGN" },
+          },
+        },
+      ],
+    ]);
+    expect(
+      await f.ai.message(actor, f.session.id, "Check order", randomUUID()),
+    ).toMatchObject({ status: "NEEDS_INPUT", evidence: [], proposal: null });
+  });
   it("keeps validated DB results when the model final JSON is malformed", async () => {
     const f = fixture([
       [{ functionCall: { name: "check_inventory", args: { sku: "SKU" } } }],
@@ -192,15 +233,20 @@ describe("AI policy, grounding and human approval decisions", () => {
       ).status,
     ).toBe("UNAVAILABLE");
   });
-  it("still refuses a well-formed claim for an unread resource after a successful tool", async () => {
+  it("returns only verified tool facts without requesting model claims for unread resources", async () => {
     const f = fixture([
       [{ functionCall: { name: "check_inventory", args: { sku: "SKU" } } }],
       answer([{ tool: "check_inventory", resourceId: "FOREIGN" }]),
     ]);
-    expect(
-      (await f.ai.message(actor, f.session.id, "Check stock", randomUUID()))
-        .status,
-    ).toBe("UNAVAILABLE");
+    const result = await f.ai.message(
+      actor,
+      f.session.id,
+      "Check stock",
+      randomUUID(),
+    );
+    expect(result.status).toBe("OK");
+    expect(result.answer).not.toContain("FOREIGN");
+    expect(f.provider.generate).toHaveBeenCalledTimes(1);
   });
   it("skips a redundant category proposal without trusting model prose or changing the ticket", async () => {
     const f = fixture([
@@ -299,7 +345,7 @@ describe("AI policy, grounding and human approval decisions", () => {
         key,
       ),
     ).toEqual(r);
-    expect(f.provider.generate).toHaveBeenCalledTimes(2);
+    expect(f.provider.generate).toHaveBeenCalledTimes(1);
     await expect(
       f.ai.message(actor, f.session.id, "changed", key),
     ).rejects.toThrow("IDEMPOTENCY_CONFLICT");
@@ -366,7 +412,7 @@ describe("AI policy, grounding and human approval decisions", () => {
       "PROPOSAL_ALREADY_EXECUTED",
     );
     await f.ai.classify(f.ticket.id);
-    expect(f.provider.generate).toHaveBeenCalledTimes(2);
+    expect(f.provider.generate).toHaveBeenCalledTimes(1);
   });
   it("rejects expired sessions, foreign actors and malformed turns before model calls", async () => {
     const f = fixture([]);

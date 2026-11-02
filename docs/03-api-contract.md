@@ -125,6 +125,11 @@ Response checkout: id, code, status, paymentStatus, subtotal, discount, total, e
 cũ trùng nhãn trả HTTP 409 `CATEGORY_UNCHANGED` sau kiểm tra quyền/version,
 không cập nhật ticket. Confirm proposal đã EXECUTED vẫn replay kết quả cũ.
 
+Assistant có thể trả `status=NEEDS_INPUT` khi yêu cầu chưa rõ hoặc mã tra cứu không
+tìm thấy; `answer` hướng dẫn bổ sung thông tin, `evidence=[]`, `proposal=null`.
+Đây không phải lỗi dịch vụ. Kết quả tool thành công trả ngay từ DB, không phụ thuộc
+lượt tổng hợp JSON của model.
+
 AI contract đầy đủ ở file 05. clientMessageId unique theo session để tránh lặp lượt khi UI retry. Confirm có transaction và dedup theo proposal ID; admin vẫn phải có quyền ticket hiện tại.
 
 ## 6. Operations

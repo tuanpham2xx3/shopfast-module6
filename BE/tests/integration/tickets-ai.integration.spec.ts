@@ -182,7 +182,30 @@ describe("tickets and AI ownership/confirmation integration", () => {
     expect(await ai.message(support, s.sessionId, "Check order", key)).toEqual(
       result,
     );
-    expect(fake.calls).toBe(2);
+    expect(fake.calls).toBe(1);
+    expect((await tickets.detail(customer, t.id)).messages.total).toBe(0);
+  });
+  it("asks for details on vague support requests without changing the ticket", async () => {
+    const t = await assigned();
+    const ai = new AiService(
+      tickets,
+      new Fake([
+        [{ functionCall: { name: "request_more_information", args: {} } }],
+      ]),
+    );
+    const s = await ai.createSession(support, t.id);
+    const r = await ai.message(
+      support,
+      s.sessionId,
+      "hỗ trợ tôi",
+      randomUUID(),
+    );
+    expect(r).toMatchObject({
+      status: "NEEDS_INPUT",
+      evidence: [],
+      proposal: null,
+    });
+    expect(await tickets.ticket(t.id)).toEqual(t);
     expect((await tickets.detail(customer, t.id)).messages.total).toBe(0);
   });
   it("hides customer ownership and serializes competing claims", async () => {
@@ -278,7 +301,7 @@ describe("tickets and AI ownership/confirmation integration", () => {
     expect(
       await ai.message(support, s.sessionId, "Please classify", key),
     ).toEqual(result);
-    expect(fake.calls).toBe(2);
+    expect(fake.calls).toBe(1);
     await expect(
       ai.message(support, s.sessionId, "changed", key),
     ).rejects.toThrow("IDEMPOTENCY_CONFLICT");

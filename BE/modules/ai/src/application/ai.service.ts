@@ -311,6 +311,8 @@ export class AiService {
       contents.push({ role: "model", parts });
       const responses: Part[] = [];
       let unchangedCategory: string | undefined;
+      let needsInput = false,
+        outOfScope = false;
       for (const p of functions) {
         if (Date.now() >= deadline) throw new TicketError("AI_DEADLINE");
         calls++;
@@ -325,6 +327,8 @@ export class AiService {
             evidence,
             deadline,
           );
+          if (call.name === "request_more_information") needsInput = true;
+          if (call.name === "respond_out_of_scope") outOfScope = true;
           if (call.name === "propose_ticket_category") {
             const outcome = result as { status?: string; category?: string };
             if (outcome.status === "UNCHANGED")
@@ -332,6 +336,11 @@ export class AiService {
             else proposal = result;
           }
         } catch (e) {
+          if (
+            e instanceof TicketError &&
+            ["ORDER_NOT_ACCESSIBLE", "PRODUCT_NOT_FOUND"].includes(e.code)
+          )
+            needsInput = true;
           result = {
             error: e instanceof TicketError ? e.code : "TOOL_UNAVAILABLE",
           };
@@ -345,6 +354,8 @@ export class AiService {
         });
       }
       contents.push({ role: "user", parts: responses });
+      if (evidence.length || proposal)
+        return this.groundedResponse(evidence, proposal);
       if (
         unchangedCategory &&
         !proposal &&
@@ -356,6 +367,16 @@ export class AiService {
         return {
           answer: `Ticket đang có nhãn ${unchangedCategory}. Không cần đổi nhãn.`,
           status: "OK",
+          evidence: [],
+          toolResults: [],
+          proposal: null,
+        };
+      if (needsInput || outOfScope)
+        return {
+          answer: outOfScope
+            ? "Trợ lý chỉ hỗ trợ nghiệp vụ ShopFast."
+            : "Bạn muốn tra cứu đơn hàng, kiểm tra tồn kho hay phân loại yêu cầu? Hãy cho biết mã đơn hàng hoặc SKU sản phẩm nếu cần tra cứu; mình sẽ dùng nội dung ticket để hỗ trợ.",
+          status: outOfScope ? "OUT_OF_SCOPE" : "NEEDS_INPUT",
           evidence: [],
           toolResults: [],
           proposal: null,
@@ -392,6 +413,18 @@ export class AiService {
       await this.repository.toolLockSet(m, []);
       await this.session(a, s.id, m);
       if (Date.now() >= deadline) throw new TicketError("AI_DEADLINE");
+      if (
+        name === "request_more_information" ||
+        name === "respond_out_of_scope"
+      ) {
+        z.object({}).strict().parse(args);
+        return {
+          status:
+            name === "request_more_information"
+              ? "NEEDS_INPUT"
+              : "OUT_OF_SCOPE",
+        };
+      }
       if (name === "get_order_status") {
         const d = z
           .object({ orderCode: z.string().min(1).max(40) })
